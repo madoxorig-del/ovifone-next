@@ -3,7 +3,7 @@ import { useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { supabase } from '@/lib/supabase';
 
-export default function Telefoane() {
+export default function Tablete() {
   const router = useRouter();
   const initialized = useRef(false);
 
@@ -11,9 +11,6 @@ export default function Telefoane() {
     if (initialized.current) return;
     initialized.current = true;
 
-    // =========================================================
-    // TOAST NOTIFICATIONS
-    // =========================================================
     function showNotification(message, isError = true) {
       const existing = document.getElementById('ovifone-toast');
       if (existing) existing.remove();
@@ -37,15 +34,9 @@ export default function Telefoane() {
       toast.innerHTML = `${icon} <span>${message}</span>`;
       document.body.appendChild(toast);
       requestAnimationFrame(() => { toast.style.transform = 'translateX(-50%) translateY(0)'; });
-      setTimeout(() => {
-        toast.style.transform = 'translateX(-50%) translateY(150px)';
-        setTimeout(() => toast.remove(), 500);
-      }, 3500);
+      setTimeout(() => { toast.style.transform = 'translateX(-50%) translateY(150px)'; setTimeout(() => toast.remove(), 500); }, 3500);
     }
 
-    // =========================================================
-    // DOM REFERENCES
-    // =========================================================
     const DOM = {
       gridContainer: document.getElementById('product-grid'),
       filterCheckboxes: document.querySelectorAll('.shop-sidebar-ultra input[type="checkbox"]'),
@@ -55,70 +46,50 @@ export default function Telefoane() {
       sidebarElement: document.querySelector('.shop-sidebar-ultra'),
       closeSidebarButton: document.querySelector('.close-filters-btn'),
       emptyStateMessage: document.getElementById('no-results'),
-      triggerSearchBtn: document.getElementById('trigger-search-btn'),
+      resetBtn: document.getElementById('st-reset-btn'),
       pageTitle: document.querySelector('.page-title-ultra'),
     };
 
     if (DOM.resultsCounterNode) DOM.resultsCounterNode.textContent = '';
 
-    // =========================================================
-    // CART SYNC
-    // =========================================================
     const GlobalCartSync = {
-      init() {
-        this.updateBadge();
-        window.addEventListener('cartUpdated', () => this.updateBadge());
-      },
+      init() { this.updateBadge(); window.addEventListener('cartUpdated', () => this.updateBadge()); },
       updateBadge() {
         try {
           const cart = JSON.parse(localStorage.getItem('ovifone_cart') || '[]');
           const total = cart.reduce((s, i) => s + i.qty, 0);
-          document.querySelectorAll('.cart-badge').forEach(b => {
-            b.textContent = total;
-            b.style.display = total > 0 ? 'flex' : 'none';
-          });
+          document.querySelectorAll('.cart-badge').forEach(b => { b.textContent = total; b.style.display = total > 0 ? 'flex' : 'none'; });
         } catch (e) {}
       }
     };
 
-    // =========================================================
-    // SIDEBAR CONTROL (MOBILE)
-    // =========================================================
     const SidebarControl = {
       init() {
-        DOM.mobileFilterTrigger?.addEventListener('click', () => {
-          DOM.sidebarElement?.classList.add('is-open');
-          document.body.style.overflow = 'hidden';
-        });
-        DOM.closeSidebarButton?.addEventListener('click', () => {
-          DOM.sidebarElement?.classList.remove('is-open');
-          document.body.style.overflow = '';
-        });
+        DOM.mobileFilterTrigger?.addEventListener('click', () => { DOM.sidebarElement?.classList.add('is-open'); document.body.style.overflow = 'hidden'; });
+        DOM.closeSidebarButton?.addEventListener('click', () => { DOM.sidebarElement?.classList.remove('is-open'); document.body.style.overflow = ''; });
       }
     };
 
-    // =========================================================
-    // PRODUCT ENGINE
-    // =========================================================
     const ProductEngine = {
       allProducts: [],
       currentPage: 1,
       itemsPerPage: 12,
       currentSort: 'popular',
-      searchQuery: '',
 
       async init() {
         await this.fetchProducts();
         this.bindFilters();
         this.bindSort();
-        this.bindSearch();
+        DOM.resetBtn?.addEventListener('click', () => this.clearAllActiveFilters());
       },
 
       async fetchProducts() {
         try {
+          // ✅ Filtru pe categorie tablete
           const { data: produse, error } = await supabase
             .from('produse')
             .select('*')
+            .eq('categorie', 'tablete')
             .order('created_at', { ascending: false });
 
           if (error) throw error;
@@ -127,10 +98,7 @@ export default function Telefoane() {
             this.allProducts = produse;
             this.executeFilteringAndSorting();
           } else {
-            if (DOM.emptyStateMessage) {
-              DOM.emptyStateMessage.style.display = 'flex';
-              DOM.emptyStateMessage.classList.remove('hidden');
-            }
+            if (DOM.emptyStateMessage) { DOM.emptyStateMessage.style.display = 'flex'; DOM.emptyStateMessage.classList.remove('hidden'); }
             if (DOM.resultsCounterNode) DOM.resultsCounterNode.textContent = '0';
           }
         } catch (err) {
@@ -149,9 +117,10 @@ export default function Telefoane() {
         let baterieText = produs.baterie ? produs.baterie.trim() : '100%';
         if (!baterieText.includes('%') && baterieText.match(/^[0-9]+$/)) baterieText += '%';
 
-        // ✅ URL-ul nou: /telefoane/[id]
-        const linkProdus = `/telefoane/produs?id=${produs.id}`;
-        const bgText = brandAttr === 'apple' ? 'iPhone' : (brandAttr === 'samsung' ? 'Galaxy' : produs.brand || 'Telefon');
+        const linkProdus = `/tablete/produs?id=${produs.id}`;
+
+        // ✅ bgText specific tablete
+        const bgText = brandAttr === 'apple' ? 'iPad' : (brandAttr === 'samsung' ? 'Galaxy Tab' : produs.brand || 'Tabletă');
 
         const card = document.createElement('div');
         card.className = 'dark-product-card product-item';
@@ -179,8 +148,7 @@ export default function Telefoane() {
             <div class="cartBtn-wrap">
               <button class="cartBtn ${stocDisponibil <= 0 ? 'disabled' : ''}"
                 ${stocDisponibil <= 0 ? 'style="background-color:#ccc;cursor:not-allowed;color:#666;"' : ''}
-                data-nume="${produs.nume}"
-                data-pret="${produs.pret}"
+                data-nume="${produs.nume}" data-pret="${produs.pret}"
                 data-img="${produs.imagine_url}"
                 data-variant="${storageScurt} • ${produs.culori ? produs.culori.split(',')[0].trim() : 'Standard'}"
                 data-stoc="${stocDisponibil}">
@@ -213,10 +181,6 @@ export default function Telefoane() {
           if (f.brand.length && !f.brand.includes(brand)) return false;
           if (f.condition.length && !f.condition.includes(condition)) return false;
           if (f.storage.length && !f.storage.includes(storageNum)) return false;
-          if (this.searchQuery) {
-            const q = this.searchQuery.toLowerCase();
-            if (!p.nume?.toLowerCase().includes(q) && !p.brand?.toLowerCase().includes(q)) return false;
-          }
           return true;
         });
       },
@@ -265,8 +229,7 @@ export default function Telefoane() {
           });
           this.rebindAddToCartButtons();
         }
-
-        this.renderPaginationUI(totalPages, products);
+        this.renderPaginationUI(totalPages);
       },
 
       renderActiveTags() {
@@ -320,14 +283,9 @@ export default function Telefoane() {
         DOM.activeTagsContainer.appendChild(clearBtn);
       },
 
-      renderPaginationUI(totalPages, products) {
+      renderPaginationUI(totalPages) {
         let container = document.getElementById('dynamic-pagination-wrap');
-        if (!container) {
-          container = document.createElement('div');
-          container.id = 'dynamic-pagination-wrap';
-          container.className = 'pagination-ultra';
-          DOM.gridContainer.parentNode.insertBefore(container, DOM.gridContainer.nextSibling);
-        }
+        if (!container) { container = document.createElement('div'); container.id = 'dynamic-pagination-wrap'; container.className = 'pagination-ultra'; DOM.gridContainer.parentNode.insertBefore(container, DOM.gridContainer.nextSibling); }
         container.innerHTML = '';
         if (totalPages <= 1) return;
 
@@ -338,15 +296,8 @@ export default function Telefoane() {
         container.appendChild(prevBtn);
 
         this.getPaginationRange(this.currentPage, totalPages).forEach(item => {
-          if (item === '...') {
-            const dots = document.createElement('span'); dots.className = 'page-dots'; dots.textContent = '…'; container.appendChild(dots);
-          } else {
-            const btn = document.createElement('button');
-            btn.className = 'page-btn' + (this.currentPage === item ? ' active' : '');
-            btn.textContent = item;
-            btn.addEventListener('click', () => { this.currentPage = item; this.renderPage(this.applySort(this.applyFilters(this.allProducts))); window.scrollTo({ top: 0, behavior: 'smooth' }); });
-            container.appendChild(btn);
-          }
+          if (item === '...') { const dots = document.createElement('span'); dots.className = 'page-dots'; dots.textContent = '…'; container.appendChild(dots); }
+          else { const btn = document.createElement('button'); btn.className = 'page-btn' + (this.currentPage === item ? ' active' : ''); btn.textContent = item; btn.addEventListener('click', () => { this.currentPage = item; this.renderPage(this.applySort(this.applyFilters(this.allProducts))); window.scrollTo({ top: 0, behavior: 'smooth' }); }); container.appendChild(btn); }
         });
 
         const nextBtn = document.createElement('button');
@@ -383,10 +334,7 @@ export default function Telefoane() {
             window.dispatchEvent(new Event('cartUpdated'));
             showNotification(`Adăugat în coș: ${title}`, false);
             btn.classList.add('is-adding');
-            setTimeout(() => {
-              btn.classList.remove('is-adding'); btn.classList.add('is-added');
-              btn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" style="margin-right:8px;"><polyline points="20 6 9 17 4 12"/></svg>VEZI COȘUL';
-            }, 800);
+            setTimeout(() => { btn.classList.remove('is-adding'); btn.classList.add('is-added'); btn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" style="margin-right:8px;"><polyline points="20 6 9 17 4 12"/></svg>VEZI COȘUL'; }, 800);
           });
         });
       },
@@ -413,18 +361,9 @@ export default function Telefoane() {
         });
       },
 
-      bindSearch() {
-        DOM.triggerSearchBtn?.addEventListener('click', () => ProductEngine.clearAllActiveFilters());
-        const params = new URLSearchParams(window.location.search);
-        const q = params.get('search');
-        if (q) { this.searchQuery = q; if (DOM.pageTitle) DOM.pageTitle.textContent = `Rezultate pentru: "${q}"`; }
-      },
-
       clearAllActiveFilters() {
         DOM.filterCheckboxes.forEach(cb => { cb.checked = false; });
-        this.searchQuery = '';
-        if (DOM.pageTitle) DOM.pageTitle.textContent = 'Telefoane';
-        window.history.replaceState({}, document.title, window.location.pathname);
+        if (DOM.pageTitle) DOM.pageTitle.textContent = 'Tablete & eReadere';
         this.executeFilteringAndSorting();
       }
     };
@@ -439,8 +378,9 @@ export default function Telefoane() {
     <main className="main-content">
       <header className="category-hero-ultra">
         <div className="section-container">
-          <div className="hero-content-wrapper">
-            <h1 className="page-title-ultra">Telefoane</h1>
+          <div className="hero-content-wrapper" style={{ maxWidth: '800px', margin: '0 auto' }}>
+            <h1 className="page-title-ultra">Tablete & eReadere</h1>
+            <p className="page-subtitle-ultra">Performanță portabilă pentru muncă, școală și divertisment.</p>
           </div>
         </div>
       </header>
@@ -459,9 +399,8 @@ export default function Telefoane() {
               <div className="filter-widget-ultra">
                 <h4 className="widget-title-ultra">Brand</h4>
                 <div className="filter-options-ultra" data-filter-group="brand">
-                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="apple" /><span className="box-ultra"></span> <span className="lbl-text">Apple</span></label>
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="apple" /><span className="box-ultra"></span> <span className="lbl-text">Apple (iPad)</span></label>
                   <label className="cyber-checkbox-ultra"><input type="checkbox" value="samsung" /><span className="box-ultra"></span> <span className="lbl-text">Samsung</span></label>
-                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="google" /><span className="box-ultra"></span> <span className="lbl-text">Google</span></label>
                 </div>
               </div>
               <hr className="filter-divider" />
@@ -500,7 +439,7 @@ export default function Telefoane() {
                 <div className="active-filters-tags"></div>
               </div>
               <div className="toolbar-right-ultra">
-                <span className="results-counter-ultra"><strong></strong> modele</span>
+                <span className="results-counter-ultra"><strong></strong> produse</span>
                 <div className="sort-wrapper-ultra">
                   <div className="custom-sort-dropdown" id="custom-sort">
                     <div className="custom-sort-trigger">

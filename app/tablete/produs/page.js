@@ -273,51 +273,16 @@ export default function Telefoane() {
         if (!DOM.activeTagsContainer) return;
         DOM.activeTagsContainer.innerHTML = '';
         const f = this.getActiveFilters();
-        const allActive = [...f.brand, ...f.condition, ...f.storage];
-        if (allActive.length === 0) return;
-
-        const isMobile = window.innerWidth <= 768;
-        const maxVisible = isMobile ? 2 : allActive.length;
-        const visible = allActive.slice(0, maxVisible);
-        const hidden = allActive.slice(maxVisible);
-
-        visible.forEach(val => {
-          const tag = document.createElement('div');
-          tag.className = 'filter-tag';
-          tag.innerHTML = `
-            <span>${val}</span>
-            <button class="remove-tag" aria-label="Elimină ${val}">
-              <svg viewBox="0 0 24 24" width="10" height="10" stroke="currentColor" stroke-width="3" fill="none">
-                <line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-              </svg>
-            </button>
-          `;
-          tag.querySelector('.remove-tag').addEventListener('click', () => {
+        [...f.brand, ...f.condition, ...f.storage].forEach(val => {
+          const tag = document.createElement('button');
+          tag.className = 'active-filter-tag';
+          tag.innerHTML = `${val} <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="3" fill="none"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>`;
+          tag.addEventListener('click', () => {
             DOM.filterCheckboxes.forEach(cb => { if (cb.value.toLowerCase() === val) cb.checked = false; });
             this.executeFilteringAndSorting();
           });
           DOM.activeTagsContainer.appendChild(tag);
         });
-
-        if (hidden.length > 0) {
-          const moreBtn = document.createElement('div');
-          moreBtn.className = 'filter-tag';
-          moreBtn.style.cssText = 'background: linear-gradient(135deg, #e35b00, #c94f00); cursor: pointer;';
-          moreBtn.innerHTML = `<span>+${hidden.length} mai multe</span>`;
-          moreBtn.addEventListener('click', () => { DOM.mobileFilterTrigger?.click(); });
-          DOM.activeTagsContainer.appendChild(moreBtn);
-        }
-
-        const clearBtn = document.createElement('button');
-        clearBtn.className = 'clear-all-tags';
-        clearBtn.innerHTML = `
-          <svg viewBox="0 0 24 24" width="12" height="12" stroke="currentColor" stroke-width="2.5" fill="none">
-            <polyline points="3 6 5 6 21 6"/><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"/>
-          </svg>
-          Șterge toate
-        `;
-        clearBtn.addEventListener('click', () => this.clearAllActiveFilters());
-        DOM.activeTagsContainer.appendChild(clearBtn);
       },
 
       renderPaginationUI(totalPages, products) {
@@ -414,7 +379,7 @@ export default function Telefoane() {
       },
 
       bindSearch() {
-        DOM.triggerSearchBtn?.addEventListener('click', () => ProductEngine.clearAllActiveFilters());
+        DOM.triggerSearchBtn?.addEventListener('click', () => { document.querySelector('.search-btn')?.click(); });
         const params = new URLSearchParams(window.location.search);
         const q = params.get('search');
         if (q) { this.searchQuery = q; if (DOM.pageTitle) DOM.pageTitle.textContent = `Rezultate pentru: "${q}"`; }
@@ -518,18 +483,19 @@ export default function Telefoane() {
               </div>
             </div>
 
-            <div id="no-results" className="empty-state-premium hidden" style={{ display: 'none' }}>
+            <div id="no-results" className="empty-state hidden" style={{ display: 'none' }}>
               <div className="empty-content-glass">
                 <div className="empty-icon-glow">
-                  <svg viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5" fill="none">
-                    <polygon points="22 3 2 3 10 12.46 10 19 14 21 14 12.46 22 3" />
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round">
+                    <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /><path d="M9 9l4 4M13 9l-4 4" />
                   </svg>
                 </div>
-                <h2>Niciun produs găsit</h2>
-                <p className="empty-dynamic-text">Nu avem stoc pentru combinația de filtre aleasă.</p>
+                <h2>Niciun rezultat găsit</h2>
+                <p className="empty-dynamic-text">Nu am găsit produse care să se potrivească criteriilor tale.</p>
                 <div style={{ display: 'flex', gap: '15px', flexWrap: 'wrap', justifyContent: 'center', marginTop: '10px' }}>
-                  <button id="trigger-search-btn" className="premium-action-btn" style={{ background: '#1d1d1f', color: '#fff' }}>
-                    <span>RESETEAZĂ FILTRELE</span>
+                  <button id="trigger-search-btn" className="premium-action-btn" style={{ backgroundColor: 'var(--color-accent)' }}>
+                    <span>Caută din nou</span>
+                    <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none"><circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" /></svg>
                   </button>
                 </div>
               </div>
