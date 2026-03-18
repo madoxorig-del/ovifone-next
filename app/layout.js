@@ -18,6 +18,8 @@ export default function RootLayout({ children }) {
         <link rel="stylesheet" href="/vindestyle.css" />
         <link rel="stylesheet" href="/tstyle.css" />
         <link rel="stylesheet" href="/pstyle.css" />
+        <link rel="stylesheet" href="/cautare.css" />
+        <link rel="stylesheet" href="/contstyle.css" />
         <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
       </head>
       <body>
