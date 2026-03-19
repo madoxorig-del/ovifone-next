@@ -1,0 +1,85 @@
+:root {
+    --text-primary: #1d1d1f;
+    --text-secondary: #4a4a4a;
+    --text-muted: #86868b;
+    --accent: #e35b00;
+    --bg-page: #f2f3f7;
+    --bg-card: #ffffff;
+    --border-soft: rgba(0, 0, 0, 0.08);
+}
+
+.legal-main {
+    padding: 100px 20px 80px;
+    display: flex;
+    justify-content: center;
+}
+
+.legal-container {
+    background-color: var(--bg-card);
+    width: 100%;
+    max-width: 850px;
+    padding: 60px 80px;
+    border-radius: 24px;
+    box-shadow: 0 15px 40px rgba(0, 0, 0, 0.04);
+    border: 1px solid var(--border-soft);
+}
+
+.legal-header {
+    border-bottom: 2px solid var(--border-soft);
+    padding-bottom: 30px;
+    margin-bottom: 40px;
+}
+
+.legal-header h1 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 36px;
+    font-weight: 800;
+    color: var(--text-primary);
+    margin: 0 0 10px 0;
+    letter-spacing: -1px;
+}
+
+.last-updated {
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--text-muted);
+    margin: 0;
+}
+
+.legal-content {
+    font-family: 'Inter', sans-serif;
+    color: var(--text-secondary);
+    line-height: 1.7;
+    font-size: 16px;
+}
+
+.legal-content h2 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 40px 0 15px 0;
+}
+
+.legal-content h3 {
+    font-family: 'Montserrat', sans-serif;
+    font-size: 18px;
+    font-weight: 700;
+    color: var(--text-primary);
+    margin: 30px 0 10px 0;
+}
+
+.legal-content p { margin: 0 0 16px 0; }
+.legal-content ul, .legal-content ol { margin: 0 0 24px 0; padding-left: 24px; }
+.legal-content li { margin-bottom: 8px; }
+.legal-content a { color: var(--accent); text-decoration: none; font-weight: 500; transition: color 0.2s ease; }
+.legal-content a:hover { text-decoration: underline; }
+
+@media (max-width: 768px) {
+    .legal-main { padding: 80px 15px 60px; }
+    .legal-container { padding: 40px 24px; border-radius: 16px; }
+    .legal-header h1 { font-size: 28px; }
+    .legal-content { font-size: 15px; }
+    .legal-content h2 { font-size: 20px; margin: 30px 0 15px 0; }
+}

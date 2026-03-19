@@ -180,6 +180,12 @@ export default function Cont() {
       if (!pass || pass.length < 8) { showErr('e-rg-pass', 'Min. 8 caractere'); shakeInput('rg-pass'); valid = false; }
       if (!terms) { showErr('e-rg-terms', 'Acceptă termenii'); valid = false; }
       if (!valid) return;
+      const BLOCKED_EMAILS = ['admin@ovifone.ro'];
+      if (BLOCKED_EMAILS.map(e => e.toLowerCase()).includes(email.toLowerCase())) {
+        showErr('e-rg-email', 'Acest email nu poate fi folosit pentru înregistrare.');
+        shakeInput('rg-email');
+        return;
+      }
       setLoading('btn-register', true);
       const { data, error } = await supabase.auth.signUp({ email, password: pass, options: { data: { first_name: fname, last_name: lname, full_name: `${fname} ${lname}`, avatar_url: '' } } });
       setLoading('btn-register', false);
