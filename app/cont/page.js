@@ -75,6 +75,11 @@ export default function Cont() {
       fillProfileData(user);
       startCounters();
       initNavigation();
+      // Asiguram ca butonul add address e vizibil
+      setTimeout(() => {
+        const addBtnEl = document.getElementById('open-addr-modal');
+        if (addBtnEl) addBtnEl.classList.add('visible');
+      }, 300);
     }
 
     function showAuth() {
@@ -191,7 +196,7 @@ export default function Cont() {
     // ── GOOGLE LOGIN ──
     document.querySelectorAll('.af-soc-btn').forEach(btn => {
       btn.addEventListener('click', async () => {
-        const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.href } });
+        const { error } = await supabase.auth.signInWithOAuth({ provider: 'google', options: { redirectTo: window.location.origin + '/cont' } });
         if (error) toast('Eroare: ' + error.message, 'err');
       });
     });
@@ -318,7 +323,6 @@ export default function Cont() {
       if (badgeComenzi) { badgeComenzi.textContent = numarComenzi; badgeComenzi.style.display = numarComenzi > 0 ? 'inline-flex' : 'none'; }
       if (numarComenzi === 0 || !ordersContainer) return;
       ordersContainer.innerHTML = '';
-      console.log('Randez comenzi:', comenzi.length, comenzi[0]);
       comenzi.forEach((comanda, index) => {
         const shortId = String(comanda.id).split('-')[0].toUpperCase();
         const dataComanda = new Date(comanda.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' });
@@ -371,11 +375,14 @@ export default function Cont() {
       const addBtn = document.getElementById('open-addr-modal');
       if (!grid || !addBtn) return;
       // Stergem cardurile vechi dar pastram butonul de adaugare
-      grid.querySelectorAll('.acard').forEach(c => c.remove());
+      grid.querySelectorAll('.acard:not(.acard-add)').forEach(c => c.remove());
       if (adrese && adrese.length > 0) {
         adrese.forEach(addr => renderAddressCard(addr, grid, addBtn));
       }
       updateAddressCount(adrese ? adrese.length : 0);
+      // Butonul devine vizibil
+      const addBtnEl = document.getElementById('open-addr-modal');
+      if (addBtnEl) addBtnEl.classList.add('visible');
     }
 
     function renderAddressCard(addr, grid, addBtn) {
@@ -679,9 +686,16 @@ export default function Cont() {
             {/* ADRESE */}
             <section className="psec" id="sec-adrese">
               <div className="sec-hd"><h2>Adresele Mele</h2><p>Gestionează adresele de livrare</p></div>
-              <div className="agrid" id="addr-grid">
-                <button className="acard-add" id="open-addr-modal">
-                  <div className="acard-add-ico"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.8" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg></div>
+              <div className="agrid" id="addr-grid" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(260px, 1fr))', gap: '16px' }}>
+                <button className="acard-add" id="open-addr-modal" style={{
+                  display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center',
+                  gap: '12px', padding: '32px 20px', border: '2px dashed #e5e7eb', borderRadius: '16px',
+                  background: 'transparent', cursor: 'pointer', color: '#6b7280', fontSize: '14px',
+                  fontWeight: 600, width: '100%', minHeight: '140px', transition: 'all 0.2s ease'
+                }}>
+                  <div style={{ width: '44px', height: '44px', borderRadius: '50%', background: '#f5f5f7', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+                    <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="1.8" fill="none"><line x1="12" y1="5" x2="12" y2="19"></line><line x1="5" y1="12" x2="19" y2="12"></line></svg>
+                  </div>
                   <span>Adaugă o adresă nouă</span>
                 </button>
               </div>

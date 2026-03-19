@@ -1,0 +1,15 @@
+export const metadata = {
+  title: 'Ovifone — Admin',
+};
+
+export default function AdminLayout({ children }) {
+  return (
+    <>
+      <link
+        href="https://fonts.googleapis.com/css2?family=DM+Sans:opsz,wght@9..40,400;9..40,500;9..40,600;9..40,700;9..40,800;9..40,900&display=swap"
+        rel="stylesheet"
+      />
+      {children}
+    </>
+  );
+}

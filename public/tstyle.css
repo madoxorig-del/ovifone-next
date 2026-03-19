@@ -1660,6 +1660,7 @@
     align-items: center;
     gap: 8px;
     width: 100%;
+    flex-wrap: wrap;
   }
 
   .toolbar-right-ultra {
@@ -1681,6 +1682,9 @@
   }
 
   .active-filters-tags {
-    display: none !important;
+    display: flex !important;
+    flex-wrap: wrap;
+    gap: 6px;
+    width: 100%;
   }
 }
