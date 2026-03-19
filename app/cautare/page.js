@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useRef, Suspense } from 'react';
+import { useEffect, useState, Suspense } from 'react';
 import { useSearchParams, useRouter } from 'next/navigation';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
@@ -7,13 +7,9 @@ import { supabase } from '@/lib/supabase';
 function CautareContent() {
   const searchParams = useSearchParams();
   const router = useRouter();
-  const initialized = useRef(false);
+  const query = searchParams.get('search');
 
   useEffect(() => {
-    if (initialized.current) return;
-    initialized.current = true;
-
-    const query = searchParams.get('search');
     const termDisplay  = document.getElementById('search-term-display');
     const countDisplay = document.getElementById('search-count');
     const grid         = document.getElementById('search-results-grid');
@@ -24,22 +20,23 @@ function CautareContent() {
 
     if (heroInput && query) heroInput.value = query;
 
-    heroForm?.addEventListener('submit', (e) => {
+    let activeFilter = 'all';
+    let allRezultate = [];
+
+    function handleSubmit(e) {
       e.preventDefault();
       const val = heroInput?.value.trim();
       if (val) router.push('/cautare?search=' + encodeURIComponent(val));
-    });
+    }
+    heroForm?.addEventListener('submit', handleSubmit);
 
     if (!query) {
       if (termDisplay) termDisplay.textContent = 'nimic';
       if (grid) grid.innerHTML = buildEmptyState('Nu ai introdus un termen.', 'Încearcă să cauți un produs, brand sau categorie.');
-      return;
+      return () => { heroForm?.removeEventListener('submit', handleSubmit); };
     }
 
     if (termDisplay) termDisplay.textContent = query;
-
-    let allRezultate = [];
-    let activeFilter = 'all';
 
     async function init() {
       try {
@@ -55,6 +52,7 @@ function CautareContent() {
         );
 
         if (allRezultate.length > 0 && controlsBar) controlsBar.style.display = 'block';
+        if (allRezultate.length === 0 && controlsBar) controlsBar.style.display = 'none';
         renderResults(allRezultate);
 
         document.querySelectorAll('.filter-chip').forEach(chip => {
@@ -183,7 +181,11 @@ function CautareContent() {
     }
 
     init();
-  }, []);
+
+    return () => {
+      heroForm?.removeEventListener('submit', handleSubmit);
+    };
+  }, [query, router]);
 
   return (
     <main className="main-content">

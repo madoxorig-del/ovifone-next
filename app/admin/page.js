@@ -17,10 +17,30 @@ export default function Admin() {
     let currentColors = [];
     let _sessionValid = false;
 
+    // ── EMAILURI ADMIN PERMISE ──
+    const ADMIN_EMAILS = [
+      'admin@ovifone.ro',
+      // Adaugă aici alte emailuri admin permise
+    ];
+
+    function isAdminEmail(email) {
+      return ADMIN_EMAILS.map(e => e.toLowerCase()).includes((email || '').toLowerCase());
+    }
+
+    // ── SANITIZARE XSS ──
+    function esc(str) {
+      if (str === null || str === undefined) return '';
+      return String(str).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&#039;');
+    }
+
     // ── SECURITATE ──
     setInterval(async () => {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session) forceLogout();
+      else {
+        const email = session.user?.email;
+        if (!isAdminEmail(email)) forceLogout();
+      }
     }, 60000);
 
     const _dashObserver = new MutationObserver(() => {
@@ -28,18 +48,31 @@ export default function Admin() {
     });
     _dashObserver.observe(dashboardScreen, { attributes: true, attributeFilter: ['style', 'class'] });
 
+    let _loggingOut = false;
     function forceLogout() {
+      if (_loggingOut) return;
+      _loggingOut = true;
       _sessionValid = false;
       ['admin-product-list','admin-orders-list','admin-bb-list'].forEach(id => { const el = document.getElementById(id); if (el) el.innerHTML = ''; });
       toateProdusele = []; toateComenzile = []; toateCererileBB = [];
       dashboardScreen.style.display = 'none';
       loginScreen.style.display = 'flex';
-      supabase.auth.signOut();
+      supabase.auth.signOut().finally(() => { _loggingOut = false; });
     }
 
     async function checkUser() {
       const { data: { session } } = await supabase.auth.getSession();
       if (session) {
+        const email = session.user?.email;
+        if (!isAdminEmail(email)) {
+          const el = document.getElementById('login-error');
+          if (el) el.textContent = 'Acces interzis — nu ești administrator.';
+          await supabase.auth.signOut();
+          _sessionValid = false;
+          loginScreen.style.display = 'flex';
+          dashboardScreen.style.display = 'none';
+          return;
+        }
         _sessionValid = true;
         loginScreen.style.display = 'none';
         dashboardScreen.style.display = 'flex';
@@ -55,7 +88,10 @@ export default function Admin() {
 
     supabase.auth.onAuthStateChange((event, session) => {
       if (event === 'SIGNED_OUT' || !session) forceLogout();
-      else if (event === 'SIGNED_IN' && session) { _sessionValid = true; }
+      else if (event === 'SIGNED_IN' && session) {
+        if (!isAdminEmail(session.user?.email)) forceLogout();
+        else _sessionValid = true;
+      }
     });
 
     // ── LOGIN ──
@@ -129,10 +165,10 @@ export default function Admin() {
       const prodEl = document.getElementById('dash-produse-list');
       const ps = produse || [];
       if (prodEl) prodEl.innerHTML = ps.length === 0 ? '<div class="empty-dash">Nu există produse în catalog.</div>' : ps.map(p => {
-        const img = p.imagine_url ? `<img class="prod-img" src="${p.imagine_url}" alt="">` : `<div class="prod-img-ph">📱</div>`;
-        const stoc = (p.stoc || 0) > 0 ? `<span class="prod-stock ps-ok">${p.stoc} buc</span>` : `<span class="prod-stock ps-no">Stoc 0</span>`;
-        const cat = p.categorie ? p.categorie.charAt(0).toUpperCase() + p.categorie.slice(1) : '';
-        return `<div class="prod-row">${img}<div style="flex:1;min-width:0;"><div class="prod-name">${p.nume}</div><div class="prod-cat">${cat}</div></div><div class="prod-right"><div class="prod-price">${p.pret} lei</div>${stoc}</div></div>`;
+        const img = p.imagine_url ? `<img class="prod-img" src="${esc(p.imagine_url)}" alt="">` : `<div class="prod-img-ph">📱</div>`;
+        const stoc = (p.stoc || 0) > 0 ? `<span class="prod-stock ps-ok">${esc(p.stoc)} buc</span>` : `<span class="prod-stock ps-no">Stoc 0</span>`;
+        const cat = p.categorie ? esc(p.categorie.charAt(0).toUpperCase() + p.categorie.slice(1)) : '';
+        return `<div class="prod-row">${img}<div style="flex:1;min-width:0;"><div class="prod-name">${esc(p.nume)}</div><div class="prod-cat">${cat}</div></div><div class="prod-right"><div class="prod-price">${esc(p.pret)} lei</div>${stoc}</div></div>`;
       }).join('');
 
       const { data: c0 } = await supabase.from('comenzi').select('id,status,total,created_at,nume_complet').order('created_at', { ascending: false });
@@ -148,7 +184,7 @@ export default function Admin() {
       const heroV = document.getElementById('hero-venit'); if (heroV) heroV.textContent = venit.toLocaleString('ro-RO');
       const recente = c.filter(x => x.status !== 'Anulata').slice(0, 6);
       const ordEl = document.getElementById('dash-recent-orders');
-      if (ordEl) ordEl.innerHTML = recente.length === 0 ? '<div class="empty-dash">Nu există comenzi momentan.</div>' : recente.map(o => `<div class="ord-row"><div><div class="ord-name">${o.nume_complet}</div><div class="ord-meta">#${String(o.id).split('-')[0].toUpperCase()} · ${new Date(o.created_at).toLocaleDateString('ro-RO')}</div></div><div class="ord-r"><span class="spill" style="${stClr(o.status)}">${o.status}</span><span class="ord-price">${o.total} lei</span></div></div>`).join('');
+      if (ordEl) ordEl.innerHTML = recente.length === 0 ? '<div class="empty-dash">Nu există comenzi momentan.</div>' : recente.map(o => `<div class="ord-row"><div><div class="ord-name">${esc(o.nume_complet)}</div><div class="ord-meta">#${esc(String(o.id).split('-')[0].toUpperCase())} · ${new Date(o.created_at).toLocaleDateString('ro-RO')}</div></div><div class="ord-r"><span class="spill" style="${stClr(o.status)}">${esc(o.status)}</span><span class="ord-price">${esc(o.total)} lei</span></div></div>`).join('');
 
       const { data: b0 } = await supabase.from('cereri_buyback').select('id,status,created_at,nume,brand,model,pret_estimat').order('created_at', { ascending: false });
       const bb = b0 || [];
@@ -157,7 +193,7 @@ export default function Admin() {
       const elBBNoi = document.getElementById('stat-bb-noi'); if (elBBNoi) elBBNoi.textContent = `${noi} neconsultate`;
       const elBadgeBB = document.getElementById('badge-bb-noi'); if (elBadgeBB) elBadgeBB.textContent = `${noi} noi`;
       const bbEl = document.getElementById('dash-recent-bb');
-      if (bbEl) bbEl.innerHTML = bb.length === 0 ? '<div class="empty-dash">Nu există cereri BuyBack momentan.</div>' : bb.slice(0, 6).map(b => `<div class="bb-row"><div><div class="bb-dev">${b.brand} ${b.model}</div><div class="bb-cli">${(b.nume || '').toUpperCase()} · #${b.id}</div></div><span class="bb-price">${b.pret_estimat}</span></div>`).join('');
+      if (bbEl) bbEl.innerHTML = bb.length === 0 ? '<div class="empty-dash">Nu există cereri BuyBack momentan.</div>' : bb.slice(0, 6).map(b => `<div class="bb-row"><div><div class="bb-dev">${esc(b.brand)} ${esc(b.model)}</div><div class="bb-cli">${esc((b.nume || '').toUpperCase())} · #${esc(b.id)}</div></div><span class="bb-price">${esc(b.pret_estimat)}</span></div>`).join('');
     }
 
     function stClr(s) {
@@ -221,9 +257,9 @@ export default function Admin() {
         const blocatStr = isAnulata ? 'disabled style="opacity:0.5;cursor:not-allowed;"' : '';
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td><strong>#${String(c.id).split('-')[0].toUpperCase()}</strong><br><small style="color:var(--txt2);">${dataF}</small></td>
-          <td><strong>${c.nume_complet}</strong><br><small>${c.telefon}</small></td>
-          <td><strong>${c.total} lei</strong><br><small style="text-transform:uppercase;">${c.metoda_plata}</small></td>
+          <td><strong>#${esc(String(c.id).split('-')[0].toUpperCase())}</strong><br><small style="color:var(--txt2);">${esc(dataF)}</small></td>
+          <td><strong>${esc(c.nume_complet)}</strong><br><small>${esc(c.telefon)}</small></td>
+          <td><strong>${esc(c.total)} lei</strong><br><small style="text-transform:uppercase;">${esc(c.metoda_plata)}</small></td>
           <td>
             <select class="status-select ${getStatusColor(c.status)}" onchange="schimbaStatusComanda('${c.id}', this)" ${blocatStr}>
               <option value="Noua" ${c.status === 'Noua' ? 'selected' : ''}>⏳ Nouă (Ramburs)</option>
@@ -246,7 +282,7 @@ export default function Admin() {
       let prodHtml = '';
       let taxaLivrare = 19;
       if (comanda.detalii_cos && Array.isArray(comanda.detalii_cos)) {
-        prodHtml = comanda.detalii_cos.map(p => `<tr><td><div class="prod-info"><img src="${p.img}" alt="produs"><div><div class="prod-name">${p.title}</div><div class="prod-meta">${p.variant || 'Standard'}</div></div></div></td><td class="text-center">${p.price} lei</td><td class="text-center">x${p.qty}</td><td class="text-right"><strong>${p.price * p.qty} lei</strong></td></tr>`).join('');
+        prodHtml = comanda.detalii_cos.map(p => `<tr><td><div class="prod-info"><img src="${esc(p.img)}" alt="produs"><div><div class="prod-name">${esc(p.title)}</div><div class="prod-meta">${esc(p.variant || 'Standard')}</div></div></div></td><td class="text-center">${esc(p.price)} lei</td><td class="text-center">x${esc(p.qty)}</td><td class="text-right"><strong>${esc(p.price * p.qty)} lei</strong></td></tr>`).join('');
       }
       if ((comanda.metoda_plata || '').toLowerCase() === 'magazin' || (comanda.adresa || '').toLowerCase().includes('magazin')) taxaLivrare = 0;
       const subtotal = comanda.total - taxaLivrare;
@@ -257,10 +293,10 @@ export default function Admin() {
           <button class="btn-print" onclick="window.print()">🖨️ Printează Factura</button>
           <button class="btn-close-inv" onclick="window.inchideFactura()">❌ Închide</button>
         </div>
-        <div class="invoice-header"><div class="invoice-logo">OVI<span>FONE</span></div><div class="invoice-title"><h2>Comanda #${String(comanda.id).split('-')[0].toUpperCase()}</h2><p>Data emiterii: ${dataF}</p></div></div>
+        <div class="invoice-header"><div class="invoice-logo">OVI<span>FONE</span></div><div class="invoice-title"><h2>Comanda #${esc(String(comanda.id).split('-')[0].toUpperCase())}</h2><p>Data emiterii: ${esc(dataF)}</p></div></div>
         <div class="invoice-addresses">
-          <div class="address-box"><h3>Facturat către / Livrare</h3><p><strong>${comanda.nume_complet}</strong></p><p>${comanda.telefon}</p><p>${comanda.email}</p><p>${comanda.adresa}</p><p>${comanda.localitate}, ${comanda.judet}</p><p><strong>${comanda.tara || 'România'}</strong></p></div>
-          <div class="address-box" style="text-align:right;"><h3>Vânzător</h3><p><strong>Ovifone Electronics S.R.L.</strong></p><p>Strada Tehnologiei, Nr. 1</p><p>București, România</p><div class="invoice-status-badge ${statusCuloare}">${comanda.status.toUpperCase()}</div><div style="margin-top:5px;font-size:13px;color:var(--txt2);">Metodă plată: <strong>${comanda.metoda_plata.toUpperCase()}</strong></div></div>
+          <div class="address-box"><h3>Facturat către / Livrare</h3><p><strong>${esc(comanda.nume_complet)}</strong></p><p>${esc(comanda.telefon)}</p><p>${esc(comanda.email)}</p><p>${esc(comanda.adresa)}</p><p>${esc(comanda.localitate)}, ${esc(comanda.judet)}</p><p><strong>${esc(comanda.tara || 'România')}</strong></p></div>
+          <div class="address-box" style="text-align:right;"><h3>Vânzător</h3><p><strong>Ovifone Electronics S.R.L.</strong></p><p>Strada Tehnologiei, Nr. 1</p><p>București, România</p><div class="invoice-status-badge ${statusCuloare}">${esc(comanda.status.toUpperCase())}</div><div style="margin-top:5px;font-size:13px;color:var(--txt2);">Metodă plată: <strong>${esc(comanda.metoda_plata.toUpperCase())}</strong></div></div>
         </div>
         <table class="invoice-products"><thead><tr><th>Produs</th><th class="text-center">Preț</th><th class="text-center">Cantitate</th><th class="text-right">Total</th></tr></thead><tbody>${prodHtml}</tbody></table>
         <div class="invoice-summary"><div class="summary-box"><div class="summary-row"><span>Subtotal Produse</span><span>${subtotal} lei</span></div><div class="summary-row"><span>Taxă Livrare</span><span>${taxaLivrare === 0 ? 'Gratuit' : taxaLivrare + ' lei'}</span></div><div class="summary-row total"><span>TOTAL PLATĂ</span><span>${comanda.total} LEI</span></div></div></div>
@@ -291,10 +327,10 @@ export default function Admin() {
         const cat = p.categorie ? p.categorie.charAt(0).toUpperCase() + p.categorie.slice(1) : '';
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td><img src="${p.imagine_url}" alt="${p.nume}" style="width:52px;height:52px;object-fit:contain;border-radius:10px;border:1px solid var(--border2);background:var(--bg);padding:3px;"></td>
-          <td><strong>${p.nume}</strong><br><small style="color:var(--txt2);">${p.brand || ''}</small></td>
-          <td>${cat}</td>
-          <td><strong>${p.pret} lei</strong>${p.pret_vechi ? `<br><small style="text-decoration:line-through;color:var(--txt2);">${p.pret_vechi} lei</small>` : ''}</td>
+          <td><img src="${esc(p.imagine_url)}" alt="${esc(p.nume)}" style="width:52px;height:52px;object-fit:contain;border-radius:10px;border:1px solid var(--border2);background:var(--bg);padding:3px;"></td>
+          <td><strong>${esc(p.nume)}</strong><br><small style="color:var(--txt2);">${esc(p.brand || '')}</small></td>
+          <td>${esc(cat)}</td>
+          <td><strong>${esc(p.pret)} lei</strong>${p.pret_vechi ? `<br><small style="text-decoration:line-through;color:var(--txt2);">${esc(p.pret_vechi)} lei</small>` : ''}</td>
           <td><span class="prod-stock ${stocClass}">${stocText}</span></td>
           <td>
             <button class="action-btn btn-edit" onclick="window.editeazaProdus('${p.id}')">✏️ Editează</button>
@@ -334,7 +370,7 @@ export default function Admin() {
       currentColors.forEach((c, index) => {
         const tag = document.createElement('div');
         tag.style.cssText = 'display:flex;align-items:center;gap:8px;background:#e5e5ea;padding:6px 14px;border-radius:20px;font-size:13px;font-weight:600;';
-        tag.innerHTML = `<div style="width:16px;height:16px;border-radius:50%;background-color:${c.hex};border:1px solid rgba(0,0,0,0.1);"></div>${c.name}<span style="cursor:pointer;color:#ff3b30;margin-left:6px;font-size:18px;line-height:1;" onclick="window.removeColor(${index})">×</span>`;
+        tag.innerHTML = `<div style="width:16px;height:16px;border-radius:50%;background-color:${esc(c.hex)};border:1px solid rgba(0,0,0,0.1);"></div>${esc(c.name)}<span style="cursor:pointer;color:#ff3b30;margin-left:6px;font-size:18px;line-height:1;" onclick="window.removeColor(${index})">×</span>`;
         container.appendChild(tag);
       });
       const colorInput = document.getElementById('p-colors');
@@ -530,10 +566,10 @@ export default function Admin() {
         const statusActual = c.status || 'Nou';
         const tr = document.createElement('tr');
         tr.innerHTML = `
-          <td><strong>#${c.id}</strong><br><small style="color:var(--txt2);">${dataF}</small></td>
-          <td><strong>${c.nume}</strong><br><small>${c.telefon}</small></td>
-          <td><strong>${c.brand} ${c.model}</strong><br><small>${c.stocare} | Baterie: ${c.baterie}</small></td>
-          <td><strong style="color:var(--accent);font-size:16px;">${c.pret_estimat}</strong></td>
+          <td><strong>#${esc(c.id)}</strong><br><small style="color:var(--txt2);">${esc(dataF)}</small></td>
+          <td><strong>${esc(c.nume)}</strong><br><small>${esc(c.telefon)}</small></td>
+          <td><strong>${esc(c.brand)} ${esc(c.model)}</strong><br><small>${esc(c.stocare)} | Baterie: ${esc(c.baterie)}</small></td>
+          <td><strong style="color:var(--accent);font-size:16px;">${esc(c.pret_estimat)}</strong></td>
           <td><select class="status-select ${getStatusColorBB(statusActual)}" onchange="schimbaStatusBB('${c.id}', this)">
             <option value="Nou" ${statusActual === 'Nou' ? 'selected' : ''}>🌟 Nou (Necontactat)</option>
             <option value="In discutie" ${statusActual === 'In discutie' ? 'selected' : ''}>📞 În discuție</option>
@@ -555,30 +591,30 @@ export default function Admin() {
           <button class="btn-close-inv" onclick="window.inchideDetaliiBB()">❌ Închide</button>
         </div>
         <div style="border-bottom:2px solid var(--border);padding-bottom:20px;margin-bottom:30px;display:flex;justify-content:space-between;align-items:center;">
-          <div><h2 style="margin:0;font-size:24px;font-weight:800;text-transform:uppercase;">Fișă Evaluare Device</h2><p style="margin:5px 0 0 0;color:var(--txt2);font-size:14px;">ID Cerere: #${c.id} | Data: ${dataF}</p></div>
-          <div class="invoice-status-badge ${getStatusColorBB(c.status || 'Nou')}">${(c.status || 'Nou').toUpperCase()}</div>
+          <div><h2 style="margin:0;font-size:24px;font-weight:800;text-transform:uppercase;">Fișă Evaluare Device</h2><p style="margin:5px 0 0 0;color:var(--txt2);font-size:14px;">ID Cerere: #${esc(c.id)} | Data: ${esc(dataF)}</p></div>
+          <div class="invoice-status-badge ${getStatusColorBB(c.status || 'Nou')}">${esc((c.status || 'Nou').toUpperCase())}</div>
         </div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-bottom:30px;">
           <div style="background:#f9fafb;padding:20px;border-radius:12px;border:1px solid var(--border);">
             <h3 style="margin:0 0 15px 0;font-size:13px;text-transform:uppercase;color:var(--txt2);">👤 Date Client</h3>
-            <div style="margin-bottom:8px;"><strong>Nume:</strong> ${c.nume}</div>
-            <div style="margin-bottom:8px;"><strong>Telefon:</strong> <a href="tel:${c.telefon}" style="color:var(--txt);font-weight:600;">${c.telefon}</a></div>
-            <div><strong>Email:</strong> ${c.email !== '-' ? `<a href="mailto:${c.email}" style="color:var(--txt);">${c.email}</a>` : 'Nespecificat'}</div>
+            <div style="margin-bottom:8px;"><strong>Nume:</strong> ${esc(c.nume)}</div>
+            <div style="margin-bottom:8px;"><strong>Telefon:</strong> <a href="tel:${esc(c.telefon)}" style="color:var(--txt);font-weight:600;">${esc(c.telefon)}</a></div>
+            <div><strong>Email:</strong> ${c.email !== '-' ? `<a href="mailto:${esc(c.email)}" style="color:var(--txt);">${esc(c.email)}</a>` : 'Nespecificat'}</div>
           </div>
           <div style="background:rgba(227,91,0,0.04);padding:20px;border-radius:12px;border:1px solid rgba(227,91,0,0.2);">
             <h3 style="margin:0 0 15px 0;font-size:13px;text-transform:uppercase;color:var(--accent);">💰 Ofertă Sistem</h3>
-            <div style="font-size:34px;font-weight:900;color:var(--txt);">${c.pret_estimat}</div>
+            <div style="font-size:34px;font-weight:900;color:var(--txt);">${esc(c.pret_estimat)}</div>
             <p style="margin:5px 0 0 0;font-size:12px;color:var(--txt2);">*Prețul final se negociază la testarea fizică.</p>
           </div>
         </div>
         <table style="width:100%;border-collapse:collapse;font-size:15px;">
           <tbody>
-            <tr><td style="padding:14px 0;border-bottom:1px solid var(--border);color:var(--txt2);width:40%;">Tip Dispozitiv</td><td style="padding:14px 0;border-bottom:1px solid var(--border);font-weight:600;">${c.tip_device}</td></tr>
-            <tr><td style="padding:14px 0;border-bottom:1px solid var(--border);color:var(--txt2);">Producător</td><td style="padding:14px 0;border-bottom:1px solid var(--border);font-weight:600;">${c.brand}</td></tr>
-            <tr><td style="padding:14px 0;border-bottom:1px solid var(--border);color:var(--txt2);">Model</td><td style="padding:14px 0;border-bottom:1px solid var(--border);font-weight:700;font-size:16px;">${c.model}</td></tr>
-            <tr><td style="padding:14px 0;border-bottom:1px solid var(--border);color:var(--txt2);">Stocare</td><td style="padding:14px 0;border-bottom:1px solid var(--border);font-weight:600;">${c.stocare}</td></tr>
-            <tr><td style="padding:14px 0;border-bottom:1px solid var(--border);color:var(--txt2);">Baterie</td><td style="padding:14px 0;border-bottom:1px solid var(--border);font-weight:600;">${c.baterie}</td></tr>
-            <tr><td style="padding:14px 0;color:var(--txt2);">Stare</td><td style="padding:14px 0;font-weight:700;color:var(--accent);">${c.stare}</td></tr>
+            <tr><td style="padding:14px 0;border-bottom:1px solid var(--border);color:var(--txt2);width:40%;">Tip Dispozitiv</td><td style="padding:14px 0;border-bottom:1px solid var(--border);font-weight:600;">${esc(c.tip_device)}</td></tr>
+            <tr><td style="padding:14px 0;border-bottom:1px solid var(--border);color:var(--txt2);">Producător</td><td style="padding:14px 0;border-bottom:1px solid var(--border);font-weight:600;">${esc(c.brand)}</td></tr>
+            <tr><td style="padding:14px 0;border-bottom:1px solid var(--border);color:var(--txt2);">Model</td><td style="padding:14px 0;border-bottom:1px solid var(--border);font-weight:700;font-size:16px;">${esc(c.model)}</td></tr>
+            <tr><td style="padding:14px 0;border-bottom:1px solid var(--border);color:var(--txt2);">Stocare</td><td style="padding:14px 0;border-bottom:1px solid var(--border);font-weight:600;">${esc(c.stocare)}</td></tr>
+            <tr><td style="padding:14px 0;border-bottom:1px solid var(--border);color:var(--txt2);">Baterie</td><td style="padding:14px 0;border-bottom:1px solid var(--border);font-weight:600;">${esc(c.baterie)}</td></tr>
+            <tr><td style="padding:14px 0;color:var(--txt2);">Stare</td><td style="padding:14px 0;font-weight:700;color:var(--accent);">${esc(c.stare)}</td></tr>
           </tbody>
         </table>`;
       document.getElementById('bb-modal')?.classList.add('active');

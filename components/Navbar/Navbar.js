@@ -1,5 +1,5 @@
 'use client';
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useRef, useCallback } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
 
@@ -7,6 +7,10 @@ export default function Navbar() {
   const [scrolled, setScrolled] = useState(false);
   const [menuOpen, setMenuOpen] = useState(false);
   const [isVindeAnim, setIsVindeAnim] = useState(false);
+  const [searchOpen, setSearchOpen] = useState(false);
+  const [searchQuery, setSearchQuery] = useState('');
+  const [popularSearches, setPopularSearches] = useState([]);
+  const searchInputRef = useRef(null);
   const pathname = usePathname();
   const router = useRouter();
   const isVinde = pathname?.includes('vinde');
@@ -26,69 +30,40 @@ export default function Navbar() {
     document.body.style.overflow = menuOpen ? 'hidden' : '';
   }, [menuOpen]);
 
-  useEffect(() => {
-    const searchBtn = document.querySelector('.search-btn');
-    const searchModal = document.getElementById('search-modal');
-    const closeBtn = document.querySelector('.close-btn');
-    const searchInput = document.querySelector('.search-input');
-    const searchSubmitBtn = document.querySelector('.search-submit');
-    const suggestionsContainer = document.getElementById('dynamic-search-suggestions');
+  const getPopularSearches = useCallback(() => {
+    try {
+      const trends = JSON.parse(localStorage.getItem('ovi_search_trends') || '{}');
+      const sorted = Object.entries(trends).sort((a, b) => b[1] - a[1]);
+      const top3 = sorted.slice(0, 3).map(item => item[0]);
+      return top3.length > 0 ? top3 : ['iPhone 15 Pro', 'Samsung Galaxy S24', 'Căști Wireless'];
+    } catch { return ['iPhone 15 Pro', 'Samsung Galaxy S24', 'Căști Wireless']; }
+  }, []);
 
-    if (!searchBtn || !searchModal) return;
+  const openSearch = useCallback(() => {
+    setPopularSearches(getPopularSearches());
+    setSearchOpen(true);
+    document.body.style.overflow = 'hidden';
+    setTimeout(() => searchInputRef.current?.focus(), 100);
+  }, [getPopularSearches]);
 
-    const updatePopularSearches = () => {
-      if (!suggestionsContainer) return;
-      let trends = JSON.parse(localStorage.getItem('ovi_search_trends') || '{}');
-      let sortedTrends = Object.entries(trends).sort((a, b) => b[1] - a[1]);
-      let top3 = sortedTrends.slice(0, 3).map(item => item[0]);
-      if (top3.length === 0) top3 = ['iPhone 15 Pro', 'Samsung Galaxy S24', 'Căști Wireless'];
-      let html = '<span class="suggestion-title">Căutări populare:</span>';
-      top3.forEach(term => {
-        const displayTerm = term.charAt(0).toUpperCase() + term.slice(1);
-        html += `<button type="button" class="suggestion-tag">${displayTerm}</button>`;
-      });
-      suggestionsContainer.innerHTML = html;
-    };
+  const closeSearch = useCallback(() => {
+    setSearchOpen(false);
+    setSearchQuery('');
+    document.body.style.overflow = '';
+  }, []);
 
-    const openSearch = () => {
-      updatePopularSearches();
-      searchModal.classList.add('is-active');
-      document.body.style.overflow = 'hidden';
-      setTimeout(() => searchInput?.focus(), 100);
-    };
-
-    const closeSearch = () => {
-      searchModal.classList.remove('is-active');
-      document.body.style.overflow = '';
-      if (searchInput) searchInput.value = '';
-    };
-
-    const executeSearch = () => {
-      const query = searchInput?.value.trim();
-      if (query) {
-        let trends = JSON.parse(localStorage.getItem('ovi_search_trends') || '{}');
+  const executeSearch = useCallback((queryOverride) => {
+    const query = (queryOverride || searchQuery).trim();
+    if (query) {
+      try {
+        const trends = JSON.parse(localStorage.getItem('ovi_search_trends') || '{}');
         trends[query.toLowerCase()] = (trends[query.toLowerCase()] || 0) + 1;
         localStorage.setItem('ovi_search_trends', JSON.stringify(trends));
-        router.push('/cautare?search=' + encodeURIComponent(query));
-        closeSearch();
-      }
-    };
-
-    searchBtn.addEventListener('click', openSearch);
-    closeBtn?.addEventListener('click', closeSearch);
-    searchSubmitBtn?.addEventListener('click', executeSearch);
-    searchInput?.addEventListener('keydown', (e) => {
-      if (e.key === 'Enter') executeSearch();
-      if (e.key === 'Escape') closeSearch();
-    });
-    searchModal.addEventListener('click', (e) => {
-      if (e.target === searchModal) closeSearch();
-      const tag = e.target.closest('.suggestion-tag');
-      if (tag) { searchInput.value = tag.textContent.trim(); executeSearch(); }
-    });
-
-    return () => searchBtn.removeEventListener('click', openSearch);
-  }, []);
+      } catch {}
+      router.push('/cautare?search=' + encodeURIComponent(query));
+      closeSearch();
+    }
+  }, [searchQuery, router, closeSearch]);
 
   const handleTradeClick = (e, href, goingToVinde) => {
     e.preventDefault();
@@ -178,7 +153,7 @@ export default function Navbar() {
           </div>
 
           <div className="nav-actions">
-            <button className="action-btn search-btn" aria-label="Cautare">
+            <button className="action-btn search-btn" aria-label="Cautare" onClick={openSearch}>
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><circle cx="10" cy="10" r="7"></circle><path d="M21 21l-6-6"></path></svg>
             </button>
             <Link href="/cont" className="action-btn profile-btn" aria-label="Cont utilizator">
@@ -198,18 +173,45 @@ export default function Navbar() {
         </div>
       </nav>
 
-      <div className="overlay-modal" id="search-modal">
+      <div className={`overlay-modal ${searchOpen ? 'is-active' : ''}`} id="search-modal" onClick={(e) => { if (e.target === e.currentTarget) closeSearch(); }}>
         <div className="modal-content">
-          <button className="close-btn" aria-label="Inchide">
+          <button className="close-btn" aria-label="Inchide" onClick={closeSearch}>
             <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><line x1="18" y1="6" x2="6" y2="18"></line><line x1="6" y1="6" x2="18" y2="18"></line></svg>
           </button>
           <div className="search-form-wrapper">
-            <input type="text" className="search-input" placeholder="Caută produse, categorii..." />
-            <button className="search-submit">
+            <input
+              ref={searchInputRef}
+              type="text"
+              className="search-input"
+              placeholder="Caută produse, categorii..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') executeSearch();
+                if (e.key === 'Escape') closeSearch();
+              }}
+            />
+            <button className="search-submit" onClick={() => executeSearch()}>
               <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><circle cx="11" cy="11" r="8"></circle><line x1="21" y1="21" x2="16.65" y2="16.65"></line></svg>
             </button>
           </div>
-          <div className="search-suggestions" id="dynamic-search-suggestions"></div>
+          <div className="search-suggestions" id="dynamic-search-suggestions">
+            {searchOpen && (
+              <>
+                <span className="suggestion-title">Căutări populare:</span>
+                {popularSearches.map((term) => (
+                  <button
+                    type="button"
+                    className="suggestion-tag"
+                    key={term}
+                    onClick={() => executeSearch(term)}
+                  >
+                    {term.charAt(0).toUpperCase() + term.slice(1)}
+                  </button>
+                ))}
+              </>
+            )}
+          </div>
         </div>
       </div>
     </>
