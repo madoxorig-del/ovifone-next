@@ -542,7 +542,7 @@ export default function Produs() {
         <div style={{textAlign:'center'}}>
           <svg viewBox="0 0 24 24" width="40" height="40" fill="none" style={{animation:'spin 1s linear infinite',margin:'0 auto 16px'}}>
             <circle cx="12" cy="12" r="9" stroke="rgba(0,0,0,.15)" strokeWidth="3"/>
-            <path d="M12 3a9 9 0 0 1 9 9" stroke="#D4941C" strokeWidth="3" strokeLinecap="round"/>
+            <path d="M12 3a9 9 0 0 1 9 9" stroke="#f49201" strokeWidth="3" strokeLinecap="round"/>
           </svg>
           <p style={{color:'#86868b',fontWeight:600}}>Se încarcă produsul...</p>
         </div>

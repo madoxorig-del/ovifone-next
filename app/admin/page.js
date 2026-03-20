@@ -601,7 +601,7 @@ export default function Admin() {
             <div style="margin-bottom:8px;"><strong>Telefon:</strong> <a href="tel:${esc(c.telefon)}" style="color:var(--txt);font-weight:600;">${esc(c.telefon)}</a></div>
             <div><strong>Email:</strong> ${c.email !== '-' ? `<a href="mailto:${esc(c.email)}" style="color:var(--txt);">${esc(c.email)}</a>` : 'Nespecificat'}</div>
           </div>
-          <div style="background:rgba(212,148,28,0.04);padding:20px;border-radius:12px;border:1px solid rgba(212,148,28,0.2);">
+          <div style="background:rgba(244,146,1,0.04);padding:20px;border-radius:12px;border:1px solid rgba(244,146,1,0.2);">
             <h3 style="margin:0 0 15px 0;font-size:13px;text-transform:uppercase;color:var(--accent);">💰 Ofertă Sistem</h3>
             <div style="font-size:34px;font-weight:900;color:var(--txt);">${esc(c.pret_estimat)}</div>
             <p style="margin:5px 0 0 0;font-size:12px;color:var(--txt2);">*Prețul final se negociază la testarea fizică.</p>
@@ -646,13 +646,13 @@ export default function Admin() {
   return (
     <>
       <style>{`
-        :root{--bg:#EDEAE4;--white:#FFF;--accent:#D4941C;--accent-soft:rgba(212,148,28,.10);--txt:#2B2E27;--txt2:#8A8A8F;--txt3:#C8C8C8;--border:#E2E2E2;--border2:#F0F0F0;--green:#16A34A;--green-soft:#DCFCE7;--red:#DC2626;--red-soft:#FEE2E2;--yellow:#854D0E;--yellow-soft:#FEF08A;--blue:#3730A3;--blue-soft:#E0E7FF;--radius:20px;--radius-sm:13px;--shadow:0 2px 24px rgba(43,46,39,.07);--shadow-md:0 8px 36px rgba(43,46,39,.11);--shadow-lg:0 24px 64px rgba(43,46,39,.16);--tr:.22s cubic-bezier(.4,0,.2,1);--glass-bg:rgba(255,255,255,.72);--glass-border:rgba(255,255,255,.6);--glass-blur:blur(28px) saturate(200%);--glass-shadow:0 4px 32px rgba(43,46,39,.10),0 1px 0 rgba(255,255,255,.8) inset;}
+        :root{--bg:#EDEAE4;--white:#FFF;--accent:#f49201;--accent-soft:rgba(244,146,1,.10);--txt:#2B2E27;--txt2:#8A8A8F;--txt3:#C8C8C8;--border:#E2E2E2;--border2:#F0F0F0;--green:#16A34A;--green-soft:#DCFCE7;--red:#DC2626;--red-soft:#FEE2E2;--yellow:#854D0E;--yellow-soft:#FEF08A;--blue:#3730A3;--blue-soft:#E0E7FF;--radius:20px;--radius-sm:13px;--shadow:0 2px 24px rgba(43,46,39,.07);--shadow-md:0 8px 36px rgba(43,46,39,.11);--shadow-lg:0 24px 64px rgba(43,46,39,.16);--tr:.22s cubic-bezier(.4,0,.2,1);--glass-bg:rgba(255,255,255,.72);--glass-border:rgba(255,255,255,.6);--glass-blur:blur(28px) saturate(200%);--glass-shadow:0 4px 32px rgba(43,46,39,.10),0 1px 0 rgba(255,255,255,.8) inset;}
         [data-theme="dark"]{--bg:#18181B;--white:#1C1C1F;--txt:#F2F2F5;--txt2:#707075;--txt3:#3A3A3F;--border:#2A2A2D;--border2:#222225;--shadow:0 2px 18px rgba(0,0,0,.35);--shadow-md:0 8px 32px rgba(0,0,0,.45);--shadow-lg:0 22px 60px rgba(0,0,0,.65);--glass-bg:rgba(30,30,34,.78);--glass-border:rgba(255,255,255,.08);--glass-blur:blur(28px) saturate(180%);--glass-shadow:0 4px 32px rgba(0,0,0,.35),0 1px 0 rgba(255,255,255,.04) inset;}
         *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
         html,body{height:100%;}
         body{font-family:'DM Sans',sans-serif;background:var(--bg);color:var(--txt);min-height:100vh;display:flex;transition:background var(--tr),color var(--tr);position:relative;overflow-x:hidden;}
         body::before,body::after{content:'';position:fixed;pointer-events:none;z-index:0;border-radius:50%;filter:blur(80px);opacity:.35;}
-        body::before{width:520px;height:520px;background:radial-gradient(circle,rgba(212,148,28,.22) 0%,transparent 70%);top:-140px;right:-100px;}
+        body::before{width:520px;height:520px;background:radial-gradient(circle,rgba(244,146,1,.22) 0%,transparent 70%);top:-140px;right:-100px;}
         body::after{width:420px;height:420px;background:radial-gradient(circle,rgba(43,46,39,.08) 0%,transparent 70%);bottom:-80px;left:-80px;}
         #login-screen{display:flex;justify-content:center;align-items:center;width:100%;min-height:100vh;position:relative;z-index:1;}
         .login-card{background:var(--glass-bg);backdrop-filter:var(--glass-blur);-webkit-backdrop-filter:var(--glass-blur);border:1.5px solid var(--glass-border);border-radius:30px;padding:54px 48px;width:100%;max-width:400px;box-shadow:var(--glass-shadow);text-align:center;}
@@ -768,7 +768,7 @@ export default function Admin() {
         .section-box{background:rgba(255,255,255,.4);border:1px solid var(--border);border-radius:var(--radius-sm);padding:20px;margin-bottom:14px;}
         .section-box-title{font-size:13px;font-weight:700;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px;margin-bottom:16px;}
         .dash-hero{background:linear-gradient(135deg,rgba(43,46,39,.96) 0%,rgba(35,37,30,.98) 55%,rgba(50,30,10,.95) 100%);border-radius:var(--radius);padding:32px 36px;margin-bottom:18px;position:relative;overflow:hidden;border:1px solid rgba(255,255,255,.07);box-shadow:0 12px 48px rgba(43,46,39,.25);}
-        .dash-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(212,148,28,.28) 0%,transparent 65%);pointer-events:none;}
+        .dash-hero::before{content:'';position:absolute;top:-60px;right:-60px;width:280px;height:280px;border-radius:50%;background:radial-gradient(circle,rgba(244,146,1,.28) 0%,transparent 65%);pointer-events:none;}
         .hero-greeting{font-size:13px;font-weight:600;color:rgba(255,255,255,.5);margin-bottom:6px;}
         .hero-title{font-size:26px;font-weight:900;color:#fff;margin-bottom:4px;}
         .hero-sub{font-size:13.5px;color:rgba(255,255,255,.4);}

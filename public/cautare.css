@@ -33,7 +33,7 @@
     margin-bottom: 12px;
 }
 .search-hero-title span {
-    background: linear-gradient(135deg, #D4941C, #F0C050);
+    background: linear-gradient(135deg, #f49201, #ffc44d);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -57,12 +57,12 @@
     transition: border-color 0.3s, background 0.3s;
 }
 .search-hero-input-wrap:focus-within {
-    border-color: rgba(212,148,28,0.6);
+    border-color: rgba(244,146,1,0.6);
     background: rgba(255,255,255,0.09);
-    box-shadow: 0 0 0 3px rgba(212,148,28,0.12);
+    box-shadow: 0 0 0 3px rgba(244,146,1,0.12);
 }
 .search-hero-input-wrap > svg { flex-shrink: 0; stroke: rgba(255,255,255,0.3); }
-.search-hero-input-wrap:focus-within > svg { stroke: #D4941C; }
+.search-hero-input-wrap:focus-within > svg { stroke: #f49201; }
 #search-hero-input {
     flex: 1;
     background: transparent;
@@ -72,14 +72,14 @@
     font-size: 16px;
     font-weight: 500;
     color: #ffffff;
-    caret-color: #D4941C;
+    caret-color: #f49201;
 }
 #search-hero-input::placeholder { color: rgba(255,255,255,0.25); }
 .search-hero-btn {
     display: flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, #D4941C, #E8B340);
+    background: linear-gradient(135deg, #f49201, #ffb833);
     color: #ffffff;
     border: none;
     border-radius: 100px;
@@ -96,10 +96,10 @@
 
 /* ── DECO RINGS ── */
 .search-hero-decoration { position: absolute; inset: 0; z-index: 1; pointer-events: none; }
-.deco-ring { position: absolute; border-radius: 50%; border: 1px solid rgba(212,148,28,0.08); }
+.deco-ring { position: absolute; border-radius: 50%; border: 1px solid rgba(244,146,1,0.08); }
 .deco-ring-1 { width: 500px; height: 500px; top: -200px; right: -150px; }
 .deco-ring-2 { width: 320px; height: 320px; bottom: -120px; left: -80px; border-color: rgba(255,255,255,0.04); }
-.deco-ring-3 { width: 180px; height: 180px; top: 10px; left: 10%; border-color: rgba(212,148,28,0.05); animation: deco-spin 20s linear infinite; }
+.deco-ring-3 { width: 180px; height: 180px; top: 10px; left: 10%; border-color: rgba(244,146,1,0.05); animation: deco-spin 20s linear infinite; }
 @keyframes deco-spin { to { transform: rotate(360deg); } }
 
 /* ── CONTROLS BAR ── */
@@ -137,12 +137,12 @@
     color: var(--color-text-secondary);
     transition: all 0.2s;
 }
-.filter-chip:hover { border-color: #D4941C; color: #D4941C; background: rgba(212,148,28,0.05); }
+.filter-chip:hover { border-color: #f49201; color: #f49201; background: rgba(244,146,1,0.05); }
 .filter-chip.active {
-    background: #D4941C;
-    border-color: #D4941C;
+    background: #f49201;
+    border-color: #f49201;
     color: #ffffff;
-    box-shadow: 0 3px 10px rgba(212,148,28,0.3);
+    box-shadow: 0 3px 10px rgba(244,146,1,0.3);
 }
 .search-sort { display: flex; align-items: center; gap: 10px; flex-shrink: 0; }
 .sort-label { font-size: 13px; font-weight: 600; color: var(--color-text-secondary); }
@@ -163,7 +163,7 @@
     background-position: right 10px center;
     transition: border-color 0.2s;
 }
-.sort-select:focus { border-color: #D4941C; }
+.sort-select:focus { border-color: #f49201; }
 
 /* ── RESULTS SECTION ── */
 .search-results-section { padding: 48px 20px 40px; }
@@ -199,8 +199,8 @@
     transition: border-color 0.25s, box-shadow 0.25s, transform 0.25s var(--ease-apple);
 }
 .search-grid .premium-card:hover .premium-card-inner {
-    border-color: rgba(212,148,28,0.25);
-    box-shadow: 0 12px 40px rgba(212,148,28,0.1), 0 2px 8px rgba(0,0,0,0.06);
+    border-color: rgba(244,146,1,0.25);
+    box-shadow: 0 12px 40px rgba(244,146,1,0.1), 0 2px 8px rgba(0,0,0,0.06);
     transform: translateY(-4px);
 }
 
@@ -233,7 +233,7 @@
     top: 14px;
     right: -28px;
     width: 110px;
-    background: #D4941C;
+    background: #f49201;
     color: #fff;
     text-align: center;
     padding: 4px 0;
@@ -272,7 +272,7 @@
 .card-category-dot {
     font-size: 11px;
     font-weight: 600;
-    color: #D4941C;
+    color: #f49201;
     opacity: 0.75;
 }
 
@@ -339,8 +339,8 @@
 .price-discount-badge {
     font-size: 12px;
     font-weight: 800;
-    color: #D4941C;
-    background: rgba(212,148,28,0.09);
+    color: #f49201;
+    background: rgba(244,146,1,0.09);
     padding: 4px 9px;
     border-radius: 100px;
     white-space: nowrap;
@@ -359,7 +359,7 @@
     color: var(--color-text-secondary);
 }
 .search-grid .premium-card:hover .card-cta-arrow {
-    background: #D4941C;
+    background: #f49201;
     color: #ffffff;
 }
 
@@ -396,13 +396,13 @@
 .empty-state-icon {
     width: 72px;
     height: 72px;
-    background: rgba(212,148,28,0.08);
+    background: rgba(244,146,1,0.08);
     border-radius: 50%;
     display: flex;
     align-items: center;
     justify-content: center;
     margin-bottom: 20px;
-    color: #D4941C;
+    color: #f49201;
 }
 .empty-state h2 {
     font-size: 24px;
@@ -423,7 +423,7 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    background: linear-gradient(135deg, #D4941C, #E8B340);
+    background: linear-gradient(135deg, #f49201, #ffb833);
     color: #fff;
     padding: 13px 26px;
     border-radius: 100px;
@@ -431,7 +431,7 @@
     font-weight: 700;
     text-decoration: none;
     transition: opacity 0.2s, transform 0.2s;
-    box-shadow: 0 4px 14px rgba(212,148,28,0.3);
+    box-shadow: 0 4px 14px rgba(244,146,1,0.3);
 }
 .btn-primary:hover { opacity: 0.92; transform: translateY(-2px); }
 .btn-secondary {
@@ -447,7 +447,7 @@
     border: 1.5px solid rgba(0,0,0,0.1);
     transition: border-color 0.2s, transform 0.2s;
 }
-.btn-secondary:hover { border-color: #D4941C; transform: translateY(-2px); }
+.btn-secondary:hover { border-color: #f49201; transform: translateY(-2px); }
 
 /* ═══════════════════════════════════════════
    SECTIUNEA DE JOS — DARK CTA BAND
@@ -467,7 +467,7 @@
     position: absolute;
     width: 500px;
     height: 500px;
-    background: radial-gradient(circle, rgba(212,148,28,0.12) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(244,146,1,0.12) 0%, transparent 70%);
     top: -150px;
     right: -100px;
     pointer-events: none;
@@ -477,7 +477,7 @@
     position: absolute;
     width: 300px;
     height: 300px;
-    background: radial-gradient(circle, rgba(212,148,28,0.07) 0%, transparent 70%);
+    background: radial-gradient(circle, rgba(244,146,1,0.07) 0%, transparent 70%);
     bottom: -80px;
     left: 5%;
     pointer-events: none;
@@ -500,7 +500,7 @@
     font-weight: 700;
     letter-spacing: 0.14em;
     text-transform: uppercase;
-    color: #D4941C;
+    color: #f49201;
     margin-bottom: 12px;
 }
 .search-cta-title {
@@ -512,7 +512,7 @@
     margin-bottom: 14px;
 }
 .search-cta-title span {
-    background: linear-gradient(135deg, #D4941C, #F0C050);
+    background: linear-gradient(135deg, #f49201, #ffc44d);
     -webkit-background-clip: text;
     -webkit-text-fill-color: transparent;
     background-clip: text;
@@ -536,7 +536,7 @@
     align-items: center;
     justify-content: center;
     gap: 8px;
-    background: linear-gradient(135deg, #D4941C, #E8B340);
+    background: linear-gradient(135deg, #f49201, #ffb833);
     color: #fff;
     padding: 14px 28px;
     border-radius: 100px;
@@ -544,7 +544,7 @@
     font-weight: 700;
     text-decoration: none;
     transition: opacity 0.2s, transform 0.2s;
-    box-shadow: 0 6px 20px rgba(212,148,28,0.35);
+    box-shadow: 0 6px 20px rgba(244,146,1,0.35);
     white-space: nowrap;
 }
 .cta-btn-primary:hover { opacity: 0.9; transform: translateY(-2px); }
@@ -588,9 +588,9 @@
     transition: all 0.2s;
 }
 .cta-cat-pill:hover {
-    background: rgba(212,148,28,0.15);
-    border-color: rgba(212,148,28,0.35);
-    color: #F0C050;
+    background: rgba(244,146,1,0.15);
+    border-color: rgba(244,146,1,0.35);
+    color: #ffc44d;
 }
 .cta-cat-pill svg { stroke: currentColor; }
 

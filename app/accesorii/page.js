@@ -261,7 +261,7 @@ export default function Accesorii() {
         if (hidden.length > 0) {
           const moreBtn = document.createElement('div');
           moreBtn.className = 'filter-tag';
-          moreBtn.style.cssText = 'background: linear-gradient(135deg, #D4941C, #B07810); cursor: pointer;';
+          moreBtn.style.cssText = 'background: linear-gradient(135deg, #f49201, #c97a00); cursor: pointer;';
           moreBtn.innerHTML = `<span>+${hidden.length} mai multe</span>`;
           moreBtn.addEventListener('click', () => { DOM.mobileFilterTrigger?.click(); });
           DOM.activeTagsContainer.appendChild(moreBtn);

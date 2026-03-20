@@ -422,8 +422,8 @@
 .extra-icon {
     width: 56px;
     height: 56px;
-    background-color: rgba(212, 148, 28, 0.08);
-    color: #D4941C;
+    background-color: rgba(244, 146, 1, 0.08);
+    color: #f49201;
     border-top-left-radius: 16px;
     border-top-right-radius: 16px;
     border-bottom-left-radius: 16px;
@@ -548,7 +548,7 @@
 .total-final .row-value {
     font-size: 36px;
     font-weight: 900;
-    color: #D4941C;
+    color: #f49201;
     letter-spacing: -0.03em;
 }
 .btn-checkout-final {
@@ -679,8 +679,8 @@
     box-sizing: border-box;
 }
 .promo-input-group input:focus {
-    border-color: #D4941C;
-    box-shadow: 0 0 0 4px rgba(212, 148, 28, 0.1);
+    border-color: #f49201;
+    box-shadow: 0 0 0 4px rgba(244, 146, 1, 0.1);
 }
 .promo-input-group button {
     padding-top: 0;
@@ -799,7 +799,7 @@
 .rec-price {
     display: block;
     font-size: 19px;
-    color: #D4941C;
+    color: #f49201;
     font-weight: 800;
     margin-top: 0;
     margin-bottom: 30px;
@@ -1573,7 +1573,7 @@
 
 @keyframes pricePop {
     0%   { transform: scale(1); }
-    40%  { transform: scale(1.18); color: #D4941C; }
+    40%  { transform: scale(1.18); color: #f49201; }
     100% { transform: scale(1); }
 }
 

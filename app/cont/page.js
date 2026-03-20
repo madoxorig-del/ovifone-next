@@ -332,7 +332,7 @@ export default function Cont() {
       comenzi.forEach((comanda, index) => {
         const shortId = String(comanda.id).split('-')[0].toUpperCase();
         const dataComanda = new Date(comanda.created_at).toLocaleDateString('ro-RO', { day: 'numeric', month: 'long', year: 'numeric' });
-        let badgeColor = 'rgba(212,148,28,.1)', textColor = 'var(--accent)';
+        let badgeColor = 'rgba(244,146,1,.1)', textColor = 'var(--accent)';
         if (comanda.status?.includes('Anulata')) { badgeColor = '#fee2e2'; textColor = '#ef4444'; }
         if (comanda.status?.includes('Expediata') || comanda.status?.includes('Finalizata')) { badgeColor = '#d1fae5'; textColor = '#10b981'; }
         const card = document.createElement('div');
