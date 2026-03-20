@@ -1,5 +1,5 @@
 :root {
-  --accent: #e35b00;
+  --accent: #D4941C;
   --txt: #1d1d1f;
   --txt2: #86868b;
   --border: rgba(0,0,0,.08);
@@ -31,7 +31,7 @@ body.termeni-page {
 .lh-container { max-width: 800px; margin: 0 auto; }
 .lh-badge {
   display: inline-block; padding: 6px 14px; border-radius: 20px;
-  background: rgba(227,91,0,.08); color: var(--accent);
+  background: rgba(212,148,28,.08); color: var(--accent);
   font-size: 11px; font-weight: 800; text-transform: uppercase; letter-spacing: .1em; margin-bottom: 16px;
 }
 .lh-title {
@@ -76,7 +76,7 @@ body.termeni-page {
 .ls-nav a:hover { color: var(--txt); background: rgba(0,0,0,.03); }
 .ls-nav a.active {
   color: var(--accent); font-weight: 700;
-  background: rgba(227,91,0,.05); border-left-color: var(--accent);
+  background: rgba(212,148,28,.05); border-left-color: var(--accent);
 }
 
 .legal-content {

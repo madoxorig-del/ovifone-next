@@ -373,12 +373,12 @@ export default function Vinde() {
               <div className="form-step" id="step-4">
                 <h3 className="step-title">Oferta ta estimată</h3>
                 <div className="calc-loader" style={{display:'flex',alignItems:'center',justifyContent:'center',padding:'40px',gap:'12px'}}>
-                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" style={{animation:'spin 1s linear infinite'}}><circle cx="12" cy="12" r="9" stroke="rgba(0,0,0,.15)" strokeWidth="3"/><path d="M12 3a9 9 0 0 1 9 9" stroke="#e35b00" strokeWidth="3" strokeLinecap="round"/></svg>
+                  <svg viewBox="0 0 24 24" width="24" height="24" fill="none" style={{animation:'spin 1s linear infinite'}}><circle cx="12" cy="12" r="9" stroke="rgba(0,0,0,.15)" strokeWidth="3"/><path d="M12 3a9 9 0 0 1 9 9" stroke="#D4941C" strokeWidth="3" strokeLinecap="round"/></svg>
                   <span style={{color:'#86868b',fontWeight:600}}>Se calculează oferta...</span>
                 </div>
                 <div className="calc-result" style={{display:'none',textAlign:'center',padding:'20px 0'}}>
                   <span className="cr-label" style={{display:'block',fontSize:'14px',color:'#86868b',fontWeight:600,marginBottom:'8px'}}>Până la:</span>
-                  <div id="price-counter" style={{fontSize:'56px',fontWeight:900,color:'#e35b00',fontFamily:'Montserrat,sans-serif',letterSpacing:'-0.03em',lineHeight:1}}></div>
+                  <div id="price-counter" style={{fontSize:'56px',fontWeight:900,color:'#D4941C',fontFamily:'Montserrat,sans-serif',letterSpacing:'-0.03em',lineHeight:1}}></div>
                   <span className="cr-note" style={{display:'block',fontSize:'12px',color:'#86868b',marginTop:'8px'}}></span>
                 </div>
                 <div className="vf-field mt-25">

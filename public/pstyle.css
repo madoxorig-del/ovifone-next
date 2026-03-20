@@ -175,7 +175,7 @@
 .thumbnail.active {
     border-color: var(--color-accent);
     background-color: #ffffff;
-    box-shadow: 0 4px 12px rgba(227, 91, 0, 0.15);
+    box-shadow: 0 4px 12px rgba(212, 148, 28, 0.15);
 }
 .thumb-nav {
     width: 36px;
@@ -417,7 +417,7 @@
 }
 .box-btn.active {
     border-color: var(--color-accent);
-    background-color: rgba(227, 91, 0, 0.03);
+    background-color: rgba(212, 148, 28, 0.03);
     box-shadow: 0 0 0 1px var(--color-accent);
 }
 .box-btn.out-of-stock {
@@ -1210,7 +1210,7 @@
 @keyframes p-relCardIn { from { opacity: 0; transform: translateY(24px); } to { opacity: 1; transform: translateY(0); } }
 @keyframes p-ripple { to { transform: scale(4); opacity: 0; } }
 @keyframes p-stickySlide { from { transform: translateY(20px); opacity: 0.6; } to { transform: translateY(0); opacity: 1; } }
-@keyframes p-thumbPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(227, 91, 0, 0.4); } 50% { box-shadow: 0 0 0 6px rgba(227, 91, 0, 0); } }
+@keyframes p-thumbPulse { 0%, 100% { box-shadow: 0 0 0 0 rgba(212, 148, 28, 0.4); } 50% { box-shadow: 0 0 0 6px rgba(212, 148, 28, 0); } }
 @keyframes p-imageReveal { from { opacity: 0; transform: scale(0.92) translateY(16px); filter: blur(4px); } to { opacity: 1; transform: scale(1) translateY(0); filter: blur(0); } }
 @keyframes p-breadcrumbIn { from { opacity: 0; transform: translateX(-16px); } to { opacity: 1; transform: translateX(0); } }
 @keyframes p-saveBadgeIn { 0% { transform: scale(0) rotate(-12deg); opacity: 0; } 60% { transform: scale(1.15) rotate(2deg); opacity: 1; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
@@ -1258,7 +1258,7 @@
 .thumbnail.active { animation: p-thumbPulse 2s ease-in-out infinite; }
 
 .box-btn { position: relative; overflow: hidden; }
-.box-btn .btn-ripple { position: absolute; border-radius: 50%; background: rgba(227, 91, 0, 0.25); transform: scale(0); animation: p-ripple 0.55s linear; pointer-events: none; width: 60px; height: 60px; margin-top: -30px; margin-left: -30px; }
+.box-btn .btn-ripple { position: absolute; border-radius: 50%; background: rgba(212, 148, 28, 0.25); transform: scale(0); animation: p-ripple 0.55s linear; pointer-events: none; width: 60px; height: 60px; margin-top: -30px; margin-left: -30px; }
 .color-btn .btn-ripple { position: absolute; border-radius: 50%; background: rgba(255,255,255,0.4); transform: scale(0); animation: p-ripple 0.5s linear; pointer-events: none; width: 60px; height: 60px; margin-top: -30px; margin-left: -30px; }
 
 .tabs-header { position: relative; }

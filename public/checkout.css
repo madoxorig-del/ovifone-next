@@ -1,8 +1,8 @@
 :root {
     --brand-dark: #111112;
     --brand-hover: #222224;
-    --accent: #e35b00;
-    --accent-glow: rgba(227, 91, 0, 0.4);
+    --accent: #D4941C;
+    --accent-glow: rgba(212, 148, 28, 0.4);
     --bg-page: #f2f3f7;
     --card-bg: rgba(255, 255, 255, 0.75);
     --card-border: rgba(255, 255, 255, 0.6);
@@ -22,7 +22,7 @@ body { background-color: var(--bg-page); position: relative; }
 
 .checkout-ambient-bg { position: fixed; inset: 0; z-index: -1; overflow: hidden; pointer-events: none; }
 .ambient-blob { position: absolute; border-radius: 50%; filter: blur(100px); opacity: 0.6; animation: floatBlob 20s infinite alternate; }
-.blob-1 { width: 600px; height: 600px; background: rgba(227, 91, 0, 0.05); top: -200px; left: -100px; }
+.blob-1 { width: 600px; height: 600px; background: rgba(212, 148, 28, 0.05); top: -200px; left: -100px; }
 .blob-2 { width: 500px; height: 500px; background: rgba(0, 102, 255, 0.03); bottom: -100px; right: -100px; animation-delay: -10s; }
 
 @keyframes floatBlob {
@@ -70,7 +70,7 @@ body { background-color: var(--bg-page); position: relative; }
 .float-input { width: 100%; padding: 26px 16px 10px 52px; border: 1.5px solid var(--border-soft); border-radius: 16px; font-family: inherit; font-size: 15px; font-weight: 600; color: var(--text-primary); background: var(--input-bg); transition: all 0.3s var(--bezier); outline: none; box-shadow: inset 0 2px 5px rgba(0,0,0,0.02); }
 .float-label { position: absolute; left: 52px; top: 19px; color: var(--text-muted); font-size: 15px; font-weight: 500; pointer-events: none; transition: all 0.3s var(--bezier); transform-origin: left top; z-index: 1; }
 
-.float-input:focus, .float-input:not(:placeholder-shown) { border-color: var(--accent); background: #fff; box-shadow: 0 0 0 4px rgba(227, 91, 0, 0.1), inset 0 2px 5px rgba(0,0,0,0); }
+.float-input:focus, .float-input:not(:placeholder-shown) { border-color: var(--accent); background: #fff; box-shadow: 0 0 0 4px rgba(212, 148, 28, 0.1), inset 0 2px 5px rgba(0,0,0,0); }
 .float-input:focus ~ .float-label, .float-input:not(:placeholder-shown) ~ .float-label { transform: translateY(-10px) scale(0.75); color: var(--accent); font-weight: 700; }
 .float-input:focus ~ .input-icon { color: var(--accent); }
 
@@ -87,7 +87,7 @@ body { background-color: var(--bg-page); position: relative; }
 .radio-btn { width: 24px; height: 24px; border: 2px solid var(--text-muted); border-radius: 50%; margin-right: 20px; position: relative; transition: all 0.3s ease; flex-shrink: 0; }
 .radio-btn::after { content: ''; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%) scale(0); width: 12px; height: 12px; border-radius: 50%; background: var(--accent); transition: transform 0.4s var(--bezier); }
 
-.method-card.active .method-content { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(227, 91, 0, 0.15); border-color: transparent; }
+.method-card.active .method-content { transform: translateY(-2px); box-shadow: 0 10px 30px rgba(212, 148, 28, 0.15); border-color: transparent; }
 .method-card.active .active-border { opacity: 1; transform: scale(1); }
 .method-card.active .radio-btn { border-color: var(--accent); }
 .method-card.active .radio-btn::after { transform: translate(-50%, -50%) scale(1); }
@@ -145,7 +145,7 @@ body { background-color: var(--bg-page); position: relative; }
 
 .cta-button-ultra { width: 100%; background: var(--brand-dark); color: #fff; border: none; padding: 22px; border-radius: 20px; font-family: 'Inter', sans-serif; font-size: 16px; font-weight: 800; cursor: pointer; display: flex; justify-content: space-between; align-items: center; transition: all 0.4s var(--bezier); position: relative; overflow: hidden; box-shadow: 0 10px 30px rgba(0,0,0,0.15); z-index: 1; }
 .btn-glow { position: absolute; inset: 0; background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent); transform: translateX(-100%); transition: transform 0.6s ease; z-index: -1; }
-.cta-button-ultra:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(227, 91, 0, 0.25); background: var(--accent); }
+.cta-button-ultra:hover { transform: translateY(-4px); box-shadow: 0 20px 40px rgba(212, 148, 28, 0.25); background: var(--accent); }
 .cta-button-ultra:hover .btn-glow { transform: translateX(100%); }
 .cta-button-ultra:active { transform: translateY(0); }
 .loader-ring { display: none; width: 24px; height: 24px; border: 3px solid rgba(255,255,255,0.3); border-radius: 50%; border-top-color: #fff; animation: spin 1s linear infinite; position: absolute; left: 50%; top: 50%; margin-left: -12px; margin-top: -12px; }

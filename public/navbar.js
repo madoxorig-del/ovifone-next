@@ -76,7 +76,7 @@ class OvifoneNav extends HTMLElement {
             position: absolute;
             bottom: -2px; left: 0;
             width: 100%; height: 2px;
-            background: #e35b00;
+            background: #D4941C;
             transform: scaleX(0);
             transform-origin: right;
             transition: transform 0.3s cubic-bezier(0.25, 1, 0.5, 1);
@@ -89,7 +89,7 @@ class OvifoneNav extends HTMLElement {
             transition: all 0.3s !important; 
         }
         .nav-link:hover svg { 
-            stroke: #e35b00 !important; 
+            stroke: #D4941C !important; 
             transform: translateY(-2px); 
         }
         .chevron { opacity: 0.5 !important; }
@@ -107,13 +107,13 @@ class OvifoneNav extends HTMLElement {
         }
         .action-btn:hover {
             background: rgba(255, 255, 255, 0.1) !important;
-            border-color: #e35b00 !important;
+            border-color: #D4941C !important;
             transform: translateY(-2px) !important;
         }
         .action-btn svg { stroke: #ffffff !important; transition: stroke 0.3s ease !important;}
-        .action-btn:hover svg { stroke: #e35b00 !important; }
+        .action-btn:hover svg { stroke: #D4941C !important; }
         
-        .cart-badge { background: #e35b00 !important; border: 2px solid #121214 !important; color: #fff !important; }
+        .cart-badge { background: #D4941C !important; border: 2px solid #121214 !important; color: #fff !important; }
 
         .menu-toggle { display: none !important; }
         .hamburger-inner, .hamburger-inner::before, .hamburger-inner::after {
@@ -146,9 +146,9 @@ class OvifoneNav extends HTMLElement {
             top: 4px !important; 
             width: calc(50% - 4px) !important; 
             height: calc(100% - 8px) !important;
-            background: linear-gradient(135deg, #e35b00, #ff7520) !important; 
+            background: linear-gradient(135deg, #D4941C, #E8B340) !important; 
             border-radius: 100px !important;
-            box-shadow: 0 2px 8px rgba(227,91,0,0.4) !important;
+            box-shadow: 0 2px 8px rgba(212,148,28,0.4) !important;
             transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
             z-index: 1 !important; 
             pointer-events: none !important;
@@ -228,9 +228,9 @@ class OvifoneNav extends HTMLElement {
             }
             .nav-link::after { display: none !important; } 
             #global-nav.menu-open .nav-link { transform: translateY(0) !important; opacity: 1 !important; color: #111 !important; }
-            .nav-link:hover { color: #e35b00 !important; padding-left: 12px !important; } 
+            .nav-link:hover { color: #D4941C !important; padding-left: 12px !important; } 
             
-            .nav-link svg:not(.chevron) { width: 24px !important; height: 24px !important; stroke: #e35b00 !important; opacity: 1 !important; }
+            .nav-link svg:not(.chevron) { width: 24px !important; height: 24px !important; stroke: #D4941C !important; opacity: 1 !important; }
             .chevron { margin-left: auto !important; stroke: #999 !important; }
             
             #global-nav.menu-open .nav-item:nth-child(1) .nav-link { transition-delay: 0.04s !important; }
@@ -339,11 +339,11 @@ class OvifoneNav extends HTMLElement {
                 height: calc(100% - 8px) !important;
                 left: 4px !important;
                 top: 4px !important;
-                box-shadow: 0 1px 6px rgba(227,91,0,0.35) !important;
+                box-shadow: 0 1px 6px rgba(212,148,28,0.35) !important;
                 transition: transform 0.5s cubic-bezier(0.4, 0, 0.2, 1) !important;
                 box-sizing: border-box !important;
                 border-radius: 100px !important;
-                background: linear-gradient(135deg, #e35b00, #ff7520) !important;
+                background: linear-gradient(135deg, #D4941C, #E8B340) !important;
             }
             .trade-option {
                 flex: 1 1 0px !important; 
@@ -381,8 +381,8 @@ class OvifoneNav extends HTMLElement {
             .nav-link { width: 100% !important; font-size: 20px !important; font-weight: 800 !important; padding: 20px 0 !important; margin: 0 !important; border-bottom: 1px solid rgba(0,0,0,0.08) !important; color: #111 !important; background: transparent !important; transform: translateY(16px) !important; opacity: 0 !important; transition: transform 0.3s ease, opacity 0.3s ease, color 0.2s ease, padding 0.3s ease !important; }
             .nav-link::after { display: none !important; }
             #global-nav.menu-open .nav-link { transform: translateY(0) !important; opacity: 1 !important; color: #111 !important; }
-            .nav-link:hover { color: #e35b00 !important; padding-left: 12px !important; }
-            .nav-link svg:not(.chevron) { width: 24px !important; height: 24px !important; stroke: #e35b00 !important; opacity: 1 !important; }
+            .nav-link:hover { color: #D4941C !important; padding-left: 12px !important; }
+            .nav-link svg:not(.chevron) { width: 24px !important; height: 24px !important; stroke: #D4941C !important; opacity: 1 !important; }
             .chevron { margin-left: auto !important; stroke: #999 !important; }
             #global-nav.menu-open .nav-item:nth-child(1) .nav-link { transition-delay: 0.04s !important; }
             #global-nav.menu-open .nav-item:nth-child(2) .nav-link { transition-delay: 0.08s !important; }

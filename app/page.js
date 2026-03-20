@@ -164,7 +164,7 @@ export default function Home() {
             </div>
             <div className="tech-panel-glass">
               <div className="glass-icon">
-                <svg viewBox="0 0 24 24" width="22" height="22" stroke="#e35b00" strokeWidth="2.5" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                <svg viewBox="0 0 24 24" width="22" height="22" stroke="#D4941C" strokeWidth="2.5" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
               </div>
               <div className="glass-info">
                 <span className="glass-title">Testat 100%</span>
@@ -321,7 +321,7 @@ export default function Home() {
                 <h3 className="ps-title">Evaluare</h3>
                 <p className="ps-desc">Inspecție completă fizică și funcțională — baterie, ecran, cameră, senzori.</p>
               </div>
-              <div className="ps-connector"><svg viewBox="0 0 40 16" width="40" height="16" fill="none"><path d="M0 8 Q20 2 40 8" stroke="rgba(227,91,0,0.3)" strokeWidth="1.5" strokeDasharray="4 3"/></svg></div>
+              <div className="ps-connector"><svg viewBox="0 0 40 16" width="40" height="16" fill="none"><path d="M0 8 Q20 2 40 8" stroke="rgba(212,148,28,0.3)" strokeWidth="1.5" strokeDasharray="4 3"/></svg></div>
             </div>
             <div className="process-step" data-reveal="true" data-delay="200">
               <div className="ps-number">02</div>
@@ -332,7 +332,7 @@ export default function Home() {
                 <h3 className="ps-title">Verificare IMEI</h3>
                 <p className="ps-desc">Controlăm istoricul complet — nicio blocaj, nicio problemă ascunsă, origine confirmată.</p>
               </div>
-              <div className="ps-connector"><svg viewBox="0 0 40 16" width="40" height="16" fill="none"><path d="M0 8 Q20 2 40 8" stroke="rgba(227,91,0,0.3)" strokeWidth="1.5" strokeDasharray="4 3"/></svg></div>
+              <div className="ps-connector"><svg viewBox="0 0 40 16" width="40" height="16" fill="none"><path d="M0 8 Q20 2 40 8" stroke="rgba(212,148,28,0.3)" strokeWidth="1.5" strokeDasharray="4 3"/></svg></div>
             </div>
             <div className="process-step" data-reveal="true" data-delay="300">
               <div className="ps-number">03</div>
@@ -343,7 +343,7 @@ export default function Home() {
                 <h3 className="ps-title">Recondiționare</h3>
                 <p className="ps-desc">Curățat, resetat și configurat la setări fabrică. Arată și funcționează ca nou.</p>
               </div>
-              <div className="ps-connector"><svg viewBox="0 0 40 16" width="40" height="16" fill="none"><path d="M0 8 Q20 2 40 8" stroke="rgba(227,91,0,0.3)" strokeWidth="1.5" strokeDasharray="4 3"/></svg></div>
+              <div className="ps-connector"><svg viewBox="0 0 40 16" width="40" height="16" fill="none"><path d="M0 8 Q20 2 40 8" stroke="rgba(212,148,28,0.3)" strokeWidth="1.5" strokeDasharray="4 3"/></svg></div>
             </div>
             <div className="process-step ps-last" data-reveal="true" data-delay="400">
               <div className="ps-number">04</div>

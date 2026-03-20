@@ -5,7 +5,7 @@
     --shop-border-hover: rgba(0, 0, 0, 0.12);
     --shop-transition-bounce: cubic-bezier(0.34, 1.56, 0.64, 1);
     --shop-transition-smooth: cubic-bezier(0.25, 1, 0.5, 1);
-    --color-accent: #e35b00;
+    --color-accent: #D4941C;
     --color-text-primary: #1d1d1f;
     --color-text-secondary: #86868b;
     --color-warning: #f56024;
@@ -443,7 +443,7 @@
     background-color: var(--shop-bg);
 }
 .custom-option.selected {
-    background-color: rgba(227, 91, 0, 0.08);
+    background-color: rgba(212, 148, 28, 0.08);
     color: var(--color-accent);
     font-weight: 600;
 }
@@ -520,8 +520,8 @@
     display: inline-block;
     white-space: nowrap;
 }
-.pc-badge-sale     { background: #e35b00; color: #fff; }
-.pc-badge-reducere { background: #fff0ee; color: #e35b00; border: 1px solid rgba(227,91,0,0.25); font-weight: 900; }
+.pc-badge-sale     { background: #D4941C; color: #fff; }
+.pc-badge-reducere { background: #fff0ee; color: #D4941C; border: 1px solid rgba(212,148,28,0.25); font-weight: 900; }
 .pc-badge-bb       { background: #f5f5f5; color: #333; border: 1px solid rgba(0,0,0,0.12); }
 
 /* Ripple pe buton coș */
@@ -544,7 +544,7 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #e35b00;
+    background: #D4941C;
     pointer-events: none;
     z-index: 99999;
     animation: pc-particle 0.7s cubic-bezier(0.25, 1, 0.5, 1) var(--delay, 0s) forwards;
@@ -654,7 +654,7 @@
 .pc-discount {
     font-size: 10px;
     font-weight: 700;
-    color: #e35b00;
+    color: #D4941C;
 }
 
 /* Buton coș rotund */
@@ -676,9 +676,9 @@
 }
 .pc-cart-btn svg { stroke: #fff; }
 .pc-cart-btn:hover {
-    background: #e35b00;
+    background: #D4941C;
     transform: scale(1.08);
-    box-shadow: 0 6px 20px rgba(227,91,0,0.35);
+    box-shadow: 0 6px 20px rgba(212,148,28,0.35);
 }
 .pc-cart-btn:active { transform: scale(0.95); }
 .pc-cart-btn.pc-cart-disabled {
@@ -700,8 +700,8 @@
     border-radius: 50%;
     animation: cart-spin 0.6s linear infinite;
 }
-.pc-cart-btn.is-added { background: #e35b00; box-shadow: 0 6px 20px rgba(227,91,0,0.35); }
-.pc-cart-btn.is-added:hover { background: #c94f00; }
+.pc-cart-btn.is-added { background: #D4941C; box-shadow: 0 6px 20px rgba(212,148,28,0.35); }
+.pc-cart-btn.is-added:hover { background: #B07810; }
 @keyframes cart-spin { 100% { transform: rotate(360deg); } }
 
 /* ========================================================
@@ -1177,7 +1177,7 @@
 .empty-icon-glow {
     width: 100px;
     height: 100px;
-    background: linear-gradient(135deg, rgba(227, 91, 0, 0.1), rgba(245, 96, 36, 0.2));
+    background: linear-gradient(135deg, rgba(212, 148, 28, 0.1), rgba(245, 96, 36, 0.2));
     border-radius: 50%;
     display: flex;
     align-items: center;
@@ -1201,7 +1201,7 @@
 .empty-icon-glow svg {
     width: 48px;
     height: 48px;
-    filter: drop-shadow(0 4px 6px rgba(227, 91, 0, 0.2));
+    filter: drop-shadow(0 4px 6px rgba(212, 148, 28, 0.2));
 }
 
 .empty-state-premium h2 {
@@ -1240,7 +1240,7 @@
 .premium-action-btn:hover {
     background-color: var(--color-accent);
     transform: translateY(-3px);
-    box-shadow: 0 15px 30px rgba(227, 91, 0, 0.2);
+    box-shadow: 0 15px 30px rgba(212, 148, 28, 0.2);
 }
 .premium-action-btn svg {
     transition: transform 0.5s ease;
@@ -1548,7 +1548,7 @@
     margin-bottom: 8px;
 }
 .cyber-checkbox-ultra:hover {
-    background: rgba(227, 91, 0, 0.05);
+    background: rgba(212, 148, 28, 0.05);
 }
 
 /* Chip hover mai expresiv */
