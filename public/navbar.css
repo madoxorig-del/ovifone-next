@@ -208,6 +208,9 @@
     #global-nav.menu-open .hamburger-inner::after { background-color: #ffffff !important; }
 }
 
+/* Search inline ascuns pe desktop */
+.mobile-search-inline { display: none !important; }
+
 /* MOBIL < 768px */
 @media (max-width: 768px) {
     .menu-toggle { display: flex !important; }
@@ -217,25 +220,25 @@
         transition: height 0.3s cubic-bezier(0.25, 1, 0.5, 1), background 0.3s ease !important;
     }
     .nav-container { height: 64px !important; padding: 0 14px !important; }
-    .nav-brand img { height: 40px !important; }
+    .nav-brand img { height: 50px !important; }
     .action-btn { width: 36px !important; height: 36px !important; border-radius: 8px !important; }
     .nav-actions { gap: 6px !important; }
     .action-btn svg { width: 17px !important; height: 17px !important; }
 
     .trade-toggle-container { display: none !important; }
 
-    /* DOAR pe index + vinde: navbar mai mare */
-    #global-nav[data-show-toggle="1"] { height: 118px !important; }
+    /* DOAR pe index + vinde: navbar mai mare cu 2 rânduri */
+    #global-nav[data-show-toggle="1"] { height: 128px !important; }
     #global-nav[data-show-toggle="1"].is-scrolled { height: 64px !important; }
 
     #global-nav[data-show-toggle="1"] .nav-container {
         height: 100% !important;
         display: flex !important;
-        align-items: flex-start !important; 
+        align-items: flex-start !important;
         position: relative !important;
         padding-top: 0 !important;
     }
-    
+
     #global-nav[data-show-toggle="1"] .nav-brand,
     #global-nav[data-show-toggle="1"] .nav-actions { height: 64px !important; }
     #global-nav[data-show-toggle="1"] .nav-actions { margin-left: auto !important; }
@@ -243,19 +246,77 @@
     #global-nav[data-show-toggle="1"] .trade-toggle-container {
         display: flex !important;
         position: absolute !important;
-        top: 64px !important; 
-        left: 0 !important; 
+        top: 64px !important;
+        left: 0 !important;
         width: 100% !important;
-        height: 54px !important; 
+        height: 64px !important;
         background: rgba(18, 18, 20, 0.98) !important;
         border-bottom: 1px solid rgba(255,255,255,0.05) !important;
-        justify-content: center !important; 
-        align-items: center !important; 
-        padding: 0 16px !important; 
+        align-items: center !important;
+        padding: 0 14px !important;
         z-index: 2 !important;
         transition: opacity 0.25s ease, transform 0.3s ease !important;
         opacity: 1 !important;
         pointer-events: auto !important;
+        flex-direction: row !important;
+        gap: 10px !important;
+    }
+
+    #global-nav[data-show-toggle="1"] .trade-toggle-wrapper {
+        flex: 0 0 auto !important;
+        width: auto !important;
+        max-width: none !important;
+        min-width: 170px !important;
+    }
+
+    /* Mobile search inline */
+    /* Ascunde iconițele trade pe mobil */
+    .trade-icon { display: none !important; }
+
+    /* Search inline real */
+    .mobile-search-inline {
+        display: flex !important;
+        align-items: center !important;
+        flex: 1 !important;
+        background: rgba(255,255,255,0.08) !important;
+        border: 1.5px solid rgba(255,255,255,0.13) !important;
+        border-radius: 14px !important;
+        height: 42px !important;
+        padding: 0 6px 0 14px !important;
+        gap: 4px !important;
+    }
+    .mobile-search-input {
+        flex: 1 !important;
+        background: transparent !important;
+        border: none !important;
+        outline: none !important;
+        color: #fff !important;
+        font-size: 14px !important;
+        font-weight: 400 !important;
+        padding: 0 !important;
+        min-width: 0 !important;
+    }
+    .mobile-search-input::placeholder {
+        color: rgba(255,255,255,0.4) !important;
+    }
+    .mobile-search-btn {
+        background: rgba(227,91,0,0.85) !important;
+        border: none !important;
+        border-radius: 10px !important;
+        width: 32px !important;
+        height: 32px !important;
+        display: flex !important;
+        align-items: center !important;
+        justify-content: center !important;
+        cursor: pointer !important;
+        flex-shrink: 0 !important;
+        transition: background 0.2s ease !important;
+    }
+    .mobile-search-btn:active {
+        background: #e35b00 !important;
+    }
+    .mobile-search-btn svg {
+        stroke: #fff !important;
     }
 
     #global-nav[data-show-toggle="1"].is-scrolled .trade-toggle-container {
@@ -299,7 +360,7 @@
         overflow-y: auto !important; opacity: 0 !important; visibility: hidden !important;
         transition: opacity 0.3s ease, visibility 0.3s !important; z-index: 10000 !important;
     }
-    #global-nav[data-show-toggle="1"] .nav-menu-wrapper { top: 118px !important; height: calc(100vh - 118px) !important; }
+    #global-nav[data-show-toggle="1"] .nav-menu-wrapper { top: 128px !important; height: calc(100vh - 128px) !important; }
     #global-nav[data-show-toggle="1"].is-scrolled .nav-menu-wrapper { top: 64px !important; height: calc(100vh - 64px) !important; }
     #global-nav.menu-open .nav-menu-wrapper { opacity: 1 !important; visibility: visible !important; }
 

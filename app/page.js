@@ -44,18 +44,19 @@ export default function Home() {
 
         if (telefoane && telefoane.length > 0) {
           track.innerHTML = telefoane.map((tel, index) => {
-            let ribbonHtml = '';
+            let badgeHtml = '';
             if (tel.pret_vechi && tel.pret_vechi > tel.pret) {
-              ribbonHtml = `<div class="corner-ribbon">Sale!</div>`;
+              const reducere = Math.round(tel.pret_vechi - tel.pret).toLocaleString('ro-RO');
+              badgeHtml = `<div class="discount-badge">-${reducere} Lei</div>`;
             } else if (index === 0 || index === 2) {
-              ribbonHtml = `<div class="corner-ribbon nou">Nou!</div>`;
+              badgeHtml = `<div class="corner-ribbon nou">Nou!</div>`;
             }
             const pretFormatat = tel.pret ? tel.pret.toLocaleString('ro-RO') + ' lei' : '';
             const pretVechiFormatat = tel.pret_vechi ? tel.pret_vechi.toLocaleString('ro-RO') + ' lei' : '';
             return `
               <div class="premium-card">
                 <a href="/telefoane/produs?id=${tel.id}" class="premium-card-inner" style="text-decoration:none;color:inherit;display:flex;flex-direction:column;height:100%;">
-                  ${ribbonHtml}
+                  ${badgeHtml}
                   <div class="premium-media"><img src="${tel.imagine_url}" alt="${tel.nume}" loading="lazy"></div>
                   <div class="premium-info">
                     <h3 class="premium-name">${tel.nume}</h3>
@@ -195,6 +196,25 @@ export default function Home() {
               <div className="trust-text"><span className="trust-title">Telefoane</span><span className="trust-desc">Ne-recondiționate</span></div>
             </div>
           </div>
+          {/* Duplicate pentru carousel infinit pe mobil */}
+          <div className="trust-grid trust-grid-clone" aria-hidden="true">
+            <div className="trust-item">
+              <div className="trust-icon"><svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" strokeWidth="1.5" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
+              <div className="trust-text"><span className="trust-title">Garanție</span><span className="trust-desc">12 luni</span></div>
+            </div>
+            <div className="trust-item">
+              <div className="trust-icon"><svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" strokeWidth="1.5" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><circle cx="9" cy="9" r="0.5"></circle><circle cx="15" cy="15" r="0.5"></circle></svg></div>
+              <div className="trust-text"><span className="trust-title">Cu până la 50%</span><span className="trust-desc">mai ieftin</span></div>
+            </div>
+            <div className="trust-item">
+              <div className="trust-icon"><svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" strokeWidth="1.5" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
+              <div className="trust-text"><span className="trust-title">Produse testate</span><span className="trust-desc">și verificate</span></div>
+            </div>
+            <div className="trust-item">
+              <div className="trust-icon"><svg viewBox="0 0 24 24" width="28" height="28" stroke="currentColor" strokeWidth="1.5" fill="none"><rect x="5" y="2" width="14" height="20" rx="2" ry="2"></rect><line x1="12" y1="18" x2="12.01" y2="18"></line></svg></div>
+              <div className="trust-text"><span className="trust-title">Telefoane</span><span className="trust-desc">Ne-recondiționate</span></div>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -215,6 +235,13 @@ export default function Home() {
             <button className="carousel-btn next-btn" aria-label="Inainte">
               <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><polyline points="9 18 15 12 9 6"></polyline></svg>
             </button>
+          </div>
+          {/* MAI MULTE PRODUSE */}
+          <div className="see-more-wrap">
+            <a href="/telefoane" className="btn-descopera">
+              <span>Toate telefoanele</span>
+              <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M5 12h14M12 5l7 7-7 7"/></svg>
+            </a>
           </div>
         </div>
       </section>
@@ -276,14 +303,57 @@ export default function Home() {
       </section>
 
       {/* ABOUT BANNERS */}
-      <section className="about-banners-section" id="cine-suntem">
-        <div className="section-container">
-          <div className="about-banners-grid">
-            <div className="about-banner-card" data-reveal="true">
-              <img src="https://www.ovifone.ro/wp-content/uploads/2025/11/OVIFONE_Cine_suntem_upscale_x4-scaled.jpg" alt="Cine Suntem" loading="lazy" />
+      {/* PROCES */}
+      <section className="process-section" id="cine-suntem">
+        <div className="process-inner">
+          <div className="process-header" data-reveal="true">
+            <span className="process-eyebrow">Cum funcționează</span>
+            <h2 className="process-title">De la evaluare<br/>până la <em>garanție</em></h2>
+            <p className="process-subtitle">Fiecare telefon trece printr-un proces riguros înainte să ajungă la tine.</p>
+          </div>
+          <div className="process-steps">
+            <div className="process-step" data-reveal="true" data-delay="100">
+              <div className="ps-number">01</div>
+              <div className="ps-icon-wrap">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
+              </div>
+              <div className="ps-content">
+                <h3 className="ps-title">Evaluare</h3>
+                <p className="ps-desc">Inspecție completă fizică și funcțională — baterie, ecran, cameră, senzori.</p>
+              </div>
+              <div className="ps-connector"><svg viewBox="0 0 40 16" width="40" height="16" fill="none"><path d="M0 8 Q20 2 40 8" stroke="rgba(227,91,0,0.3)" strokeWidth="1.5" strokeDasharray="4 3"/></svg></div>
             </div>
-            <div className="about-banner-card" data-reveal="true" data-delay="200">
-              <img src="https://www.ovifone.ro/wp-content/uploads/2025/11/OVIFONE_Ce_oferim_upscale_x4_nowa-scaled.jpg" alt="Ce Oferim" loading="lazy" />
+            <div className="process-step" data-reveal="true" data-delay="200">
+              <div className="ps-number">02</div>
+              <div className="ps-icon-wrap">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
+              </div>
+              <div className="ps-content">
+                <h3 className="ps-title">Verificare IMEI</h3>
+                <p className="ps-desc">Controlăm istoricul complet — nicio blocaj, nicio problemă ascunsă, origine confirmată.</p>
+              </div>
+              <div className="ps-connector"><svg viewBox="0 0 40 16" width="40" height="16" fill="none"><path d="M0 8 Q20 2 40 8" stroke="rgba(227,91,0,0.3)" strokeWidth="1.5" strokeDasharray="4 3"/></svg></div>
+            </div>
+            <div className="process-step" data-reveal="true" data-delay="300">
+              <div className="ps-number">03</div>
+              <div className="ps-icon-wrap">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
+              </div>
+              <div className="ps-content">
+                <h3 className="ps-title">Recondiționare</h3>
+                <p className="ps-desc">Curățat, resetat și configurat la setări fabrică. Arată și funcționează ca nou.</p>
+              </div>
+              <div className="ps-connector"><svg viewBox="0 0 40 16" width="40" height="16" fill="none"><path d="M0 8 Q20 2 40 8" stroke="rgba(227,91,0,0.3)" strokeWidth="1.5" strokeDasharray="4 3"/></svg></div>
+            </div>
+            <div className="process-step ps-last" data-reveal="true" data-delay="400">
+              <div className="ps-number">04</div>
+              <div className="ps-icon-wrap ps-icon-accent">
+                <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
+              </div>
+              <div className="ps-content">
+                <h3 className="ps-title">Livrare + Garanție</h3>
+                <p className="ps-desc">Primit rapid, cu 12 luni garanție inclusă și suport dedicat post-vânzare.</p>
+              </div>
             </div>
           </div>
         </div>

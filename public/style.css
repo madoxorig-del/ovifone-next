@@ -847,7 +847,129 @@ button {
 }
 
 .corner-ribbon.nou {
-    background: #0071e3; 
+    background: #0071e3;
+}
+
+/* --- BADGE REDUCERE --- */
+.discount-badge {
+    position: absolute;
+    top: 12px;
+    left: 12px;
+    background: linear-gradient(135deg, #e35b00, #ff7520);
+    color: #fff;
+    font-size: 12px;
+    font-weight: 800;
+    padding: 5px 10px;
+    border-radius: 8px;
+    z-index: 10;
+    pointer-events: none;
+    letter-spacing: 0.02em;
+    box-shadow: 0 2px 10px rgba(227,91,0,0.4);
+    animation: badge-pop 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+@keyframes badge-pop {
+    from { transform: scale(0.5); opacity: 0; }
+    to   { transform: scale(1);   opacity: 1; }
+}
+
+/* --- CARD SHIMMER LA HOVER --- */
+.premium-card-inner::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(120deg, transparent 30%, rgba(255,255,255,0.5) 50%, transparent 70%);
+    transform: translateX(-100%);
+    transition: none;
+    pointer-events: none;
+    border-radius: inherit;
+}
+.premium-card:hover .premium-card-inner::after {
+    transform: translateX(100%);
+    transition: transform 0.6s ease;
+}
+
+/* --- BUTON DESCOPERA --- */
+/* --- SEE MORE WRAP --- */
+.see-more-wrap {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+    padding: 8px 16px 52px;
+}
+.see-more-hint {
+    font-size: 13px;
+    color: #999;
+    margin: 0;
+    text-align: center;
+}
+@media (max-width: 768px) {
+    .see-more-wrap { padding: 4px 16px 40px; }
+    .see-more-wrap .btn-descopera {
+        width: 100%;
+        justify-content: center;
+    }
+}
+
+/* --- BUTON DESCOPERA --- */
+.btn-descopera-wrap {
+    display: flex;
+    justify-content: center;
+    padding: 8px 16px 48px;
+}
+.btn-descopera {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    padding: 16px 48px;
+    background: #e35b00;
+    border: 2px solid #e35b00;
+    color: #fff;
+    font-size: 17px;
+    font-weight: 700;
+    border-radius: 50px;
+    text-decoration: none;
+    position: relative;
+    overflow: hidden;
+    transition: color 0.3s ease, background 0.3s ease, transform 0.25s ease, box-shadow 0.3s ease;
+    box-shadow: 0 4px 16px rgba(227,91,0,0.3);
+}
+.btn-descopera::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: #fff;
+    transform: scaleX(0);
+    transform-origin: left;
+    transition: transform 0.35s cubic-bezier(0.4, 0, 0.2, 1);
+    z-index: 0;
+    border-radius: 50px;
+}
+.btn-descopera span, .btn-descopera svg {
+    position: relative;
+    z-index: 1;
+}
+.btn-descopera:hover::before { transform: scaleX(1); }
+.btn-descopera:hover {
+    color: #e35b00;
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(227,91,0,0.2);
+}
+.btn-descopera svg { transition: transform 0.3s ease; }
+.btn-descopera:hover svg { transform: translateX(4px); }
+
+@media (max-width: 768px) {
+    .see-more-wrap {
+        align-items: flex-end !important;
+        padding: 4px 16px 32px !important;
+    }
+    .see-more-wrap .btn-descopera {
+        font-size: 13px !important;
+        padding: 10px 20px !important;
+        width: auto !important;
+        box-shadow: 0 3px 10px rgba(227,91,0,0.25) !important;
+    }
 }
 
 .premium-media {
@@ -1098,35 +1220,172 @@ button {
     color: var(--color-text-secondary);
 }
 
-.about-banners-section {
-    background-color: var(--color-bg-primary);
-}
-
-.about-banners-grid {
-    display: grid;
-    grid-template-columns: repeat(2, 1fr);
-    gap: 30px;
-}
-
-.about-banner-card {
-    width: 100%;
-    border-radius: var(--radius-lg);
-    overflow: hidden;
+/* ===================== PROCESS SECTION ===================== */
+.process-section {
+    background: #fafafa;
+    padding: 80px 0 90px;
     position: relative;
-    box-shadow: var(--shadow-md);
-    transition: transform 0.5s var(--ease-apple), box-shadow 0.5s var(--ease-apple);
+    overflow: hidden;
+    border-top: 1px solid rgba(0,0,0,0.06);
+    border-bottom: 1px solid rgba(0,0,0,0.06);
+}
+.process-section::before {
+    content: '';
+    position: absolute;
+    top: -80px; right: -100px;
+    width: 500px; height: 500px;
+    background: radial-gradient(circle, rgba(227,91,0,0.06) 0%, transparent 65%);
+    pointer-events: none;
+}
+.process-inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 40px;
+}
+.process-header {
+    text-align: center;
+    margin-bottom: 64px;
+}
+.process-eyebrow {
+    display: inline-block;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: #e35b00;
+    background: rgba(227,91,0,0.1);
+    border: 1px solid rgba(227,91,0,0.2);
+    border-radius: 100px;
+    padding: 5px 14px;
+    margin-bottom: 20px;
+}
+.process-title {
+    font-size: 42px;
+    font-weight: 900;
+    color: #111;
+    line-height: 1.15;
+    margin: 0 0 16px;
+    letter-spacing: -0.02em;
+}
+.process-title em {
+    font-style: normal;
+    color: #e35b00;
+}
+.process-subtitle {
+    font-size: 16px;
+    color: rgba(0,0,0,0.45);
+    max-width: 460px;
+    margin: 0 auto;
+    line-height: 1.6;
 }
 
-.about-banner-card img {
-    width: 100%;
-    height: auto;
-    display: block;
-    transition: transform 0.8s var(--ease-apple);
+/* Steps row */
+.process-steps {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 0;
+    position: relative;
+}
+.process-step {
+    position: relative;
+    padding: 32px 24px 32px 0;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+}
+.ps-number {
+    font-size: 11px;
+    font-weight: 800;
+    letter-spacing: 0.12em;
+    color: rgba(227,91,0,0.5);
+    font-variant-numeric: tabular-nums;
+}
+.ps-icon-wrap {
+    width: 60px; height: 60px;
+    border-radius: 16px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.08);
+    box-shadow: 0 2px 12px rgba(0,0,0,0.06);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: #555;
+    transition: background 0.3s ease, border-color 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
+}
+.ps-icon-accent {
+    background: rgba(227,91,0,0.1) !important;
+    border-color: rgba(227,91,0,0.25) !important;
+    color: #e35b00 !important;
+    box-shadow: 0 2px 16px rgba(227,91,0,0.15) !important;
+}
+.process-step:hover .ps-icon-wrap {
+    background: rgba(227,91,0,0.08);
+    border-color: rgba(227,91,0,0.2);
+    transform: translateY(-4px);
+    color: #e35b00;
+    box-shadow: 0 6px 20px rgba(227,91,0,0.12);
+}
+.ps-content { flex: 1; }
+.ps-title {
+    font-size: 17px;
+    font-weight: 800;
+    color: #111;
+    margin: 0 0 8px;
+}
+.ps-desc {
+    font-size: 13px;
+    color: rgba(0,0,0,0.45);
+    line-height: 1.6;
+    margin: 0;
+}
+.ps-connector {
+    position: absolute;
+    top: 64px;
+    right: -8px;
+    z-index: 2;
+    opacity: 0.6;
+}
+.ps-last .ps-connector { display: none; }
+
+/* Separator line pe fundal */
+.process-steps::before {
+    content: '';
+    position: absolute;
+    top: 96px;
+    left: 44px;
+    right: 44px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(0,0,0,0.07) 20%, rgba(0,0,0,0.07) 80%, transparent);
+    pointer-events: none;
 }
 
-.about-banner-card:hover {
-    transform: translateY(-8px);
-    box-shadow: var(--shadow-lg);
+/* Mobile */
+@media (max-width: 900px) {
+    .process-section { padding: 60px 0 70px; }
+    .process-inner { padding: 0 20px; }
+    .process-title { font-size: 28px; }
+    .process-subtitle { font-size: 14px; }
+    .process-header { margin-bottom: 40px; }
+    .process-steps {
+        grid-template-columns: 1fr 1fr;
+        gap: 2px;
+    }
+    .process-steps::before { display: none; }
+    .process-step {
+        padding: 24px 16px;
+        background: #fff;
+        border-radius: 16px;
+        border: 1px solid rgba(0,0,0,0.07);
+        box-shadow: 0 2px 12px rgba(0,0,0,0.04);
+    }
+    .ps-connector { display: none; }
+}
+@media (max-width: 480px) {
+    .process-title { font-size: 24px; }
+    .process-steps { grid-template-columns: 1fr; gap: 8px; }
+    .process-step { flex-direction: row; align-items: flex-start; gap: 16px; padding: 20px 16px; }
+    .ps-icon-wrap { flex-shrink: 0; }
+    .ps-number { display: none; }
 }
 
 .about-banner-card:hover img {
@@ -1846,25 +2105,38 @@ button {
     }
 
     /* --- TELEFOANE MOBILE --- */
-    .product-track { 
-        gap: 12px; 
-        padding-bottom: 20px; 
+    .product-track {
+        gap: 12px;
+        padding: 4px 0 20px 0;
     }
-    .premium-card { flex: 0 0 43vw; }
-    .premium-card-inner { padding: 16px 12px; border-radius: 16px; }
-    .premium-media { height: 110px; margin-bottom: 12px; }
-    .premium-name { font-size: 13px; margin-bottom: 6px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
-    .price-current { font-size: 14px; }
+    .premium-card { flex: 0 0 47vw; }
+    .premium-card-inner {
+        padding: 12px 12px 16px;
+        border-radius: 18px;
+        background: #f7f7f7;
+    }
+    .premium-media { height: 130px; margin-bottom: 10px; }
+    .premium-name { font-size: 13px; font-weight: 700; margin-bottom: 4px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+    .price-current { font-size: 15px; font-weight: 800; }
     .price-old { font-size: 11px; }
     .btn-premium { padding: 10px 0; font-size: 12px; }
-    
+
+    /* --- BADGE REDUCERE MOBIL --- */
+    .discount-badge {
+        top: 10px !important;
+        left: 10px !important;
+        font-size: 11px !important;
+        padding: 4px 8px !important;
+        border-radius: 7px !important;
+    }
+
     /* --- BANDEROLA MICA PENTRU MOBIL --- */
-    .corner-ribbon { 
-        top: 18px; 
-        right: -42px; 
-        width: 130px; 
-        font-size: 10px; 
-        padding: 4px 0; 
+    .corner-ribbon {
+        top: 18px;
+        right: -42px;
+        width: 130px;
+        font-size: 10px;
+        padding: 4px 0;
     }
 
     /* --- CATEGORII/ACCESORII MOBILE REPARATE --- */

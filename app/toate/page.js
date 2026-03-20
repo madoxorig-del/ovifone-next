@@ -88,21 +88,30 @@ export default function Toate() {
         const stocDisponibil = produs.stoc || 0;
         const linkProdus = getLinkForProduct(produs);
 
-        // bgText si displayVariant dinamic per categorie
-        let bgText = '', displayVariant = '';
+        // displayVariant dinamic per categorie
+        let displayVariant = '';
         if (categoryAttr === 'telefoane' || categoryAttr === 'tablete') {
           const storageScurt = produs.stocare ? produs.stocare.split(',')[0].trim() : '128GB';
           let baterieText = produs.baterie ? produs.baterie.trim() : '100%';
           if (!baterieText.includes('%') && baterieText.match(/^[0-9]+$/)) baterieText += '%';
-          bgText = brandAttr === 'apple' ? 'iPhone' : (brandAttr === 'samsung' ? 'Galaxy' : produs.brand || 'Telefon');
-          displayVariant = `${storageScurt} • Bat: ${baterieText}`;
+          displayVariant = `${storageScurt} • ${conditionAttr} • Bat: ${baterieText}`;
         } else {
-          bgText = produs.brand ? produs.brand.toUpperCase() : 'PRODUS';
           if (categoryAttr === 'casti') displayVariant = produs.conectivitate || 'Audio';
-          else if (categoryAttr === 'huse' || categoryAttr === 'folii') displayVariant = produs.material ? produs.material.toUpperCase() : 'Protecție';
-          else if (categoryAttr === 'accesorii') displayVariant = produs.tip_accesoriu ? produs.tip_accesoriu.replace('-', ' ').toUpperCase() : 'Accesoriu';
+          else if (categoryAttr === 'huse' || categoryAttr === 'folii') displayVariant = produs.material || 'Protecție';
+          else if (categoryAttr === 'accesorii') displayVariant = produs.tip_accesoriu ? produs.tip_accesoriu.replace('-', ' ') : 'Accesoriu';
           else displayVariant = categoryAttr;
         }
+
+        const isOnSale = produs.pret_vechi && produs.pret_vechi > produs.pret;
+        const reducere = isOnSale ? Math.round(produs.pret_vechi - produs.pret).toLocaleString('ro-RO') : 0;
+        let badges = '';
+        if (isOnSale) badges += `<span class="pc-badge pc-badge-sale">SALE</span><span class="pc-badge pc-badge-reducere">-${reducere} Lei</span>`;
+        if (produs.buyback) badges += `<span class="pc-badge pc-badge-bb">BUYBACK</span>`;
+
+        const inStoc = stocDisponibil > 0;
+        const pretFormatat = produs.pret ? Number(produs.pret).toLocaleString('ro-RO') : '';
+        const pretVechiFormatat = produs.pret_vechi ? Number(produs.pret_vechi).toLocaleString('ro-RO') : '';
+        const brandDisplay = (produs.brand || '').toUpperCase();
 
         const card = document.createElement('div');
         card.className = 'dark-product-card product-item';
@@ -114,28 +123,34 @@ export default function Toate() {
         card.setAttribute('data-date', new Date(produs.created_at).getTime());
 
         card.innerHTML = `
-          <div class="bg-text">${bgText}</div>
-          <div class="img-container">
-            <a href="${linkProdus}" style="display:contents;">
-              <img src="${produs.imagine_url}" alt="${produs.nume}" decoding="async" loading="lazy">
-            </a>
+          <a href="${linkProdus}" class="pc-link-overlay" aria-label="${produs.nume}"></a>
+          <div class="pc-badges">${badges}</div>
+          <div class="pc-img-wrap">
+            <img src="${produs.imagine_url}" alt="${produs.nume}" decoding="async" loading="lazy">
           </div>
-          <div class="container-info">
-            <h2>${produs.nume}</h2>
-            <p class="variant-text">${displayVariant}</p>
-            <div class="price-wrapper">
-              ${produs.pret_vechi ? `<span class="old-price">${produs.pret_vechi} lei</span>` : ''}
-              <h3 class="price">${produs.pret}.<small>00</small> lei</h3>
+          <div class="pc-body">
+            <span class="pc-brand">${brandDisplay}</span>
+            <h2 class="pc-name">${produs.nume}</h2>
+            <p class="pc-meta">${displayVariant}</p>
+            <div class="pc-stock ${inStoc ? 'pc-in-stock' : 'pc-out-stock'}">
+              <span class="pc-stock-dot"></span>
+              <span>${inStoc ? 'În stoc' : 'Stoc epuizat'}</span>
             </div>
-            <div class="cartBtn-wrap">
-              <button class="cartBtn ${stocDisponibil <= 0 ? 'disabled' : ''}"
-                ${stocDisponibil <= 0 ? 'style="background-color:#ccc;cursor:not-allowed;color:#666;"' : ''}
-                data-nume="${produs.nume}" data-pret="${produs.pret}"
+            <div class="pc-footer">
+              <div class="pc-prices">
+                ${isOnSale ? `<span class="pc-price-old">${pretVechiFormatat} lei</span>` : ''}
+                <span class="pc-price-new">${pretFormatat} lei</span>
+                ${isOnSale ? `<span class="pc-discount">-${reducere} lei</span>` : ''}
+              </div>
+              <button class="pc-cart-btn ${!inStoc ? 'pc-cart-disabled' : ''}"
+                data-nume="${produs.nume}"
+                data-pret="${produs.pret}"
                 data-img="${produs.imagine_url}"
                 data-variant="${displayVariant}"
-                data-stoc="${stocDisponibil}">
-                <svg class="cart" fill="currentColor" viewBox="0 0 576 512" height="1em"><path d="M0 24C0 10.7 10.7 0 24 0H69.5c22 0 41.5 12.8 50.6 32h411c26.3 0 45.5 25 38.6 50.4l-41 152.3c-8.5 31.4-37 53.3-69.5 53.3H170.7l5.4 28.5c2.2 11.3 12.1 19.5 23.6 19.5H488c13.3 0 24 10.7 24 24s-10.7 24-24 24H199.7c-34.6 0-64.3-24.6-70.7-58.5L77.4 54.5c-.7-3.8-4-6.5-7.9-6.5H24C10.7 48 0 37.3 0 24zM128 464a48 48 0 1 1 96 0 48 48 0 1 1 -96 0zm336-48a48 48 0 1 1 0 96 48 48 0 1 1 0-96z"/></svg>
-                ${stocDisponibil <= 0 ? 'STOC EPUIZAT' : 'ADAUGĂ ÎN COȘ'}
+                data-stoc="${stocDisponibil}"
+                ${!inStoc ? 'disabled' : ''}
+                aria-label="Adaugă în coș">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>
               </button>
             </div>
           </div>`;
@@ -248,20 +263,48 @@ export default function Toate() {
       },
 
       rebindAddToCartButtons() {
-        DOM.gridContainer.querySelectorAll('.cartBtn:not(.disabled)').forEach(btn => {
+        DOM.gridContainer.querySelectorAll('.pc-cart-btn:not(.pc-cart-disabled)').forEach(btn => {
           btn.addEventListener('click', e => {
             e.preventDefault();
             if (btn.classList.contains('is-added')) { router.push('/cos'); return; }
-            const title = btn.getAttribute('data-nume'), price = parseInt(btn.getAttribute('data-pret')), variant = btn.getAttribute('data-variant'), img = btn.getAttribute('data-img'), stocMax = parseInt(btn.getAttribute('data-stoc')) || 0;
-            let cart = []; try { cart = JSON.parse(localStorage.getItem('ovifone_cart') || '[]'); } catch (err) {}
+            const title = btn.getAttribute('data-nume');
+            const price = parseInt(btn.getAttribute('data-pret'));
+            const variant = btn.getAttribute('data-variant');
+            const img = btn.getAttribute('data-img');
+            const stocMax = parseInt(btn.getAttribute('data-stoc')) || 0;
+            let cart = []; try { cart = JSON.parse(localStorage.getItem('ovifone_cart') || '[]'); } catch (err) { cart = []; }
             const existentItem = cart.find(i => i.title === title && i.variant === variant);
             if ((existentItem ? existentItem.qty : 0) + 1 > stocMax) { showNotification(`Nu poți adăuga. Stoc maxim: ${stocMax} bucăți.`, true); return; }
             if (existentItem) { existentItem.qty++; } else { cart.push({ title, price, variant, img, qty: 1 }); }
             localStorage.setItem('ovifone_cart', JSON.stringify(cart));
             window.dispatchEvent(new Event('cartUpdated'));
-            showNotification(`Adăugat în coș: ${title}`, false);
+            window.dispatchEvent(new CustomEvent('cartItemAdded', { detail: { name: title, price, img, variant } }));
+
+            // Ripple
+            const ripple = document.createElement('span');
+            ripple.className = 'pc-cart-ripple';
+            btn.appendChild(ripple);
+            setTimeout(() => ripple.remove(), 600);
+
+            // Particule
+            const rect = btn.getBoundingClientRect();
+            for (let i = 0; i < 6; i++) {
+              const p = document.createElement('span');
+              p.className = 'pc-cart-particle';
+              p.style.cssText = `left:${rect.left + rect.width/2}px;top:${rect.top + rect.height/2}px;--dx:${(Math.random()-0.5)*80}px;--dy:${(Math.random()-0.5)*80}px;--delay:${i*0.05}s`;
+              document.body.appendChild(p);
+              setTimeout(() => p.remove(), 800);
+            }
+
             btn.classList.add('is-adding');
-            setTimeout(() => { btn.classList.remove('is-adding'); btn.classList.add('is-added'); btn.innerHTML = '<svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" stroke-width="2.5" fill="none" style="margin-right:8px;"><polyline points="20 6 9 17 4 12"/></svg>VEZI COȘUL'; }, 800);
+            setTimeout(() => {
+              btn.classList.remove('is-adding'); btn.classList.add('is-added');
+              btn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" stroke="#fff" stroke-width="2.5" fill="none"><polyline points="20 6 9 17 4 12"/></svg>';
+              setTimeout(() => {
+                btn.classList.remove('is-added');
+                btn.innerHTML = '<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M6 2L3 6v14a2 2 0 002 2h14a2 2 0 002-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 01-8 0"/></svg>';
+              }, 2500);
+            }, 600);
           });
         });
       },

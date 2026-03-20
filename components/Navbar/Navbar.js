@@ -142,14 +142,20 @@ export default function Navbar() {
             <div className={`trade-toggle-wrapper ${isVindeAnim ? 'is-vinde' : ''}`}>
               <div className="trade-slider-bg"></div>
               <a href="/" className={`trade-option ${!isVinde ? 'active' : ''}`} onClick={(e) => handleTradeClick(e, '/', false)}>
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3h2l3.6 10.6A2 2 0 0 0 10.5 15h8a2 2 0 0 0 1.9-1.4l2-6H6"></path><circle cx="10" cy="20" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="18" cy="20" r="1.5" fill="currentColor" stroke="none"></circle></svg>
+                <svg className="trade-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M3 3h2l3.6 10.6A2 2 0 0 0 10.5 15h8a2 2 0 0 0 1.9-1.4l2-6H6"></path><circle cx="10" cy="20" r="1.5" fill="currentColor" stroke="none"></circle><circle cx="18" cy="20" r="1.5" fill="currentColor" stroke="none"></circle></svg>
                 <span className="trade-text">Cumpără</span>
               </a>
               <a href="/vinde" className={`trade-option ${isVinde ? 'active' : ''}`} onClick={(e) => handleTradeClick(e, '/vinde', true)}>
-                <svg viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>
+                <svg className="trade-icon" viewBox="0 0 24 24" width="16" height="16" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><polyline points="17 11 12 6 7 11"></polyline><polyline points="17 18 12 13 7 18"></polyline></svg>
                 <span className="trade-text">Vinde</span>
               </a>
             </div>
+            <form className="mobile-search-inline" onSubmit={(e) => { e.preventDefault(); const q = e.target.querySelector('input').value.trim(); if(q) router.push(`/toate?q=${encodeURIComponent(q)}`); }}>
+              <input type="text" className="mobile-search-input" placeholder="Ce te interesează?" autoComplete="off" />
+              <button type="submit" className="mobile-search-btn" aria-label="Caută">
+                <svg viewBox="0 0 24 24" width="17" height="17" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><circle cx="10" cy="10" r="7"></circle><path d="M21 21l-6-6"></path></svg>
+              </button>
+            </form>
           </div>
 
           <div className="nav-actions">
