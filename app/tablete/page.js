@@ -80,6 +80,7 @@ export default function Tablete() {
         await this.fetchProducts();
         this.bindFilters();
         this.bindSort();
+        this.bindSearch();
         DOM.resetBtn?.addEventListener('click', () => this.clearAllActiveFilters());
       },
 
@@ -176,7 +177,7 @@ export default function Tablete() {
         const f = this.getActiveFilters();
         return products.filter(p => {
           const brand = (p.brand || '').toLowerCase();
-          const condition = p.stare || 'SH';
+          const condition = (p.stare || 'SH').toLowerCase();
           const storageNum = (p.stocare ? p.stocare.split(',')[0].trim() : '128GB').replace(/[^0-9]/g, '');
           if (f.brand.length && !f.brand.includes(brand)) return false;
           if (f.condition.length && !f.condition.includes(condition)) return false;
@@ -195,7 +196,13 @@ export default function Tablete() {
 
       executeFilteringAndSorting() {
         this.currentPage = 1;
-        const filtered = this.applyFilters(this.allProducts);
+        let filtered = this.applyFilters(this.allProducts);
+        const minPrice = parseFloat(document.getElementById('price-min')?.value) || 0;
+        const maxPrice = parseFloat(document.getElementById('price-max')?.value) || Infinity;
+        filtered = filtered.filter(p => {
+          const price = p.pret || 0;
+          return price >= minPrice && (maxPrice === Infinity || price <= maxPrice);
+        });
         const sorted = this.applySort(filtered);
         this.renderPage(sorted);
         this.renderActiveTags();
@@ -340,7 +347,46 @@ export default function Tablete() {
       },
 
       bindFilters() {
+        const self = this;
         DOM.filterCheckboxes.forEach(cb => { cb.addEventListener('change', () => this.executeFilteringAndSorting()); });
+        document.getElementById('price-apply-btn')?.addEventListener('click', () => this.executeFilteringAndSorting());
+        document.querySelectorAll('.price-input').forEach(input => {
+          input.addEventListener('keydown', (e) => { if (e.key === 'Enter') this.executeFilteringAndSorting(); });
+        });
+
+        // Price slider
+        const rangeMin = document.getElementById('price-range-min');
+        const rangeMax = document.getElementById('price-range-max');
+        const inputMin = document.getElementById('price-min');
+        const inputMax = document.getElementById('price-max');
+        const fill = document.getElementById('price-slider-fill');
+        const maxVal = 10000;
+
+        function updateSliderFill() {
+          const min = parseInt(rangeMin?.value || 0);
+          const max = parseInt(rangeMax?.value || maxVal);
+          const leftPct = (min / maxVal) * 100;
+          const rightPct = (max / maxVal) * 100;
+          if (fill) { fill.style.left = leftPct + '%'; fill.style.width = (rightPct - leftPct) + '%'; }
+        }
+
+        function syncSliderToInputs() {
+          if (inputMin) inputMin.value = rangeMin?.value || '';
+          if (inputMax) inputMax.value = rangeMax?.value === String(maxVal) ? '' : rangeMax?.value;
+          updateSliderFill();
+        }
+
+        rangeMin?.addEventListener('input', () => {
+          if (parseInt(rangeMin.value) > parseInt(rangeMax.value) - 100) rangeMin.value = parseInt(rangeMax.value) - 100;
+          syncSliderToInputs();
+        });
+        rangeMax?.addEventListener('input', () => {
+          if (parseInt(rangeMax.value) < parseInt(rangeMin.value) + 100) rangeMax.value = parseInt(rangeMin.value) + 100;
+          syncSliderToInputs();
+        });
+        rangeMin?.addEventListener('change', () => self.executeFilteringAndSorting());
+        rangeMax?.addEventListener('change', () => self.executeFilteringAndSorting());
+        updateSliderFill();
       },
 
       bindSort() {
@@ -361,9 +407,32 @@ export default function Tablete() {
         });
       },
 
+      bindSearch() {
+        const params = new URLSearchParams(window.location.search);
+        const stareParam = params.get('stare');
+        if (stareParam) {
+          const condGroup = document.querySelector('[data-filter-group="condition"]');
+          if (condGroup) {
+            const cb = condGroup.querySelector(`input[value="${stareParam}"]`);
+            if (cb) {
+              cb.checked = true;
+              const stareNames = { 'Nou': 'Noi', 'SH': 'Second Hand' };
+              if (DOM.pageTitle) DOM.pageTitle.textContent = `Tablete ${stareNames[stareParam] || stareParam}`;
+              this.executeFilteringAndSorting();
+            }
+          }
+        }
+      },
+
       clearAllActiveFilters() {
         DOM.filterCheckboxes.forEach(cb => { cb.checked = false; });
         if (DOM.pageTitle) DOM.pageTitle.textContent = 'Tablete & eReadere';
+        const rMin = document.getElementById('price-range-min');
+        const rMax = document.getElementById('price-range-max');
+        if (rMin) rMin.value = 0;
+        if (rMax) rMax.value = 10000;
+        const fill = document.getElementById('price-slider-fill');
+        if (fill) { fill.style.left = '0%'; fill.style.width = '100%'; }
         this.executeFilteringAndSorting();
       }
     };
@@ -391,29 +460,52 @@ export default function Tablete() {
           <aside className="shop-sidebar-ultra">
             <div className="filter-header-mobile">
               <h3>Filtre</h3>
-              <button className="close-filters-btn">
-                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-              </button>
+              <button className="close-filters-btn"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg></button>
             </div>
             <div className="filter-scroll-area">
               <div className="filter-widget-ultra">
+                <h4 className="widget-title-ultra">Preț</h4>
+                <div className="price-range-filter">
+                  <div className="price-slider-wrap">
+                    <div className="price-slider-track" id="price-slider-track">
+                      <div className="price-slider-fill" id="price-slider-fill"></div>
+                    </div>
+                    <input type="range" className="price-range-thumb" id="price-range-min" min="0" max="10000" defaultValue="0" step="50" />
+                    <input type="range" className="price-range-thumb" id="price-range-max" min="0" max="10000" defaultValue="10000" step="50" />
+                  </div>
+                  <div className="price-inputs">
+                    <div className="price-input-wrap">
+                      <span className="price-currency">Lei</span>
+                      <input type="number" className="price-input" id="price-min" placeholder="0" min="0" />
+                    </div>
+                    <span className="price-separator">—</span>
+                    <div className="price-input-wrap">
+                      <span className="price-currency">Lei</span>
+                      <input type="number" className="price-input" id="price-max" placeholder="10000" min="0" />
+                    </div>
+                  </div>
+                  <button className="price-apply-btn" id="price-apply-btn">Aplică</button>
+                </div>
+              </div>
+              <hr className="filter-divider" />
+              <div className="filter-widget-ultra">
                 <h4 className="widget-title-ultra">Brand</h4>
                 <div className="filter-options-ultra" data-filter-group="brand">
-                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="apple" /><span className="box-ultra"></span> <span className="lbl-text">Apple (iPad)</span></label>
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="apple" /><span className="box-ultra"></span> <span className="lbl-text">Apple</span></label>
                   <label className="cyber-checkbox-ultra"><input type="checkbox" value="samsung" /><span className="box-ultra"></span> <span className="lbl-text">Samsung</span></label>
                 </div>
               </div>
               <hr className="filter-divider" />
               <div className="filter-widget-ultra">
-                <h4 className="widget-title-ultra">Stare Produs</h4>
+                <h4 className="widget-title-ultra">Stare</h4>
                 <div className="filter-options-ultra" data-filter-group="condition">
                   <label className="cyber-checkbox-ultra"><input type="checkbox" value="Nou" /><span className="box-ultra"></span> <span className="lbl-text">Nou</span></label>
-                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="SH" /><span className="box-ultra"></span> <span className="lbl-text">Second Hand (SH)</span></label>
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="SH" /><span className="box-ultra"></span> <span className="lbl-text">Second Hand</span></label>
                 </div>
               </div>
               <hr className="filter-divider" />
               <div className="filter-widget-ultra">
-                <h4 className="widget-title-ultra">Capacitate Stocare</h4>
+                <h4 className="widget-title-ultra">Memorie</h4>
                 <div className="filter-options-grid-ultra" data-filter-group="storage">
                   <label className="chip-checkbox-ultra"><input type="checkbox" value="64" /><span className="chip-ultra">64GB</span></label>
                   <label className="chip-checkbox-ultra"><input type="checkbox" value="128" /><span className="chip-ultra">128GB</span></label>
@@ -427,19 +519,12 @@ export default function Tablete() {
 
           <div className="shop-main-ultra">
             <div className="shop-toolbar-ultra">
-              <div className="toolbar-left-ultra">
-                <button className="mobile-filter-trigger-ultra">
-                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none">
-                    <line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" />
-                    <line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" />
-                    <line x1="20" y1="21" x2="20" y2="16" /><line x1="20" y1="12" x2="20" y2="3" />
-                  </svg>
-                  <span>Filtre</span>
-                </button>
-                <div className="active-filters-tags"></div>
-              </div>
               <div className="toolbar-right-ultra">
                 <span className="results-counter-ultra"><strong></strong> produse</span>
+                <button className="mobile-filter-trigger-ultra">
+                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none"><line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" /><line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" /><line x1="20" y1="21" x2="20" y2="16" /><line x1="20" y1="12" x2="20" y2="3" /></svg>
+                  <span>Filtre</span>
+                </button>
                 <div className="sort-wrapper-ultra">
                   <div className="custom-sort-dropdown" id="custom-sort">
                     <div className="custom-sort-trigger">

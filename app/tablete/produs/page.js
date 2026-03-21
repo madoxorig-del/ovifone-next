@@ -208,7 +208,7 @@ export default function Telefoane() {
         const f = this.getActiveFilters();
         return products.filter(p => {
           const brand = (p.brand || '').toLowerCase();
-          const condition = p.stare || 'SH';
+          const condition = (p.stare || 'SH').toLowerCase();
           const storageNum = (p.stocare ? p.stocare.split(',')[0].trim() : '128GB').replace(/[^0-9]/g, '');
           if (f.brand.length && !f.brand.includes(brand)) return false;
           if (f.condition.length && !f.condition.includes(condition)) return false;
@@ -453,19 +453,12 @@ export default function Telefoane() {
 
           <div className="shop-main-ultra">
             <div className="shop-toolbar-ultra">
-              <div className="toolbar-left-ultra">
+              <div className="toolbar-right-ultra">
+                <span className="results-counter-ultra"><strong></strong> produse</span>
                 <button className="mobile-filter-trigger-ultra">
-                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none">
-                    <line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" />
-                    <line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" />
-                    <line x1="20" y1="21" x2="20" y2="16" /><line x1="20" y1="12" x2="20" y2="3" />
-                  </svg>
+                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none"><line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" /><line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" /><line x1="20" y1="21" x2="20" y2="16" /><line x1="20" y1="12" x2="20" y2="3" /></svg>
                   <span>Filtre</span>
                 </button>
-                <div className="active-filters-tags"></div>
-              </div>
-              <div className="toolbar-right-ultra">
-                <span className="results-counter-ultra"><strong></strong> modele</span>
                 <div className="sort-wrapper-ultra">
                   <div className="custom-sort-dropdown" id="custom-sort">
                     <div className="custom-sort-trigger">

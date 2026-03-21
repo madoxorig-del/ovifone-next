@@ -64,7 +64,7 @@ function CheckoutContent() {
 
     const state = {
       cart: JSON.parse(localStorage.getItem('ovifone_cart') || '[]'),
-      subtotal: 0, shipping: 30, discount: 0, total: 0,
+      subtotal: 0, shipping: 30, coletFee: 30, discount: 0, total: 0,
       isSubmitting: false, deliveryType: 'curier', currentUser: null,
     };
 
@@ -107,7 +107,8 @@ function CheckoutContent() {
 
     function updateTotalsDOM() {
       if (state.discount > state.subtotal) state.discount = state.subtotal;
-      state.total = state.subtotal + state.shipping - state.discount;
+      state.shipping = state.subtotal >= 300 ? 0 : (state.deliveryType === 'magazin' ? 0 : (DOM.inputs.tara?.value === 'România' || !DOM.inputs.tara?.value ? 30 : 90));
+      state.total = state.subtotal + state.shipping + state.coletFee - state.discount;
       if (DOM.summSubtotal) DOM.summSubtotal.textContent = `${state.subtotal} lei`;
       if (DOM.summShipping) DOM.summShipping.textContent = state.shipping === 0 ? 'Gratuit' : `${state.shipping} lei`;
       if (state.discount > 0) {
@@ -122,7 +123,6 @@ function CheckoutContent() {
 
     function handleCountryChange() {
       if (state.deliveryType === 'magazin') return;
-      state.shipping = DOM.inputs.tara?.value === 'România' ? 30 : 90;
       updateTotalsDOM();
     }
 
@@ -345,7 +345,7 @@ function CheckoutContent() {
                     <input type="radio" name="delivery_method" value="curier" defaultChecked />
                     <div className="method-content">
                       <div className="radio-btn"></div>
-                      <div className="method-details"><span className="method-title">Livrare prin curier</span><span className="method-desc">Livrare rapidă la domiciliu (30 lei)</span></div>
+                      <div className="method-details"><span className="method-title">Livrare prin curier</span><span className="method-desc">Livrare rapidă la domiciliu</span></div>
                       <div className="method-visuals"><div className="icon-chip"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg></div></div>
                     </div>
                     <div className="active-border"></div>
@@ -448,7 +448,8 @@ function CheckoutContent() {
                 </div>
                 <div className="summary-calculations">
                   <div className="calc-row"><span>Subtotal Produse</span><span id="summ-subtotal">0 lei</span></div>
-                  <div className="calc-row"><span>Taxă Livrare</span><span id="summ-shipping">30 lei</span></div>
+                  <div className="calc-row"><span>Livrare</span><span id="summ-shipping">30 lei</span></div>
+                  <div className="calc-row"><span>Deschidere colet</span><span>+30 lei</span></div>
                   <div className="calc-row discount-row" id="discount-row" style={{ display: 'none', color: '#10b981', fontWeight: 700 }}>
                     <span>Reducere Cod</span><span id="summ-discount">-0 lei</span>
                   </div>

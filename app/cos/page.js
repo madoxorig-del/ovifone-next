@@ -109,8 +109,12 @@ export default function Cos() {
         });
 
         if (elements.subtotalText) elements.subtotalText.textContent = runningTotal.toLocaleString('ro-RO') + ',00 lei';
-        const totalCuLivrare = runningTotal > 0 ? runningTotal + 30 : 0;
+        const shippingFee = runningTotal >= 300 ? 0 : 30;
+        const coletFee = 30;
+        const totalCuLivrare = runningTotal > 0 ? runningTotal + shippingFee + coletFee : 0;
         if (elements.totalText) elements.totalText.textContent = totalCuLivrare.toLocaleString('ro-RO') + ',00 lei';
+        const shippingLabel = document.getElementById('shipping-cost');
+        if (shippingLabel) shippingLabel.textContent = shippingFee === 0 ? 'Gratuit' : '30 lei';
 
         [elements.subtotalText, elements.totalText].forEach(el => {
           if (el) { el.classList.remove('total-updated'); void el.offsetWidth; el.classList.add('total-updated'); }
@@ -269,7 +273,7 @@ export default function Cos() {
             <div className="cart-extra-info">
               <div className="extra-card">
                 <div className="extra-icon"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><rect x="1" y="3" width="15" height="13"></rect><polygon points="16 8 20 8 23 11 23 16 16 16 16 8"></polygon><circle cx="5.5" cy="18.5" r="2.5"></circle><circle cx="18.5" cy="18.5" r="2.5"></circle></svg></div>
-                <div className="extra-text"><strong>Livrare rapidă și sigură</strong><p>Toate comenzile sunt procesate în 24h și livrate în siguranță maximă.</p></div>
+                <div className="extra-text"><strong>Livrare 24-72h</strong><p>Toate comenzile sunt procesate și livrate în siguranță maximă.</p></div>
               </div>
               <div className="extra-card">
                 <div className="extra-icon"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path></svg></div>
@@ -287,12 +291,12 @@ export default function Cos() {
                   <span className="row-value" id="summary-subtotal">0,00 lei</span>
                 </div>
                 <div className="summary-row-item">
-                  <span className="row-label">Cost livrare</span>
-                  <span className="row-value green-text">30 lei</span>
+                  <span className="row-label">Livrare</span>
+                  <span className="row-value" id="shipping-cost" style={{ color: '#10b981', fontWeight: 700 }}>30 lei</span>
                 </div>
                 <div className="summary-row-item">
-                  <span className="row-label">TVA Inclus</span>
-                  <span className="row-value">Da</span>
+                  <span className="row-label">Deschidere colet</span>
+                  <span className="row-value">+30 lei</span>
                 </div>
                 <div className="summary-separator"></div>
                 <div className="summary-row-item total-final">

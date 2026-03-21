@@ -1,9 +1,80 @@
 'use client';
-import { useEffect } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import Link from 'next/link';
 import { supabase } from '@/lib/supabase';
 
+const modelsByType = {
+  Telefon: {
+    Apple: [
+      'iPhone 11', 'iPhone 11 Pro', 'iPhone 11 Pro Max',
+      'iPhone 12', 'iPhone 12 Mini', 'iPhone 12 Pro', 'iPhone 12 Pro Max',
+      'iPhone 13', 'iPhone 13 Mini', 'iPhone 13 Pro', 'iPhone 13 Pro Max',
+      'iPhone 14', 'iPhone 14 Plus', 'iPhone 14 Pro', 'iPhone 14 Pro Max',
+      'iPhone 15', 'iPhone 15 Plus', 'iPhone 15 Pro', 'iPhone 15 Pro Max',
+      'iPhone 16', 'iPhone 16 Plus', 'iPhone 16 Pro', 'iPhone 16 Pro Max',
+      'iPhone 16e',
+      'iPhone 17', 'iPhone 17 Air', 'iPhone 17 Pro', 'iPhone 17 Pro Max',
+    ],
+    Samsung: [
+      'Galaxy S22', 'Galaxy S22+', 'Galaxy S22 Ultra',
+      'Galaxy S23', 'Galaxy S23+', 'Galaxy S23 Ultra', 'Galaxy S23 FE',
+      'Galaxy S24', 'Galaxy S24+', 'Galaxy S24 Ultra', 'Galaxy S24 FE',
+      'Galaxy S25', 'Galaxy S25+', 'Galaxy S25 Ultra',
+      'Galaxy Z Flip 4', 'Galaxy Z Flip 5', 'Galaxy Z Flip 6',
+      'Galaxy Z Fold 4', 'Galaxy Z Fold 5', 'Galaxy Z Fold 6',
+    ],
+    Google: [
+      'Pixel 8', 'Pixel 8 Pro', 'Pixel 8a',
+      'Pixel 9', 'Pixel 9 Pro', 'Pixel 9 Pro XL', 'Pixel 9a',
+      'Pixel 10', 'Pixel 10 Pro', 'Pixel 10 Pro XL',
+    ],
+  },
+  'Tabletă': {
+    Apple: [
+      'iPad (9th gen)', 'iPad (10th gen)',
+      'iPad Mini 6', 'iPad Mini 7',
+      'iPad Air 4', 'iPad Air 5', 'iPad Air 6 (11")', 'iPad Air 6 (13")',
+      'iPad Pro 11" (3rd gen)', 'iPad Pro 11" (4th gen)', 'iPad Pro 11" (M4)',
+      'iPad Pro 12.9" (5th gen)', 'iPad Pro 12.9" (6th gen)', 'iPad Pro 13" (M4)',
+    ],
+    Samsung: [
+      'Galaxy Tab S7', 'Galaxy Tab S7+', 'Galaxy Tab S7 FE',
+      'Galaxy Tab S8', 'Galaxy Tab S8+', 'Galaxy Tab S8 Ultra',
+      'Galaxy Tab S9', 'Galaxy Tab S9+', 'Galaxy Tab S9 Ultra', 'Galaxy Tab S9 FE',
+      'Galaxy Tab S10+', 'Galaxy Tab S10 Ultra',
+    ],
+  },
+  Laptop: {
+    Apple: [
+      'MacBook Air 13" (M1)', 'MacBook Air 13" (M2)', 'MacBook Air 13" (M3)', 'MacBook Air 15" (M3)',
+      'MacBook Pro 13" (M1)', 'MacBook Pro 13" (M2)',
+      'MacBook Pro 14" (M1 Pro/Max)', 'MacBook Pro 14" (M2 Pro/Max)', 'MacBook Pro 14" (M3 Pro/Max)', 'MacBook Pro 14" (M4 Pro/Max)',
+      'MacBook Pro 16" (M1 Pro/Max)', 'MacBook Pro 16" (M2 Pro/Max)', 'MacBook Pro 16" (M3 Pro/Max)', 'MacBook Pro 16" (M4 Pro/Max)',
+    ],
+  },
+};
+
 export default function Vinde() {
+  const [deviceType, setDeviceType] = useState('');
+  const [selectedBrand, setSelectedBrand] = useState('');
+  const [selectedModel, setSelectedModel] = useState('');
+  const [brandOpen, setBrandOpen] = useState(false);
+  const [modelOpen, setModelOpen] = useState(false);
+
+  const currentBrands = deviceType ? modelsByType[deviceType] || {} : {};
+  const currentModels = selectedBrand ? currentBrands[selectedBrand] || [] : [];
+
+  // Close dropdowns when clicking outside
+  useEffect(() => {
+    const handleClickOutside = (e) => {
+      if (!e.target.closest('.vf-dropdown')) {
+        setBrandOpen(false);
+        setModelOpen(false);
+      }
+    };
+    document.addEventListener('click', handleClickOutside);
+    return () => document.removeEventListener('click', handleClickOutside);
+  }, []);
 
   useEffect(() => {
     // REVEAL ANIMATIONS
@@ -260,7 +331,7 @@ export default function Vinde() {
           <div className="vf-panel" data-reveal="true">
             <div className="vf-header">
               <div className="vf-badge-row">
-                <div className="vf-badge">Trade-In</div>
+                <div className="vf-badge">Buy-Back</div>
                 <button className="vbtn-reset" id="top-reset-btn" title="Resetează formularul">
                   <svg viewBox="0 0 24 24" width="14" height="14" stroke="currentColor" strokeWidth="2.5" fill="none"><polyline points="1 4 1 10 7 10"></polyline><path d="M3.51 15a9 9 0 1 0 2.13-9.36L1 10"></path></svg>
                   Reset
@@ -290,19 +361,49 @@ export default function Vinde() {
                 <div className="vf-field mt-20">
                   <label>Tip Dispozitiv</label>
                   <div className="vf-chips" id="type-chips">
-                    <label className="v-chip"><input type="radio" name="deviceType" value="Telefon" /><span>Telefon</span></label>
-                    <label className="v-chip"><input type="radio" name="deviceType" value="Tabletă" /><span>Tabletă / iPad</span></label>
-                    <label className="v-chip"><input type="radio" name="deviceType" value="Laptop" /><span>Laptop / Mac</span></label>
+                    <label className="v-chip"><input type="radio" name="deviceType" value="Telefon" checked={deviceType === 'Telefon'} onChange={() => { setDeviceType('Telefon'); setSelectedBrand(''); setSelectedModel(''); }} /><span>Telefon</span></label>
+                    <label className="v-chip"><input type="radio" name="deviceType" value="Tabletă" checked={deviceType === 'Tabletă'} onChange={() => { setDeviceType('Tabletă'); setSelectedBrand(''); setSelectedModel(''); }} /><span>Tabletă / iPad</span></label>
+                    <label className="v-chip"><input type="radio" name="deviceType" value="Laptop" checked={deviceType === 'Laptop'} onChange={() => { setDeviceType('Laptop'); setSelectedBrand(''); setSelectedModel(''); }} /><span>Laptop / Mac</span></label>
                   </div>
                 </div>
                 <div className="vf-row-2 mt-20">
                   <div className="vf-field">
                     <label>Producător</label>
-                    <input type="text" className="vf-input" id="v-brand" placeholder="Ex: Apple, Samsung, Xiaomi" />
+                    <div className={`vf-dropdown${brandOpen ? ' open' : ''}${!deviceType ? ' disabled' : ''}`}>
+                      <button type="button" className="vf-dropdown-trigger" disabled={!deviceType} onClick={() => { setBrandOpen(!brandOpen); setModelOpen(false); }}>
+                        <span className={selectedBrand ? 'vf-dd-value' : 'vf-dd-placeholder'}>{selectedBrand || (deviceType ? 'Alege producătorul' : 'Alege mai întâi tipul')}</span>
+                        <svg className="vf-dd-arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </button>
+                      {brandOpen && deviceType && (
+                        <div className="vf-dropdown-menu">
+                          {Object.keys(currentBrands).map(brand => (
+                            <button type="button" key={brand} className={`vf-dropdown-item${selectedBrand === brand ? ' active' : ''}`} onClick={() => { setSelectedBrand(brand); setSelectedModel(''); setBrandOpen(false); }}>
+                              {brand}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <input type="hidden" id="v-brand" value={selectedBrand} />
                   </div>
                   <div className="vf-field">
-                    <label>Model Exact</label>
-                    <input type="text" className="vf-input" id="v-model" placeholder="Ex: iPhone 14 Pro, iPad Air 5" />
+                    <label>Model</label>
+                    <div className={`vf-dropdown${modelOpen ? ' open' : ''}${!selectedBrand ? ' disabled' : ''}`}>
+                      <button type="button" className="vf-dropdown-trigger" disabled={!selectedBrand} onClick={() => { setModelOpen(!modelOpen); setBrandOpen(false); }}>
+                        <span className={selectedModel ? 'vf-dd-value' : 'vf-dd-placeholder'}>{selectedModel || (selectedBrand ? 'Alege modelul' : 'Alege mai întâi producătorul')}</span>
+                        <svg className="vf-dd-arrow" viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                      </button>
+                      {modelOpen && selectedBrand && (
+                        <div className="vf-dropdown-menu">
+                          {currentModels.map(model => (
+                            <button type="button" key={model} className={`vf-dropdown-item${selectedModel === model ? ' active' : ''}`} onClick={() => { setSelectedModel(model); setModelOpen(false); }}>
+                              {model}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                    <input type="hidden" id="v-model" value={selectedModel} />
                   </div>
                 </div>
               </div>
@@ -487,7 +588,7 @@ export default function Vinde() {
           <div className="faq-list" data-reveal="true">
             <div className="faq-item">
               <button className="faq-question"><span>Cumpărați și telefoane blocate în iCloud sau defecte total?</span><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg></button>
-              <div className="faq-answer"><p>Cumpărăm telefoane cu ecran spart sau defecte hardware minore, însă NU cumpărăm dispozitive blocate în iCloud, cu cont de Google blocat sau raportate ca furate.</p></div>
+              <div className="faq-answer"><p>NU cumpărăm telefoane cu defecte, blocate în iCloud, cu cont de Google blocat sau raportate ca furate. Toate telefoanele sunt verificate în baze de date internaționale (CheckMEND).</p></div>
             </div>
             <div className="faq-item">
               <button className="faq-question"><span>Trebuie să aduc și cutia sau încărcătorul?</span><svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="2" fill="none"><polyline points="6 9 12 15 18 9"></polyline></svg></button>

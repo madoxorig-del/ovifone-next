@@ -120,6 +120,36 @@ function ProdusContent() {
       const batElement = document.getElementById('produs-baterie-valoare');
       if (batElement) batElement.textContent = baterieText;
 
+      // ── STARE VIZUALĂ ──
+      const stareVizuala = (pData.stare || 'Nou').trim();
+      const stareContainer = document.getElementById('stare-vizuala-container');
+      if (stareContainer) {
+        const stareList = [
+          { key: 'Nou', label: 'Nou Sigilat', color: '#34c759', desc: 'Produs sigilat în cutia originală, nefolosit, cu toate accesoriile incluse.' },
+          { key: 'Excelent', label: 'Excelent', color: '#2563eb', desc: 'Ca nou — fără zgârieturi sau semne de utilizare vizibile pe ecran sau carcasă.' },
+          { key: 'Foarte Bun', label: 'Foarte Bun', color: '#f49201', desc: 'Minime urme de utilizare, micro-zgârieturi vizibile doar la lumină directă.' },
+          { key: 'Bun', label: 'Bun', color: '#8b5cf6', desc: 'Zgârieturi ușoare pe ecran sau carcasă. Funcționează perfect, aspect îngrijit.' }
+        ];
+
+        stareContainer.innerHTML = `
+          <div class="stare-header-row">
+            <span class="stare-section-label">Stare vizuală</span>
+          </div>
+          <div class="stare-grid">
+            ${stareList.map(s => {
+              const isActive = s.key === stareVizuala;
+              return `<div class="stare-item ${isActive ? 'active' : ''}" style="${isActive ? `--stare-color:${s.color};` : ''}">
+                <div class="stare-item-dot" style="background:${s.color};"></div>
+                <div class="stare-item-content">
+                  <span class="stare-item-label" style="${isActive ? `color:${s.color};` : ''}">${s.label}</span>
+                  <p class="stare-item-desc">${s.desc}</p>
+                </div>
+                ${isActive ? '<span class="stare-item-check"><svg viewBox="0 0 24 24" width="16" height="16" stroke="' + s.color + '" stroke-width="2.5" fill="none"><polyline points="20 6 9 17 4 12"/></svg></span>' : ''}
+              </div>`;
+            }).join('')}
+          </div>`;
+      }
+
       const tabDescriere = document.getElementById('tab-descriere');
       if (tabDescriere) tabDescriere.innerHTML = pData.descriere ? `<div class="rich-text">${pData.descriere}</div>` : '<p>Fără descriere.</p>';
       const tabSpecs = document.getElementById('tab-specificatii');
@@ -141,6 +171,116 @@ function ProdusContent() {
             if (relSection) relSection.style.display = 'none';
           }
         } catch (e) { console.error('Eroare produse similare', e); }
+      }
+
+      // ── CROSS-SELL: Îți recomandăm și ──
+      const crossGrid = document.getElementById('cross-sell-grid');
+      if (crossGrid) {
+        try {
+          const numeProdusCurent = pData.nume.toLowerCase();
+          const brandProdusCurent = (pData.brand || '').toLowerCase();
+          const { data: accAll, error: accErr } = await supabase.from('produse').select('*').gt('stoc', 0).neq('id', produsId);
+          if (!accErr && accAll) {
+            let recomandate = [];
+            const folii = accAll.filter(p => (p.categorie || '').toLowerCase() === 'folii' && p.compatibilitate && p.compatibilitate.toLowerCase().includes(pData.nume.split(' ').slice(0,3).join(' ').toLowerCase()));
+            const huse = accAll.filter(p => (p.categorie || '').toLowerCase() === 'huse' && p.compatibilitate && p.compatibilitate.toLowerCase().includes(pData.nume.split(' ').slice(0,3).join(' ').toLowerCase()));
+            const incarcatoare = accAll.filter(p => {
+              const cat = (p.categorie || '').toLowerCase();
+              const tip = (p.tip_accesoriu || '').toLowerCase();
+              return cat === 'accesorii' && (tip === 'incarcator' || (p.nume || '').toLowerCase().includes('incarcator') || (p.nume || '').toLowerCase().includes('încărcător'));
+            });
+            const cabluri = accAll.filter(p => {
+              const cat = (p.categorie || '').toLowerCase();
+              const tip = (p.tip_accesoriu || '').toLowerCase();
+              return cat === 'accesorii' && (tip === 'cablu' || (p.nume || '').toLowerCase().includes('cablu'));
+            });
+            if (folii.length) recomandate.push(folii[0]);
+            if (huse.length) recomandate.push(huse[0]);
+            if (incarcatoare.length) recomandate.push(incarcatoare[0]);
+            if (cabluri.length) recomandate.push(cabluri[0]);
+            if (recomandate.length < 4) {
+              const ids = recomandate.map(r => r.id);
+              const extras = accAll.filter(p => !ids.includes(p.id) && ['folii','huse','accesorii'].includes((p.categorie||'').toLowerCase())).slice(0, 4 - recomandate.length);
+              recomandate = recomandate.concat(extras);
+            }
+            if (recomandate.length > 0) {
+              const crossSection = document.getElementById('cross-sell-section');
+              if (crossSection) crossSection.style.display = 'block';
+              crossGrid.innerHTML = recomandate.map(prod => {
+                const cat = (prod.categorie || '').toLowerCase();
+                let variant = 'Standard';
+                if (cat === 'huse' || cat === 'folii') variant = prod.material || 'Protecție';
+                else if (cat === 'accesorii') variant = prod.conector || prod.tip_accesoriu || 'Accesoriu';
+                let tag = '';
+                if (cat === 'folii') tag = 'Folie';
+                else if (cat === 'huse') tag = 'Husă';
+                else if ((prod.tip_accesoriu || '').toLowerCase() === 'incarcator' || (prod.nume || '').toLowerCase().includes('ncărcător')) tag = 'Încărcător';
+                else if ((prod.tip_accesoriu || '').toLowerCase() === 'cablu') tag = 'Cablu';
+                else tag = prod.tip_accesoriu || 'Accesoriu';
+                return `
+                  <div class="cross-card" data-id="${prod.id}">
+                    <div class="cross-tag">${tag}</div>
+                    <div class="cross-img"><img src="${prod.imagine_url}" alt="${prod.nume}" /></div>
+                    <div class="cross-info">
+                      <h4 class="cross-name" title="${prod.nume}">${prod.nume}</h4>
+                      <span class="cross-price">${Number(prod.pret).toLocaleString('ro-RO')} lei</span>
+                    </div>
+                    <div class="cross-actions">
+                      <button class="cross-btn cross-add" data-nume="${prod.nume}" data-pret="${prod.pret}" data-img="${prod.imagine_url}" data-variant="${variant}" data-stoc="${prod.stoc}">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Adaugă
+                      </button>
+                      <button class="cross-btn cross-remove" data-nume="${prod.nume}" data-variant="${variant}" style="display:none;">
+                        <svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" stroke-width="2.5" fill="none"><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                        Șterge
+                      </button>
+                    </div>
+                  </div>`;
+              }).join('');
+
+              function updateCrossBtns() {
+                let cart = []; try { cart = JSON.parse(localStorage.getItem('ovifone_cart') || '[]'); } catch(e) {}
+                crossGrid.querySelectorAll('.cross-card').forEach(card => {
+                  const addBtn = card.querySelector('.cross-add');
+                  const removeBtn = card.querySelector('.cross-remove');
+                  const name = addBtn.getAttribute('data-nume');
+                  const inCart = cart.some(i => i.title === name);
+                  addBtn.style.display = inCart ? 'none' : 'flex';
+                  removeBtn.style.display = inCart ? 'flex' : 'none';
+                });
+              }
+              updateCrossBtns();
+              window.addEventListener('cartUpdated', updateCrossBtns);
+
+              crossGrid.querySelectorAll('.cross-add').forEach(btn => {
+                btn.addEventListener('click', () => {
+                  let cart = []; try { cart = JSON.parse(localStorage.getItem('ovifone_cart') || '[]'); } catch(e) {}
+                  const title = btn.getAttribute('data-nume'), price = parseInt(btn.getAttribute('data-pret'));
+                  const variant = btn.getAttribute('data-variant'), img = btn.getAttribute('data-img');
+                  const stocMax = parseInt(btn.getAttribute('data-stoc'));
+                  const existing = cart.find(i => i.title === title);
+                  if (existing && existing.qty >= stocMax) { showNotification(`Stoc maxim: ${stocMax} bucăți.`, true); return; }
+                  if (existing) existing.qty++;
+                  else cart.push({ title, price, variant, img, qty: 1 });
+                  localStorage.setItem('ovifone_cart', JSON.stringify(cart));
+                  window.dispatchEvent(new Event('cartUpdated'));
+                  showNotification(`${title} adăugat în coș!`, false);
+                });
+              });
+
+              crossGrid.querySelectorAll('.cross-remove').forEach(btn => {
+                btn.addEventListener('click', () => {
+                  let cart = []; try { cart = JSON.parse(localStorage.getItem('ovifone_cart') || '[]'); } catch(e) {}
+                  const title = btn.getAttribute('data-nume');
+                  cart = cart.filter(i => i.title !== title);
+                  localStorage.setItem('ovifone_cart', JSON.stringify(cart));
+                  window.dispatchEvent(new Event('cartUpdated'));
+                  showNotification(`${title} eliminat din coș.`, false);
+                });
+              });
+            }
+          }
+        } catch (e) { console.error('Eroare cross-sell:', e); }
       }
 
       const elements = {
@@ -435,6 +575,8 @@ function ProdusContent() {
               <div className="price-old" id="dynamic-old-price" style={{ display: 'none' }}></div>
               <div className="price-save" style={{ display: 'none' }}></div>
             </div>
+            <div className="stare-vizuala-section" id="stare-vizuala-container"></div>
+
             <div className="p-options">
               <div className="options-top-row">
                 <div className="option-group">
@@ -480,7 +622,7 @@ function ProdusContent() {
               </div>
               <div className="f-item">
                 <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="1.5" fill="none"><rect x="1" y="3" width="15" height="13" /><polygon points="16 8 20 8 23 11 23 16 16 16 16 8" /><circle cx="5.5" cy="18.5" r="2.5" /><circle cx="18.5" cy="18.5" r="2.5" /></svg>
-                <span>Livrare gratuită în 24-48 ore</span>
+                <span>Livrare gratuită în 24-72h</span>
               </div>
               <div className="f-item">
                 <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" strokeWidth="1.5" fill="none"><polyline points="3 6 5 6 21 6" /><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" /><line x1="10" y1="11" x2="10" y2="17" /><line x1="14" y1="11" x2="14" y2="17" /></svg>
@@ -499,6 +641,17 @@ function ProdusContent() {
         <div className="tabs-content-area">
           <div className="tab-panel active" id="tab-descriere"></div>
           <div className="tab-panel" id="tab-specificatii"></div>
+        </div>
+      </section>
+
+      <section className="cross-sell-section" id="cross-sell-section" style={{ display: 'none' }}>
+        <div className="section-container">
+          <div className="cross-sell-header">
+            <svg viewBox="0 0 24 24" width="24" height="24" stroke="#f49201" strokeWidth="2" fill="none"><path d="M20.84 4.61a5.5 5.5 0 00-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 00-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 000-7.78z"/></svg>
+            <h2 className="section-title">Îți recomandăm și</h2>
+          </div>
+          <p className="cross-sell-subtitle">Completează-ți achiziția cu accesorii compatibile</p>
+          <div className="cross-sell-grid" id="cross-sell-grid"></div>
         </div>
       </section>
 

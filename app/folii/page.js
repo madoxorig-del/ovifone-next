@@ -118,7 +118,7 @@ export default function Folii() {
       },
 
       getActiveFilters() {
-        const filters = { compat: [], material: [] };
+        const filters = { compatibility: [], type: [] };
         DOM.filterCheckboxes.forEach(cb => {
           if (cb.checked) {
             const group = cb.closest('[data-filter-group]')?.getAttribute('data-filter-group');
@@ -132,11 +132,9 @@ export default function Folii() {
         const f = this.getActiveFilters();
         return products.filter(p => {
           const compat = (p.compatibilitate || p.brand || '').toLowerCase();
-          const material = (p.material || '').toLowerCase();
-          const features = `${compat} ${material} ${(p.nume || '').toLowerCase()}`;
-          if (f.compat.length && !f.compat.some(v => compat.includes(v))) return false;
-          if (f.material.length && !f.material.some(v => material.includes(v))) return false;
-          
+          const tipFolie = (p.material || p.tip_folie || '').toLowerCase();
+          if (f.compatibility.length && !f.compatibility.some(v => compat.includes(v))) return false;
+          if (f.type.length && !f.type.some(v => tipFolie.includes(v))) return false;
           return true;
         });
       },
@@ -149,7 +147,18 @@ export default function Folii() {
         return sorted;
       },
 
-      executeFilteringAndSorting() { this.currentPage = 1; this.renderPage(this.applySort(this.applyFilters(this.allProducts))); this.renderActiveTags(); },
+      executeFilteringAndSorting() {
+        this.currentPage = 1;
+        let filtered = this.applyFilters(this.allProducts);
+        const minPrice = parseFloat(document.getElementById('price-min')?.value) || 0;
+        const maxPrice = parseFloat(document.getElementById('price-max')?.value) || Infinity;
+        filtered = filtered.filter(p => {
+          const price = p.pret || 0;
+          return price >= minPrice && (maxPrice === Infinity || price <= maxPrice);
+        });
+        this.renderPage(this.applySort(filtered));
+        this.renderActiveTags();
+      },
 
       renderPage(products) {
         const totalPages = Math.ceil(products.length / this.itemsPerPage);
@@ -176,7 +185,7 @@ export default function Folii() {
         if (!DOM.activeTagsContainer) return;
         DOM.activeTagsContainer.innerHTML = '';
         const f = this.getActiveFilters();
-        const allActive = [...f.compat, ...f.material];
+        const allActive = [...f.compatibility, ...f.type];
         if (allActive.length === 0) return;
         const isMobile = window.innerWidth <= 768;
         const maxVisible = isMobile ? 2 : allActive.length;
@@ -239,7 +248,48 @@ export default function Folii() {
         });
       },
 
-      bindFilters() { DOM.filterCheckboxes.forEach(cb => { cb.addEventListener('change', () => this.executeFilteringAndSorting()); }); },
+      bindFilters() {
+        const self = this;
+        DOM.filterCheckboxes.forEach(cb => { cb.addEventListener('change', () => self.executeFilteringAndSorting()); });
+        document.getElementById('price-apply-btn')?.addEventListener('click', () => self.executeFilteringAndSorting());
+        document.querySelectorAll('.price-input').forEach(input => {
+          input.addEventListener('keydown', (e) => { if (e.key === 'Enter') self.executeFilteringAndSorting(); });
+        });
+
+        // Price slider
+        const rangeMin = document.getElementById('price-range-min');
+        const rangeMax = document.getElementById('price-range-max');
+        const inputMin = document.getElementById('price-min');
+        const inputMax = document.getElementById('price-max');
+        const fill = document.getElementById('price-slider-fill');
+        const maxVal = 10000;
+
+        function updateSliderFill() {
+          const min = parseInt(rangeMin?.value || 0);
+          const max = parseInt(rangeMax?.value || maxVal);
+          const leftPct = (min / maxVal) * 100;
+          const rightPct = (max / maxVal) * 100;
+          if (fill) { fill.style.left = leftPct + '%'; fill.style.width = (rightPct - leftPct) + '%'; }
+        }
+
+        function syncSliderToInputs() {
+          if (inputMin) inputMin.value = rangeMin?.value || '';
+          if (inputMax) inputMax.value = rangeMax?.value === String(maxVal) ? '' : rangeMax?.value;
+          updateSliderFill();
+        }
+
+        rangeMin?.addEventListener('input', () => {
+          if (parseInt(rangeMin.value) > parseInt(rangeMax.value) - 100) rangeMin.value = parseInt(rangeMax.value) - 100;
+          syncSliderToInputs();
+        });
+        rangeMax?.addEventListener('input', () => {
+          if (parseInt(rangeMax.value) < parseInt(rangeMin.value) + 100) rangeMax.value = parseInt(rangeMin.value) + 100;
+          syncSliderToInputs();
+        });
+        rangeMin?.addEventListener('change', () => { self.executeFilteringAndSorting(); });
+        rangeMax?.addEventListener('change', () => { self.executeFilteringAndSorting(); });
+        updateSliderFill();
+      },
 
       bindSort() {
         const trigger = document.querySelector('.custom-sort-trigger'), options = document.querySelectorAll('.custom-option'), dropdown = document.getElementById('custom-sort');
@@ -248,7 +298,17 @@ export default function Folii() {
         options.forEach(opt => { opt.addEventListener('click', () => { options.forEach(o => o.classList.remove('selected')); opt.classList.add('selected'); this.currentSort = opt.getAttribute('data-value'); const st = document.querySelector('.sort-selected-text'); if (st) st.textContent = opt.textContent; dropdown?.classList.remove('is-open'); this.executeFilteringAndSorting(); }); });
       },
 
-      clearAllActiveFilters() { DOM.filterCheckboxes.forEach(cb => { cb.checked = false; }); if (DOM.pageTitle) DOM.pageTitle.textContent = 'Folii Protecție Ecran'; this.executeFilteringAndSorting(); }
+      clearAllActiveFilters() {
+        DOM.filterCheckboxes.forEach(cb => { cb.checked = false; });
+        if (DOM.pageTitle) DOM.pageTitle.textContent = 'Folii Protecție Ecran';
+        const rMin = document.getElementById('price-range-min');
+        const rMax = document.getElementById('price-range-max');
+        if (rMin) rMin.value = 0;
+        if (rMax) rMax.value = 10000;
+        const fill = document.getElementById('price-slider-fill');
+        if (fill) { fill.style.left = '0%'; fill.style.width = '100%'; }
+        this.executeFilteringAndSorting();
+      }
     };
 
     GlobalCartSync.init(); SidebarControl.init(); ProductEngine.init();
@@ -266,36 +326,59 @@ export default function Folii() {
       <section className="shop-section-ultra">
         <div className="section-container shop-layout-ultra">
           <aside className="shop-sidebar-ultra">
-            <div className="filter-header-mobile"><h3>Filtre</h3><button className="close-filters-btn"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg></button></div>
+            <div className="filter-header-mobile">
+              <h3>Filtre</h3>
+              <button className="close-filters-btn"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg></button>
+            </div>
             <div className="filter-scroll-area">
               <div className="filter-widget-ultra">
+                <h4 className="widget-title-ultra">Preț</h4>
+                <div className="price-range-filter">
+                  <div className="price-slider-wrap">
+                    <div className="price-slider-track" id="price-slider-track">
+                      <div className="price-slider-fill" id="price-slider-fill"></div>
+                    </div>
+                    <input type="range" className="price-range-thumb" id="price-range-min" min="0" max="10000" defaultValue="0" step="50" />
+                    <input type="range" className="price-range-thumb" id="price-range-max" min="0" max="10000" defaultValue="10000" step="50" />
+                  </div>
+                  <div className="price-inputs">
+                    <div className="price-input-wrap"><span className="price-currency">Lei</span><input type="number" className="price-input" id="price-min" placeholder="0" min="0" /></div>
+                    <span className="price-separator">—</span>
+                    <div className="price-input-wrap"><span className="price-currency">Lei</span><input type="number" className="price-input" id="price-max" placeholder="10000" min="0" /></div>
+                  </div>
+                  <button className="price-apply-btn" id="price-apply-btn">Aplică</button>
+                </div>
+              </div>
+              <hr className="filter-divider" />
+              <div className="filter-widget-ultra">
                 <h4 className="widget-title-ultra">Compatibilitate</h4>
-                <div className="filter-options-ultra" data-filter-group="compat">
-                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="apple" /><span className="box-ultra"></span> <span className="lbl-text">Pentru Apple</span></label>
-                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="samsung" /><span className="box-ultra"></span> <span className="lbl-text">Pentru Samsung</span></label>
-                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="google" /><span className="box-ultra"></span> <span className="lbl-text">Pentru Google</span></label>
+                <div className="filter-options-ultra" data-filter-group="compatibility">
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="apple" /><span className="box-ultra"></span> <span className="lbl-text">iPhone</span></label>
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="samsung" /><span className="box-ultra"></span> <span className="lbl-text">Samsung</span></label>
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="google" /><span className="box-ultra"></span> <span className="lbl-text">Google Pixel</span></label>
                 </div>
               </div>
               <hr className="filter-divider" />
               <div className="filter-widget-ultra">
                 <h4 className="widget-title-ultra">Tip Folie</h4>
-                <div className="filter-options-ultra" data-filter-group="material">
-                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="sticla" /><span className="box-ultra"></span> <span className="lbl-text">Sticlă Securizată</span></label>
-                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="privacy" /><span className="box-ultra"></span> <span className="lbl-text">Privacy (Anti-spionaj)</span></label>
-                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="hidrogel" /><span className="box-ultra"></span> <span className="lbl-text">Silicon / Hidrogel</span></label>
-                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="ceramica" /><span className="box-ultra"></span> <span className="lbl-text">Ceramică / Mată</span></label>
+                <div className="filter-options-ultra" data-filter-group="type">
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="sticla" /><span className="box-ultra"></span> <span className="lbl-text">Sticlă securizată</span></label>
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="privacy" /><span className="box-ultra"></span> <span className="lbl-text">Privacy</span></label>
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="hidrogel" /><span className="box-ultra"></span> <span className="lbl-text">Hidrogel</span></label>
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="ceramica" /><span className="box-ultra"></span> <span className="lbl-text">Ceramică</span></label>
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="mata" /><span className="box-ultra"></span> <span className="lbl-text">Mată (Anti-glare)</span></label>
                 </div>
               </div>
             </div>
           </aside>
           <div className="shop-main-ultra">
             <div className="shop-toolbar-ultra">
-              <div className="toolbar-left-ultra">
-                <button className="mobile-filter-trigger-ultra"><svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none"><line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" /><line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" /><line x1="20" y1="21" x2="20" y2="16" /><line x1="20" y1="12" x2="20" y2="3" /></svg><span>Filtre</span></button>
-                <div className="active-filters-tags"></div>
-              </div>
               <div className="toolbar-right-ultra">
-                <span className="results-counter-ultra"><strong></strong> modele</span>
+                <span className="results-counter-ultra"><strong></strong> produse</span>
+                <button className="mobile-filter-trigger-ultra">
+                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none"><line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" /><line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" /><line x1="20" y1="21" x2="20" y2="16" /><line x1="20" y1="12" x2="20" y2="3" /></svg>
+                  <span>Filtre</span>
+                </button>
                 <div className="sort-wrapper-ultra">
                   <div className="custom-sort-dropdown" id="custom-sort">
                     <div className="custom-sort-trigger"><span className="sort-selected-text">Cele mai populare</span><svg viewBox="0 0 24 24" width="16" height="16" stroke="currentColor" strokeWidth="2" fill="none"><polyline points="6 9 12 15 18 9" /></svg></div>

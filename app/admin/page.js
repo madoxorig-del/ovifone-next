@@ -432,6 +432,7 @@ export default function Admin() {
       if (document.getElementById('p-compat')) document.getElementById('p-compat').value = p.compatibilitate || '';
       if (document.getElementById('p-material')) document.getElementById('p-material').value = p.material || '';
       if (document.getElementById('p-caracteristici-prot')) document.getElementById('p-caracteristici-prot').value = p.caracteristici || '';
+      if (document.getElementById('p-tip-accesoriu')) document.getElementById('p-tip-accesoriu').value = p.tip_accesoriu || '';
       if (document.getElementById('p-conector')) document.getElementById('p-conector').value = p.conector || '';
       if (document.getElementById('p-caracteristici-acc')) document.getElementById('p-caracteristici-acc').value = p.caracteristici || '';
       if (document.getElementById('p-desc')) document.getElementById('p-desc').value = p.descriere || '';
@@ -464,6 +465,42 @@ export default function Admin() {
       const us = document.getElementById('upload-status'); if (us) us.textContent = '';
       actualizeazaCampuri();
     }
+
+    // ── TEMPLATE DESCRIERI ──
+    const descTemplates = {
+      'iPhone 17 ProMax': 'iPhone 17 Pro Max — cel mai avansat iPhone creat vreodată. Ecran Super Retina XDR de 6.9", chip A19 Pro cu performanțe de top, cameră triplă de 48MP cu zoom optic 5x, și construcție din titan. Autonomie de o zi întreagă, USB-C și Dynamic Island.',
+      'iPhone 17 Pro': 'iPhone 17 Pro — performanță profesională. Ecran Super Retina XDR de 6.3", chip A19 Pro, cameră triplă de 48MP și design din titan. USB-C, Dynamic Island și autonomie excelentă.',
+      'iPhone 17 Air': 'iPhone 17 Air — cel mai subțire iPhone. Design ultraslim, ecran Super Retina XDR, chip A19 și cameră de 48MP. Perfect pentru cei care apreciază eleganța și portabilitatea.',
+      'iPhone 17': 'iPhone 17 — smart și accesibil. Ecran Super Retina XDR de 6.1", chip A19 puternic, cameră duală de 48MP și Dynamic Island. USB-C și autonomie de o zi.',
+      'iPhone 16 ProMax': 'iPhone 16 Pro Max — putere maximă. Ecran Super Retina XDR de 6.9", chip A18 Pro, cameră de 48MP cu zoom 5x tetraprism și baterie de lungă durată. Titan și USB-C.',
+      'iPhone 16 Pro': 'iPhone 16 Pro — pentru profesioniști. Ecran de 6.3", A18 Pro, cameră triplă 48MP și buton Camera Control. Design din titan cu USB-C.',
+      'iPhone 16': 'iPhone 16 — performanță la alt nivel. Ecran de 6.1", chip A18, cameră de 48MP, buton Action și Camera Control. USB-C, Dynamic Island.',
+      'iPhone 15 ProMax': 'iPhone 15 Pro Max — vârf de gamă Apple. Ecran de 6.7", chip A17 Pro, cameră de 48MP cu zoom 5x tetraprism, design din titan și USB-C.',
+      'iPhone 15 Pro': 'iPhone 15 Pro — performanță premium. Ecran de 6.1", A17 Pro, cameră triplă 48MP, buton Action, titan și USB-C.',
+      'iPhone 15': 'iPhone 15 — experiența Apple completă. Ecran Super Retina XDR 6.1", chip A16 Bionic, cameră de 48MP, Dynamic Island și USB-C.',
+      'iPhone 14 ProMax': 'iPhone 14 Pro Max — ecran Always-On și Dynamic Island. Display de 6.7", chip A16 Bionic, cameră de 48MP și autonomie excepțională.',
+      'iPhone 14 Pro': 'iPhone 14 Pro — inovație Pro. Ecran Always-On de 6.1", A16 Bionic, cameră de 48MP și Dynamic Island.',
+      'iPhone 14': 'iPhone 14 — fiabil și performant. Ecran de 6.1", chip A15 Bionic, cameră duală de 12MP, Crash Detection și autonomie excelentă.',
+      'iPhone 13 ProMax': 'iPhone 13 Pro Max — baterie uriașă, cameră cinematografică. Ecran ProMotion 120Hz de 6.7", A15 Bionic, zoom optic 3x.',
+      'iPhone 13 Pro': 'iPhone 13 Pro — ProMotion 120Hz. Ecran de 6.1", A15 Bionic, cameră triplă cu macro și Cinematic Mode.',
+      'iPhone 13': 'iPhone 13 — performanță la superlativ. Ecran de 6.1", A15 Bionic, cameră duală cu Cinematic Mode și autonomie îmbunătățită.',
+      'Samsung S25 Ultra': 'Samsung Galaxy S25 Ultra — cel mai puternic Galaxy. Ecran Dynamic AMOLED 2X de 6.9" QHD+, Snapdragon 8 Elite, cameră de 200MP, S Pen integrat, Galaxy AI și baterie de 5000mAh.',
+      'Samsung S25+': 'Samsung Galaxy S25+ — performanță premium. Ecran de 6.7" Dynamic AMOLED 2X, Snapdragon 8 Elite, cameră triplă 50MP, Galaxy AI și baterie de 4900mAh.',
+      'Samsung S25': 'Samsung Galaxy S25 — compact și puternic. Ecran de 6.2" Dynamic AMOLED 2X, Snapdragon 8 Elite, cameră triplă 50MP și Galaxy AI.',
+      'Samsung S24 Ultra': 'Samsung Galaxy S24 Ultra — inteligență la superlativ. Ecran de 6.8" QHD+, Snapdragon 8 Gen 3, cameră 200MP, S Pen, Galaxy AI și cadru din titan.',
+      'Samsung S24': 'Samsung Galaxy S24 — smart și elegant. Ecran de 6.2" Dynamic AMOLED 2X, Exynos 2400, cameră triplă 50MP și Galaxy AI.',
+      'Samsung S25 FE': 'Samsung Galaxy S25 FE — tot ce contează. Ecran Dynamic AMOLED 2X, procesor puternic, cameră triplă și Galaxy AI la un preț accesibil.'
+    };
+    document.getElementById('btn-apply-template')?.addEventListener('click', () => {
+      const sel = document.getElementById('p-template-model');
+      const desc = document.getElementById('p-desc');
+      if (sel && desc && sel.value && descTemplates[sel.value]) {
+        desc.value = descTemplates[sel.value];
+        desc.style.transition = 'box-shadow 0.3s ease';
+        desc.style.boxShadow = '0 0 0 2px var(--accent)';
+        setTimeout(() => { desc.style.boxShadow = ''; }, 1500);
+      }
+    });
 
     document.getElementById('btn-upload')?.addEventListener('click', async () => {
       const statusDiv = document.getElementById('upload-status');
@@ -509,7 +546,7 @@ export default function Admin() {
         if (cat === 'telefoane' || cat === 'telefoane altele' || cat === 'tablete') { productData.stocare = document.getElementById('p-storage')?.value || null; productData.baterie = document.getElementById('p-baterie')?.value || null; productData.stare = document.getElementById('p-stare')?.value || null; }
         else if (cat === 'casti') { productData.conectivitate = document.getElementById('p-conectivitate')?.value || null; }
         else if (cat === 'huse' || cat === 'folii') { productData.compatibilitate = document.getElementById('p-compat')?.value || null; productData.material = document.getElementById('p-material')?.value || null; productData.caracteristici = document.getElementById('p-caracteristici-prot')?.value || null; }
-        else if (cat === 'accesorii') { productData.conector = document.getElementById('p-conector')?.value || null; productData.caracteristici = document.getElementById('p-caracteristici-acc')?.value || null; }
+        else if (cat === 'accesorii') { productData.tip_accesoriu = document.getElementById('p-tip-accesoriu')?.value || null; productData.conector = document.getElementById('p-conector')?.value || null; productData.caracteristici = document.getElementById('p-caracteristici-acc')?.value || null; }
         if (editId) {
           if (galerieUrls.length === 0) delete productData.galerie;
           const { error } = await supabase.from('produse').update(productData).eq('id', editId);
@@ -1161,12 +1198,48 @@ export default function Admin() {
                 <div className="section-box">
                   <div className="section-box-title">Detalii Accesorii</div>
                   <div className="form-grid">
+                    <div className="field"><label>Tip Accesoriu</label><select id="p-tip-accesoriu"><option value="">— Selectează —</option><option value="adaptor">Adaptor</option><option value="incarcator">Încărcător</option><option value="cablu">Cablu</option><option value="suport">Suport</option><option value="powerbank">Baterie externă</option><option value="card-memorie">Card Memorie</option></select></div>
                     <div className="field"><label>Interfață / Conector</label><input type="text" id="p-conector" placeholder="Ex: USB-C, Lightning" /></div>
                     <div className="field"><label>Caracteristici speciale</label><input type="text" id="p-caracteristici-acc" placeholder="Ex: Fast Charge" /></div>
                   </div>
                 </div>
               </div>
-              <div className="field"><label>Descriere (Scurtă)</label><textarea id="p-desc" rows={3}></textarea></div>
+              <div className="field">
+                <label>Descriere (Scurtă)</label>
+                <div style={{ display: 'flex', gap: '8px', marginBottom: '8px' }}>
+                  <select id="p-template-model" style={{ flex: 1, padding: '8px 12px', borderRadius: '10px', border: '1px solid var(--border)', background: 'var(--card)', color: 'var(--txt)', fontSize: '13px' }}>
+                    <option value="">— Generează descriere din template —</option>
+                    <optgroup label="iPhone">
+                      <option value="iPhone 17 ProMax">iPhone 17 Pro Max</option>
+                      <option value="iPhone 17 Pro">iPhone 17 Pro</option>
+                      <option value="iPhone 17 Air">iPhone 17 Air</option>
+                      <option value="iPhone 17">iPhone 17</option>
+                      <option value="iPhone 16 ProMax">iPhone 16 Pro Max</option>
+                      <option value="iPhone 16 Pro">iPhone 16 Pro</option>
+                      <option value="iPhone 16">iPhone 16</option>
+                      <option value="iPhone 15 ProMax">iPhone 15 Pro Max</option>
+                      <option value="iPhone 15 Pro">iPhone 15 Pro</option>
+                      <option value="iPhone 15">iPhone 15</option>
+                      <option value="iPhone 14 ProMax">iPhone 14 Pro Max</option>
+                      <option value="iPhone 14 Pro">iPhone 14 Pro</option>
+                      <option value="iPhone 14">iPhone 14</option>
+                      <option value="iPhone 13 ProMax">iPhone 13 Pro Max</option>
+                      <option value="iPhone 13 Pro">iPhone 13 Pro</option>
+                      <option value="iPhone 13">iPhone 13</option>
+                    </optgroup>
+                    <optgroup label="Samsung">
+                      <option value="Samsung S25 Ultra">Samsung Galaxy S25 Ultra</option>
+                      <option value="Samsung S25+">Samsung Galaxy S25+</option>
+                      <option value="Samsung S25">Samsung Galaxy S25</option>
+                      <option value="Samsung S24 Ultra">Samsung Galaxy S24 Ultra</option>
+                      <option value="Samsung S24">Samsung Galaxy S24</option>
+                      <option value="Samsung S25 FE">Samsung Galaxy S25 FE</option>
+                    </optgroup>
+                  </select>
+                  <button type="button" id="btn-apply-template" style={{ padding: '8px 16px', borderRadius: '10px', border: 'none', background: 'var(--accent)', color: '#fff', fontWeight: 700, fontSize: '13px', cursor: 'pointer', whiteSpace: 'nowrap' }}>Aplică</button>
+                </div>
+                <textarea id="p-desc" rows={3}></textarea>
+              </div>
               <div className="field"><label>Specificații (HTML Tabel)</label><textarea id="p-specs" rows={3}></textarea></div>
               <div className="form-grid">
                 <div className="field">

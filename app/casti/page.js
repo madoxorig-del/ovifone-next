@@ -80,6 +80,7 @@ export default function Casti() {
         await this.fetchProducts();
         this.bindFilters();
         this.bindSort();
+        this.bindSearch();
         DOM.resetBtn?.addEventListener('click', () => this.clearAllActiveFilters());
       },
 
@@ -154,7 +155,7 @@ export default function Casti() {
       },
 
       getActiveFilters() {
-        const filters = { brand: [], condition: [], connectivity: [] };
+        const filters = { brand: [], condition: [], connectivity: [], type: [] };
         DOM.filterCheckboxes.forEach(cb => {
           if (cb.checked) {
             const group = cb.closest('[data-filter-group]')?.getAttribute('data-filter-group');
@@ -168,11 +169,13 @@ export default function Casti() {
         const f = this.getActiveFilters();
         return products.filter(p => {
           const brand = (p.brand || '').toLowerCase();
-          const condition = p.stare || 'SH';
-          const conn = p.conectivitate || 'Wireless';
+          const condition = (p.stare || 'SH').toLowerCase();
+          const conn = (p.conectivitate || 'Wireless').toLowerCase();
+          const tip = (p.tip || '').toLowerCase();
           if (f.brand.length && !f.brand.includes(brand)) return false;
           if (f.condition.length && !f.condition.includes(condition)) return false;
           if (f.connectivity.length && !f.connectivity.includes(conn)) return false;
+          if (f.type.length && !f.type.includes(tip)) return false;
           return true;
         });
       },
@@ -187,7 +190,13 @@ export default function Casti() {
 
       executeFilteringAndSorting() {
         this.currentPage = 1;
-        const filtered = this.applyFilters(this.allProducts);
+        let filtered = this.applyFilters(this.allProducts);
+        const minPrice = parseFloat(document.getElementById('price-min')?.value) || 0;
+        const maxPrice = parseFloat(document.getElementById('price-max')?.value) || Infinity;
+        filtered = filtered.filter(p => {
+          const price = p.pret || 0;
+          return price >= minPrice && (maxPrice === Infinity || price <= maxPrice);
+        });
         const sorted = this.applySort(filtered);
         this.renderPage(sorted);
         this.renderActiveTags();
@@ -228,7 +237,7 @@ export default function Casti() {
         if (!DOM.activeTagsContainer) return;
         DOM.activeTagsContainer.innerHTML = '';
         const f = this.getActiveFilters();
-        const allActive = [...f.brand, ...f.condition, ...f.connectivity];
+        const allActive = [...f.brand, ...f.condition, ...f.connectivity, ...f.type];
         if (allActive.length === 0) return;
 
         const isMobile = window.innerWidth <= 768;
@@ -332,7 +341,46 @@ export default function Casti() {
       },
 
       bindFilters() {
+        const self = this;
         DOM.filterCheckboxes.forEach(cb => { cb.addEventListener('change', () => this.executeFilteringAndSorting()); });
+        document.getElementById('price-apply-btn')?.addEventListener('click', () => this.executeFilteringAndSorting());
+        document.querySelectorAll('.price-input').forEach(input => {
+          input.addEventListener('keydown', (e) => { if (e.key === 'Enter') this.executeFilteringAndSorting(); });
+        });
+
+        // Price slider
+        const rangeMin = document.getElementById('price-range-min');
+        const rangeMax = document.getElementById('price-range-max');
+        const inputMin = document.getElementById('price-min');
+        const inputMax = document.getElementById('price-max');
+        const fill = document.getElementById('price-slider-fill');
+        const maxVal = 10000;
+
+        function updateSliderFill() {
+          const min = parseInt(rangeMin?.value || 0);
+          const max = parseInt(rangeMax?.value || maxVal);
+          const leftPct = (min / maxVal) * 100;
+          const rightPct = (max / maxVal) * 100;
+          if (fill) { fill.style.left = leftPct + '%'; fill.style.width = (rightPct - leftPct) + '%'; }
+        }
+
+        function syncSliderToInputs() {
+          if (inputMin) inputMin.value = rangeMin?.value || '';
+          if (inputMax) inputMax.value = rangeMax?.value === String(maxVal) ? '' : rangeMax?.value;
+          updateSliderFill();
+        }
+
+        rangeMin?.addEventListener('input', () => {
+          if (parseInt(rangeMin.value) > parseInt(rangeMax.value) - 100) rangeMin.value = parseInt(rangeMax.value) - 100;
+          syncSliderToInputs();
+        });
+        rangeMax?.addEventListener('input', () => {
+          if (parseInt(rangeMax.value) < parseInt(rangeMin.value) + 100) rangeMax.value = parseInt(rangeMin.value) + 100;
+          syncSliderToInputs();
+        });
+        rangeMin?.addEventListener('change', () => self.executeFilteringAndSorting());
+        rangeMax?.addEventListener('change', () => self.executeFilteringAndSorting());
+        updateSliderFill();
       },
 
       bindSort() {
@@ -353,8 +401,35 @@ export default function Casti() {
         });
       },
 
+      bindSearch() {
+        const params = new URLSearchParams(window.location.search);
+        const connParam = params.get('conectivitate');
+        if (connParam) {
+          const connGroup = document.querySelector('[data-filter-group="connectivity"]');
+          if (connGroup) {
+            const cb = connGroup.querySelector(`input[value="${connParam.toLowerCase()}"]`);
+            if (cb) {
+              cb.checked = true;
+              const connNames = { 'wireless': 'Wireless', 'cu fir': 'Cu fir' };
+              if (DOM.pageTitle) DOM.pageTitle.textContent = `Căști ${connNames[connParam.toLowerCase()] || connParam}`;
+              this.executeFilteringAndSorting();
+            }
+          }
+        }
+      },
+
       clearAllActiveFilters() {
         DOM.filterCheckboxes.forEach(cb => { cb.checked = false; });
+        const priceMin = document.getElementById('price-min');
+        const priceMax = document.getElementById('price-max');
+        if (priceMin) priceMin.value = '';
+        if (priceMax) priceMax.value = '';
+        const rMin = document.getElementById('price-range-min');
+        const rMax = document.getElementById('price-range-max');
+        if (rMin) rMin.value = 0;
+        if (rMax) rMax.value = 10000;
+        const fill = document.getElementById('price-slider-fill');
+        if (fill) { fill.style.left = '0%'; fill.style.width = '100%'; }
         if (DOM.pageTitle) DOM.pageTitle.textContent = 'Căști';
         this.executeFilteringAndSorting();
       }
@@ -382,25 +457,58 @@ export default function Casti() {
           <aside className="shop-sidebar-ultra">
             <div className="filter-header-mobile">
               <h3>Filtre</h3>
-              <button className="close-filters-btn">
-                <svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg>
-              </button>
+              <button className="close-filters-btn"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" /></svg></button>
             </div>
             <div className="filter-scroll-area">
               <div className="filter-widget-ultra">
+                <h4 className="widget-title-ultra">Preț</h4>
+                <div className="price-range-filter">
+                  <div className="price-slider-wrap">
+                    <div className="price-slider-track" id="price-slider-track">
+                      <div className="price-slider-fill" id="price-slider-fill"></div>
+                    </div>
+                    <input type="range" className="price-range-thumb" id="price-range-min" min="0" max="10000" defaultValue="0" step="50" />
+                    <input type="range" className="price-range-thumb" id="price-range-max" min="0" max="10000" defaultValue="10000" step="50" />
+                  </div>
+                  <div className="price-inputs">
+                    <div className="price-input-wrap">
+                      <span className="price-currency">Lei</span>
+                      <input type="number" className="price-input" id="price-min" placeholder="0" min="0" />
+                    </div>
+                    <span className="price-separator">—</span>
+                    <div className="price-input-wrap">
+                      <span className="price-currency">Lei</span>
+                      <input type="number" className="price-input" id="price-max" placeholder="10000" min="0" />
+                    </div>
+                  </div>
+                  <button className="price-apply-btn" id="price-apply-btn">Aplică</button>
+                </div>
+              </div>
+              <hr className="filter-divider" />
+              <div className="filter-widget-ultra">
                 <h4 className="widget-title-ultra">Brand</h4>
                 <div className="filter-options-ultra" data-filter-group="brand">
-                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="apple" /><span className="box-ultra"></span> <span className="lbl-text">Apple (AirPods)</span></label>
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="apple" /><span className="box-ultra"></span> <span className="lbl-text">Apple</span></label>
                   <label className="cyber-checkbox-ultra"><input type="checkbox" value="samsung" /><span className="box-ultra"></span> <span className="lbl-text">Samsung</span></label>
                   <label className="cyber-checkbox-ultra"><input type="checkbox" value="sony" /><span className="box-ultra"></span> <span className="lbl-text">Sony</span></label>
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="jbl" /><span className="box-ultra"></span> <span className="lbl-text">JBL</span></label>
                 </div>
               </div>
               <hr className="filter-divider" />
               <div className="filter-widget-ultra">
                 <h4 className="widget-title-ultra">Conectivitate</h4>
                 <div className="filter-options-ultra" data-filter-group="connectivity">
-                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="Wireless" /><span className="box-ultra"></span> <span className="lbl-text">Wireless (Fără fir)</span></label>
-                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="Cu fir" /><span className="box-ultra"></span> <span className="lbl-text">Cu fir (Cablu)</span></label>
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="wireless" /><span className="box-ultra"></span> <span className="lbl-text">Wireless (Bluetooth)</span></label>
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="cu fir" /><span className="box-ultra"></span> <span className="lbl-text">Cu fir</span></label>
+                </div>
+              </div>
+              <hr className="filter-divider" />
+              <div className="filter-widget-ultra">
+                <h4 className="widget-title-ultra">Tip</h4>
+                <div className="filter-options-ultra" data-filter-group="type">
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="in-ear" /><span className="box-ultra"></span> <span className="lbl-text">In-Ear</span></label>
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="over-ear" /><span className="box-ultra"></span> <span className="lbl-text">Over-Ear</span></label>
+                  <label className="cyber-checkbox-ultra"><input type="checkbox" value="on-ear" /><span className="box-ultra"></span> <span className="lbl-text">On-Ear</span></label>
                 </div>
               </div>
             </div>
@@ -408,19 +516,12 @@ export default function Casti() {
 
           <div className="shop-main-ultra">
             <div className="shop-toolbar-ultra">
-              <div className="toolbar-left-ultra">
-                <button className="mobile-filter-trigger-ultra">
-                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none">
-                    <line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" />
-                    <line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" />
-                    <line x1="20" y1="21" x2="20" y2="16" /><line x1="20" y1="12" x2="20" y2="3" />
-                  </svg>
-                  <span>Filtre</span>
-                </button>
-                <div className="active-filters-tags"></div>
-              </div>
               <div className="toolbar-right-ultra">
                 <span className="results-counter-ultra"><strong></strong> produse</span>
+                <button className="mobile-filter-trigger-ultra">
+                  <svg viewBox="0 0 24 24" width="18" height="18" stroke="currentColor" strokeWidth="2" fill="none"><line x1="4" y1="21" x2="4" y2="14" /><line x1="4" y1="10" x2="4" y2="3" /><line x1="12" y1="21" x2="12" y2="12" /><line x1="12" y1="8" x2="12" y2="3" /><line x1="20" y1="21" x2="20" y2="16" /><line x1="20" y1="12" x2="20" y2="3" /></svg>
+                  <span>Filtre</span>
+                </button>
                 <div className="sort-wrapper-ultra">
                   <div className="custom-sort-dropdown" id="custom-sort">
                     <div className="custom-sort-trigger">

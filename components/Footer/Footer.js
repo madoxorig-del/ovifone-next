@@ -15,8 +15,8 @@ export default function Footer() {
 
           {/* Coloana Brand */}
           <div className="footer-column brand-column">
-            <img src="/img/logo2.PNG" alt="Ovifone Logo" style={{ height: '110px', width: '170px' }} />
-            <p className="brand-desc">
+            <img src="/img/logo2.PNG" alt="Ovifone Logo" style={{ height: '75px', width: '120px', objectFit: 'contain' }} />
+            <p className="brand-desc" style={{ fontSize: '17px', fontWeight: 700, lineHeight: 1.5, color: '#d1d5db' }}>
               Vindem, cumpărăm și facem buy back pentru iPhone-uri și nu numai!<br />
               Oferte speciale te așteaptă!
             </p>

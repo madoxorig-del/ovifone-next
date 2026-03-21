@@ -26,7 +26,7 @@ export default function Home() {
     };
     window.addEventListener('scroll', onScroll, { passive: true });
 
-    // CAROUSEL
+    // CAROUSEL - Infinite continuous
     const track = document.getElementById('phones-track');
     const btnPrev = document.querySelector('.prev-btn');
     const btnNext = document.querySelector('.next-btn');
@@ -43,7 +43,7 @@ export default function Home() {
         if (error) throw error;
 
         if (telefoane && telefoane.length > 0) {
-          track.innerHTML = telefoane.map((tel, index) => {
+          const buildCard = (tel, index) => {
             let badgeHtml = '';
             if (tel.pret_vechi && tel.pret_vechi > tel.pret) {
               const reducere = Math.round(tel.pret_vechi - tel.pret).toLocaleString('ro-RO');
@@ -67,30 +67,95 @@ export default function Home() {
                   </div>
                 </a>
               </div>`;
-          }).join('');
+          };
+
+          // Build original + clone cards for infinite loop
+          const originalHtml = telefoane.map((tel, i) => buildCard(tel, i)).join('');
+          track.innerHTML = originalHtml + originalHtml;
+
+          // Wait for layout before measuring
+          requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+          const allCards = track.querySelectorAll('.premium-card');
+          const cardStep = allCards.length > 1
+            ? Math.round(allCards[1].getBoundingClientRect().left - allCards[0].getBoundingClientRect().left)
+            : 304;
+          const totalOriginal = telefoane.length * cardStep;
+          let pos = 0;
+          let autoTimer;
+
+          const setPos = (x, smooth) => {
+            pos = x;
+            track.style.transition = smooth ? 'transform 0.6s cubic-bezier(0.25, 0.1, 0.25, 1)' : 'none';
+            track.style.transform = `translateX(${-x}px)`;
+          };
+
+          // Snap to nearest card boundary
+          const snapPos = (x) => Math.round(x / cardStep) * cardStep;
+
+          track.addEventListener('transitionend', () => {
+            if (pos >= totalOriginal) {
+              setPos(pos - totalOriginal, false);
+            } else if (pos < 0) {
+              setPos(pos + totalOriginal, false);
+            }
+          });
+
+          const moveNext = () => {
+            setPos(snapPos(pos + cardStep), true);
+          };
+
+          const movePrev = () => {
+            if (pos <= 0) {
+              setPos(totalOriginal, false);
+              requestAnimationFrame(() => {
+                requestAnimationFrame(() => {
+                  setPos(totalOriginal - cardStep, true);
+                });
+              });
+            } else {
+              setPos(snapPos(pos - cardStep), true);
+            }
+          };
+
+          const startPlay = () => { autoTimer = setInterval(moveNext, 3000); };
+          const stopPlay = () => clearInterval(autoTimer);
+
+          if (btnNext) btnNext.addEventListener('click', () => { stopPlay(); moveNext(); startPlay(); });
+          if (btnPrev) btnPrev.addEventListener('click', () => { stopPlay(); movePrev(); startPlay(); });
+          track.addEventListener('mouseenter', stopPlay);
+          track.addEventListener('mouseleave', startPlay);
+
+          // Touch/swipe support for mobile
+          let touchStartX = 0;
+          let touchDiff = 0;
+          track.addEventListener('touchstart', (e) => {
+            stopPlay();
+            touchStartX = e.touches[0].clientX;
+            track.style.transition = 'none';
+          }, { passive: true });
+          track.addEventListener('touchmove', (e) => {
+            touchDiff = e.touches[0].clientX - touchStartX;
+            track.style.transform = `translateX(${-(pos - touchDiff)}px)`;
+          }, { passive: true });
+          track.addEventListener('touchend', () => {
+            if (Math.abs(touchDiff) > 50) {
+              if (touchDiff < 0) moveNext(); else movePrev();
+            } else {
+              setPos(pos, true);
+            }
+            touchDiff = 0;
+            startPlay();
+          });
+
+          startPlay();
+          }); // end rAF
+          }); // end rAF
         } else {
           track.innerHTML = `<p style="padding:20px;color:#86868b;text-align:center;width:100%;">Nu există telefoane în stoc momentan.</p>`;
         }
       } catch (err) {
         track.innerHTML = `<p style="padding:20px;color:red;">Eroare la încărcarea produselor.</p>`;
-      }
-
-      if (btnPrev && btnNext) {
-        let scrollAmount = 320;
-        let autoPlayTimer;
-        const moveNext = () => {
-          const maxScrollLeft = track.scrollWidth - track.clientWidth;
-          if (track.scrollLeft >= maxScrollLeft - 10) track.scrollTo({ left: 0, behavior: 'smooth' });
-          else track.scrollBy({ left: scrollAmount, behavior: 'smooth' });
-        };
-        const startPlay = () => { autoPlayTimer = setInterval(moveNext, 2500); };
-        const stopPlay = () => clearInterval(autoPlayTimer);
-
-        btnNext.addEventListener('click', () => { stopPlay(); moveNext(); startPlay(); });
-        btnPrev.addEventListener('click', () => { stopPlay(); track.scrollBy({ left: -scrollAmount, behavior: 'smooth' }); startPlay(); });
-        track.addEventListener('mouseenter', stopPlay);
-        track.addEventListener('mouseleave', startPlay);
-        startPlay();
       }
     };
 
@@ -254,15 +319,15 @@ export default function Home() {
             <span className="section-heading-line"></span>
           </div>
           <div className="bento-grid-3">
-            <a href="/cautare?search=Apple" className="bento-card bento-dark" data-reveal="true" data-delay="100">
+            <a href="/telefoane?brand=apple" className="bento-card bento-dark" data-reveal="true" data-delay="100">
               <div className="bento-content"><h3 className="bento-title">Apple</h3><span className="bento-link">Descoperă <span>→</span></span></div>
               <div className="bento-img-wrap right-bottom"><img src="/img/iphone3.webp" alt="Apple" loading="lazy" /></div>
             </a>
-            <a href="/cautare?search=Samsung" className="bento-card bento-light" data-reveal="true" data-delay="200">
+            <a href="/telefoane?brand=samsung" className="bento-card bento-light" data-reveal="true" data-delay="200">
               <div className="bento-content"><h3 className="bento-title">Samsung</h3><span className="bento-link">Descoperă <span>→</span></span></div>
               <div className="bento-img-wrap right-bottom"><img src="/img/telefon2.webp" alt="Samsung" loading="lazy" /></div>
             </a>
-            <a href="/cautare?search=Altele" className="bento-card bento-light" data-reveal="true" data-delay="300">
+            <a href="/telefoane?brand=google" className="bento-card bento-light" data-reveal="true" data-delay="300">
               <div className="bento-content"><h3 className="bento-title">Altele</h3><span className="bento-link">Descoperă <span>→</span></span></div>
               <div className="bento-img-wrap right-bottom"><img src="/img/pixel.PNG" alt="Altele" loading="lazy" /></div>
             </a>
@@ -278,23 +343,23 @@ export default function Home() {
             <span className="section-heading-line"></span>
           </div>
           <div className="bento-grid-5">
-            <a href="/cautare?search=Incarcatoare" className="bento-card bento-light span-3" data-reveal="true" data-delay="100">
+            <a href="/accesorii?tip=incarcator" className="bento-card bento-light span-3" data-reveal="true" data-delay="100">
               <div className="bento-content"><h3 className="bento-title">Încărcătoare</h3><span className="bento-link">Vezi oferte <span>→</span></span></div>
               <div className="bento-img-wrap right-center"><img src="/img/incarcator.webp" alt="Incarcatoare" loading="lazy" /></div>
             </a>
-            <a href="/cautare?search=Huse" className="bento-card bento-light span-3" data-reveal="true" data-delay="150">
+            <a href="/huse" className="bento-card bento-light span-3" data-reveal="true" data-delay="150">
               <div className="bento-content"><h3 className="bento-title">Huse</h3><span className="bento-link">Vezi oferte <span>→</span></span></div>
               <div className="bento-img-wrap right-center"><img src="https://cdn-ultra.esempla.com/storage/webp/dcc8157f-74e3-4d47-9618-27925fab04bb.webp" alt="Huse" loading="lazy" /></div>
             </a>
-            <a href="/cautare?search=Casti" className="bento-card bento-light span-2" data-reveal="true" data-delay="200">
+            <a href="/casti" className="bento-card bento-light span-2" data-reveal="true" data-delay="200">
               <div className="bento-content"><h3 className="bento-title">Căști</h3></div>
               <div className="bento-img-wrap center-bottom"><img src="https://istore.md/media/3467/conversions/1_1695736110293-preview-webp.webp" alt="Casti" loading="lazy" /></div>
             </a>
-            <a href="/cautare?search=Baterii" className="bento-card bento-light span-2" data-reveal="true" data-delay="250">
+            <a href="/accesorii?tip=powerbank" className="bento-card bento-light span-2" data-reveal="true" data-delay="250">
               <div className="bento-content"><h3 className="bento-title">Baterii externe</h3></div>
               <div className="bento-img-wrap center-bottom"><img src="https://cdn-ultra.esempla.com/storage/webp/fd655029-3e2e-4b0a-85f3-9f11894b92fb.webp" alt="Baterii" loading="lazy" /></div>
             </a>
-            <a href="/cautare?search=Suport" className="bento-card bento-light span-2" data-reveal="true" data-delay="300">
+            <a href="/accesorii?tip=suport" className="bento-card bento-light span-2" data-reveal="true" data-delay="300">
               <div className="bento-content"><h3 className="bento-title">Suporturi</h3></div>
               <div className="bento-img-wrap center-bottom"><img src="/img/suport.PNG" alt="Suport" loading="lazy" /></div>
             </a>
@@ -302,7 +367,6 @@ export default function Home() {
         </div>
       </section>
 
-      {/* ABOUT BANNERS */}
       {/* PROCES */}
       <section className="process-section" id="cine-suntem">
         <div className="process-inner">
@@ -313,44 +377,41 @@ export default function Home() {
           </div>
           <div className="process-steps">
             <div className="process-step" data-reveal="true" data-delay="100">
-              <div className="ps-number">01</div>
+              <div className="ps-number">Pas 01</div>
               <div className="ps-icon-wrap">
                 <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 01-2 2H5a2 2 0 01-2-2V5a2 2 0 012-2h11"/></svg>
               </div>
-              <div className="ps-content">
+              <div className="ps-step-text">
                 <h3 className="ps-title">Evaluare</h3>
                 <p className="ps-desc">Inspecție completă fizică și funcțională — baterie, ecran, cameră, senzori.</p>
               </div>
-              <div className="ps-connector"><svg viewBox="0 0 40 16" width="40" height="16" fill="none"><path d="M0 8 Q20 2 40 8" stroke="rgba(244,146,1,0.3)" strokeWidth="1.5" strokeDasharray="4 3"/></svg></div>
             </div>
             <div className="process-step" data-reveal="true" data-delay="200">
-              <div className="ps-number">02</div>
+              <div className="ps-number">Pas 02</div>
               <div className="ps-icon-wrap">
                 <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><circle cx="11" cy="11" r="8"/><path d="M21 21l-4.35-4.35"/><path d="M11 8v6M8 11h6"/></svg>
               </div>
-              <div className="ps-content">
+              <div className="ps-step-text">
                 <h3 className="ps-title">Verificare IMEI</h3>
                 <p className="ps-desc">Controlăm istoricul complet — nicio blocaj, nicio problemă ascunsă, origine confirmată.</p>
               </div>
-              <div className="ps-connector"><svg viewBox="0 0 40 16" width="40" height="16" fill="none"><path d="M0 8 Q20 2 40 8" stroke="rgba(244,146,1,0.3)" strokeWidth="1.5" strokeDasharray="4 3"/></svg></div>
             </div>
             <div className="process-step" data-reveal="true" data-delay="300">
-              <div className="ps-number">03</div>
+              <div className="ps-number">Pas 03</div>
               <div className="ps-icon-wrap">
                 <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/><path d="M9 12l2 2 4-4"/></svg>
               </div>
-              <div className="ps-content">
+              <div className="ps-step-text">
                 <h3 className="ps-title">Recondiționare</h3>
                 <p className="ps-desc">Curățat, resetat și configurat la setări fabrică. Arată și funcționează ca nou.</p>
               </div>
-              <div className="ps-connector"><svg viewBox="0 0 40 16" width="40" height="16" fill="none"><path d="M0 8 Q20 2 40 8" stroke="rgba(244,146,1,0.3)" strokeWidth="1.5" strokeDasharray="4 3"/></svg></div>
             </div>
-            <div className="process-step ps-last" data-reveal="true" data-delay="400">
-              <div className="ps-number">04</div>
+            <div className="process-step" data-reveal="true" data-delay="400">
+              <div className="ps-number">Pas 04</div>
               <div className="ps-icon-wrap ps-icon-accent">
                 <svg viewBox="0 0 24 24" width="28" height="28" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round"><rect x="1" y="3" width="15" height="13" rx="2"/><path d="M16 8h4l3 3v5h-7V8z"/><circle cx="5.5" cy="18.5" r="2.5"/><circle cx="18.5" cy="18.5" r="2.5"/></svg>
               </div>
-              <div className="ps-content">
+              <div className="ps-step-text">
                 <h3 className="ps-title">Livrare + Garanție</h3>
                 <p className="ps-desc">Primit rapid, cu 12 luni garanție inclusă și suport dedicat post-vânzare.</p>
               </div>
@@ -367,9 +428,10 @@ export default function Home() {
             <span className="section-heading-line"></span>
           </div>
           <div className="info-grid">
-            <div className="info-card" data-reveal="true" data-delay="100">
+            <div className="info-card info-featured" data-reveal="true" data-delay="100">
               <div className="info-media"><img src="https://images.unsplash.com/photo-1556656793-08538906a9f8?auto=format&fit=crop&q=80&w=600&h=400" alt="Provenienta" loading="lazy" /></div>
               <div className="info-content">
+                <span className="info-tag">Transparență</span>
                 <h3 className="info-title">Proveniența telefoanelor</h3>
                 <p className="info-desc">Toate iPhone-urile noastre provin exclusiv din surse verificate: buy-back propriu, furnizori autorizați și parteneri de încredere. Fiecare telefon este testat riguros și verificat IMEI.</p>
               </div>
@@ -377,6 +439,7 @@ export default function Home() {
             <div className="info-card" data-reveal="true" data-delay="200">
               <div className="info-media"><img src="https://www.digimap.co.id/cdn/shop/files/2026_DG_Digitrade_Landing-01.jpg?v=1761186242&width=600" alt="BuyBack" loading="lazy" /></div>
               <div className="info-content">
+                <span className="info-tag">BuyBack</span>
                 <h3 className="info-title">Cum funcționează sistemul de BuyBack</h3>
                 <p className="info-desc">Adu iPhone-ul vechi, îl evaluăm pe loc, iar tu plătești doar diferența pentru un model nou. Proces rapid, transparent și fără bătăi de cap.</p>
               </div>
@@ -384,6 +447,7 @@ export default function Home() {
             <div className="info-card" data-reveal="true" data-delay="300">
               <div className="info-media"><img src="https://wisetekstore.com/cdn/shop/articles/Refurbished_iPhone_c3f25026-472d-4934-8da7-50537e067d80.png?v=1753960873&width=600" alt="Telefon utilizat" loading="lazy" /></div>
               <div className="info-content">
+                <span className="info-tag">Economie</span>
                 <h3 className="info-title">De ce merită să alegi un telefon utilizat</h3>
                 <p className="info-desc">Primești un iPhone verificat, la un preț mult mai bun cu până la 50% reducere, fără compromisuri în performanță.</p>
               </div>
@@ -397,7 +461,7 @@ export default function Home() {
         <div className="cta-banner-inner">
           <div className="cta-banner-text" data-reveal="true">
             <span className="cta-tag">Consultanță gratuită</span>
-            <h2 className="cta-banner-title">Ai întrebări despre un telefon?</h2>
+            <h2 className="cta-banner-title">Ai vreo nelămurire sau nu înțelegi cum funcționează site-ul?</h2>
             <p className="cta-banner-sub">Suntem la un apel distanță. Îți explicăm tot, fără presiune.</p>
           </div>
           <div className="cta-banner-actions" data-reveal="true" data-delay="150">
@@ -405,7 +469,6 @@ export default function Home() {
               <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round" strokeLinejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07A19.5 19.5 0 0 1 4.11 11.91 19.79 19.79 0 0 1 1.04 3.24 2 2 0 0 1 3 1h3a2 2 0 0 1 2 1.72c.127.96.361 1.903.7 2.81a2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45c.907.339 1.85.573 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
               <span>+40 738 700 777</span>
             </a>
-            <a href="#best-sellers" className="cta-btn-browse">Vezi toate telefoanele →</a>
           </div>
         </div>
       </section>
