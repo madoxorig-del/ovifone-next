@@ -165,6 +165,7 @@
         background: rgba(18, 18, 20, 0.98) !important;
         border-bottom: 1px solid rgba(255,255,255,0.05) !important;
         margin: 0 !important; justify-content: center !important; z-index: 10001 !important;
+        box-sizing: border-box !important;
     }
 
     .nav-menu-wrapper {
@@ -253,6 +254,7 @@
         background: rgba(18, 18, 20, 0.98) !important;
         border-bottom: 1px solid rgba(255,255,255,0.05) !important;
         align-items: center !important;
+        justify-content: flex-start !important;
         padding: 0 14px !important;
         z-index: 2 !important;
         transition: opacity 0.25s ease, transform 0.3s ease !important;
@@ -260,13 +262,15 @@
         pointer-events: auto !important;
         flex-direction: row !important;
         gap: 10px !important;
+        box-sizing: border-box !important;
+        overflow: hidden !important;
     }
 
     #global-nav[data-show-toggle="1"] .trade-toggle-wrapper {
         flex: 0 0 auto !important;
         width: auto !important;
         max-width: none !important;
-        min-width: 170px !important;
+        min-width: 140px !important;
     }
 
     /* Mobile search inline */
@@ -277,13 +281,15 @@
     .mobile-search-inline {
         display: flex !important;
         align-items: center !important;
-        flex: 1 !important;
+        flex: 1 1 0px !important;
+        min-width: 0 !important;
         background: rgba(255,255,255,0.08) !important;
         border: 1.5px solid rgba(255,255,255,0.13) !important;
         border-radius: 14px !important;
         height: 42px !important;
         padding: 0 6px 0 14px !important;
         gap: 4px !important;
+        box-sizing: border-box !important;
     }
     .mobile-search-input {
         flex: 1 !important;
