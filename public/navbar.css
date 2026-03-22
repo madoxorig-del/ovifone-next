@@ -597,8 +597,8 @@
     }
     .chevron-toggle {
         display: flex !important;
-        width: 40px !important;
-        height: 40px !important;
+        width: 44px !important;
+        height: 44px !important;
         padding: 6px !important;
         border: none !important;
         outline: none !important;
@@ -608,6 +608,11 @@
         border-radius: 12px !important;
         margin-left: auto !important;
         pointer-events: auto !important;
+        touch-action: manipulation !important;
+        -webkit-tap-highlight-color: transparent !important;
+        cursor: pointer !important;
+        align-items: center !important;
+        justify-content: center !important;
     }
     .chevron-toggle:active {
         background: rgba(244,146,1,0.1) !important;
