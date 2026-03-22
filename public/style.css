@@ -3075,12 +3075,17 @@ html {
 .promo-btn-dark:hover { transform: translateY(-2px); box-shadow: 0 12px 32px rgba(244,146,1,0.4); }
 
 @media (max-width: 900px) {
-    .promo-banners-grid { grid-template-columns: 1fr; }
-    .promo-banner { padding: 36px 28px; }
-    .promo-banner-title { font-size: 24px; }
-    .promo-nerecond-badges { grid-template-columns: 1fr; }
-    .promo-banner-steps { flex-direction: column; align-items: stretch; }
-    .pbs-arrow { display: none; }
+    .promo-banners-section { padding: 40px 0; }
+    .promo-banners-grid { grid-template-columns: 1fr; gap: 16px; overflow: hidden; }
+    .promo-banner {
+        min-width: 560px;
+        zoom: 0.6;
+    }
+}
+@media (min-width: 500px) and (max-width: 900px) {
+    .promo-banner {
+        zoom: 0.78;
+    }
 }
 
 

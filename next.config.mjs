@@ -3,6 +3,16 @@ const nextConfig = {
   async headers() {
     return [
       {
+        // CSS, JS, and font files — no cache, always fresh after deploy
+        source: '/:path*(css|js|woff|woff2|ttf|otf)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
+          },
+        ],
+      },
+      {
         source: '/(.*)',
         headers: [
           {
