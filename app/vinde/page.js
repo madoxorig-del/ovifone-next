@@ -521,46 +521,55 @@ export default function Vinde() {
 
                 {/* Chestionar Utilizat */}
                 <div id="utilizat-questionnaire" style={{display:'none'}} className="vf-questionnaire mt-20">
-                  <h4 className="vq-title">Detalii suplimentare</h4>
 
-                  <div className="vq-item">
-                    <span className="vq-label">A avut contact cu lichide?</span>
-                    <div className="vq-options">
-                      <label className="vq-opt"><input type="radio" name="contactLichide" value="Da" /><span>Da</span></label>
-                      <label className="vq-opt"><input type="radio" name="contactLichide" value="Nu" /><span>Nu</span></label>
+                  <div className="vq-section">
+                    <h4 className="vq-title">Cum arată ECRANUL?</h4>
+                    <div className="vq-cards-col">
+                      <label className="vq-card"><input type="radio" name="stareEcran" value="Fără urme" /><span>Nu prezintă urme vizibile de folosire</span></label>
+                      <label className="vq-card"><input type="radio" name="stareEcran" value="Urme fine" /><span>Câteva urme fine</span></label>
+                      <label className="vq-card"><input type="radio" name="stareEcran" value="Urme vizibile" /><span>Urme vizibile (semi profunde)</span></label>
+                      <label className="vq-card"><input type="radio" name="stareEcran" value="Zgârieturi profunde" /><span>Zgârieturi foarte vizibile (profunde)</span></label>
+                      <label className="vq-card"><input type="radio" name="stareEcran" value="Ecran spart" /><span>Ecranul este spart sau crăpat</span></label>
                     </div>
                   </div>
 
-                  <div className="vq-item">
-                    <span className="vq-label">Funcționează perfect? (touchscreen, butoane, cameră, microfon)</span>
-                    <div className="vq-options">
-                      <label className="vq-opt"><input type="radio" name="functionarePerfecta" value="Da" /><span>Da</span></label>
-                      <label className="vq-opt"><input type="radio" name="functionarePerfecta" value="Nu" /><span>Nu</span></label>
+                  <div className="vq-section">
+                    <h4 className="vq-title">Cum arată SPATELE și LATERALELE?</h4>
+                    <div className="vq-cards-col">
+                      <label className="vq-card"><input type="radio" name="stareSpate" value="Fără urme" /><span>Nu prezintă urme vizibile de folosire</span></label>
+                      <label className="vq-card"><input type="radio" name="stareSpate" value="Urme fine" /><span>Câteva urme fine</span></label>
+                      <label className="vq-card"><input type="radio" name="stareSpate" value="Urme vizibile" /><span>Urme vizibile (semi profunde)</span></label>
+                      <label className="vq-card"><input type="radio" name="stareSpate" value="Zgârieturi profunde" /><span>Zgârieturi foarte vizibile (profunde)</span></label>
+                      <label className="vq-card"><input type="radio" name="stareSpate" value="Necesită reparații" /><span>Necesită reparații care pot fi efectuate</span></label>
                     </div>
                   </div>
 
-                  <div className="vq-item">
-                    <span className="vq-label">Are zgârieturi vizibile pe ecran sau carcasă?</span>
-                    <div className="vq-options">
-                      <label className="vq-opt"><input type="radio" name="zgarieturi" value="Da" /><span>Da</span></label>
-                      <label className="vq-opt"><input type="radio" name="zgarieturi" value="Nu" /><span>Nu</span></label>
+                  <div className="vq-section">
+                    <h4 className="vq-title">Funcționalitate</h4>
+                    <div className="vq-cards-col">
+                      <label className="vq-card"><input type="radio" name="functionare" value="Totul perfect" /><span>Totul funcționează perfect</span></label>
+                      <label className="vq-card"><input type="radio" name="functionare" value="Probleme minore" /><span>Probleme minore (baterie slabă, buton dur)</span></label>
+                      <label className="vq-card"><input type="radio" name="functionare" value="Defecte" /><span>Are defecte (cameră, difuzor, microfon, etc.)</span></label>
                     </div>
                   </div>
 
-                  <div className="vq-item">
-                    <span className="vq-label">Ai cutia originală?</span>
-                    <div className="vq-options">
-                      <label className="vq-opt"><input type="radio" name="cutieOriginala" value="Da" /><span>Da</span></label>
-                      <label className="vq-opt"><input type="radio" name="cutieOriginala" value="Nu" /><span>Nu</span></label>
-                    </div>
-                  </div>
-
-                  <div className="vq-item">
-                    <span className="vq-label">Conectivitate rețea</span>
-                    <div className="vq-options">
-                      <label className="vq-opt"><input type="radio" name="conectivitate" value="Liber de rețea" /><span>Liber de rețea</span></label>
-                      <label className="vq-opt"><input type="radio" name="conectivitate" value="Blocat" /><span>Blocat</span></label>
-                      <label className="vq-opt"><input type="radio" name="conectivitate" value="e-SIM" /><span>e-SIM</span></label>
+                  <div className="vq-section">
+                    <h4 className="vq-title">Alte detalii</h4>
+                    <div className="vq-row-group">
+                      <div className="vq-item">
+                        <span className="vq-label">A avut contact cu lichide?</span>
+                        <div className="vq-options">
+                          <label className="vq-opt"><input type="radio" name="contactLichide" value="Da" /><span>Da</span></label>
+                          <label className="vq-opt"><input type="radio" name="contactLichide" value="Nu" /><span>Nu</span></label>
+                        </div>
+                      </div>
+                      <div className="vq-item">
+                        <span className="vq-label">Ai cutia originală și accesoriile?</span>
+                        <div className="vq-options">
+                          <label className="vq-opt"><input type="radio" name="cutieOriginala" value="Da" /><span>Da</span></label>
+                          <label className="vq-opt"><input type="radio" name="cutieOriginala" value="Nu" /><span>Nu</span></label>
+                        </div>
+                      </div>
                     </div>
                   </div>
                 </div>
