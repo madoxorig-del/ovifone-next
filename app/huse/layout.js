@@ -1,11 +1,12 @@
 export const metadata = {
-  title: 'Huse Telefon',
+  title: 'Huse Telefoane',
   description:
-    'Huse de protecție pentru telefoane: silicon, flip, armour și alte tipuri. Compatibile cu iPhone, Samsung, Xiaomi și alte modele.',
+    'Huse de protecție pentru iPhone, Samsung și alte modele. Calitate premium la prețuri accesibile.',
+  keywords: ['huse telefon', 'huse iphone', 'huse samsung'],
   openGraph: {
-    title: 'Huse Telefon',
+    title: 'Huse Telefoane | OviFone',
     description:
-      'Huse de protecție pentru telefoane: silicon, flip, armour și alte tipuri.',
+      'Huse de protecție pentru iPhone, Samsung și alte modele. Calitate premium la prețuri accesibile.',
     url: '/huse',
   },
   alternates: {

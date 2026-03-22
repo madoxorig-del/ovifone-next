@@ -1,11 +1,12 @@
 export const metadata = {
-  title: 'Vinde Telefonul Tău',
+  title: 'Vinde Telefonul | Program Buyback',
   description:
-    'Vinde-ți telefonul vechi rapid și simplu. Evaluare gratuită, preț corect și plată pe loc. Acceptăm toate brandurile.',
+    'Vinde-ți telefonul vechi rapid și simplu. Evaluare gratuită pe loc, plata instant. Program buyback OviFone.',
+  keywords: ['vinde telefon', 'buyback telefon', 'evaluare telefon'],
   openGraph: {
-    title: 'Vinde Telefonul Tău',
+    title: 'Vinde Telefonul | Program Buyback | OviFone',
     description:
-      'Vinde-ți telefonul vechi rapid și simplu. Evaluare gratuită, preț corect și plată pe loc.',
+      'Vinde-ți telefonul vechi rapid și simplu. Evaluare gratuită pe loc, plata instant. Program buyback OviFone.',
     url: '/vinde',
   },
   alternates: {

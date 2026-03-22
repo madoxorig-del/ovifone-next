@@ -1,11 +1,11 @@
 export const metadata = {
   title: 'Căutare Produse',
   description:
-    'Caută telefoane, tablete, căști și accesorii verificate pe OviFone. Găsește produsul dorit rapid și simplu.',
+    'Caută în catalogul OviFone - telefoane, tablete, căști și accesorii verificate cu garanție 12 luni.',
   openGraph: {
-    title: 'Căutare Produse',
+    title: 'Căutare Produse | OviFone',
     description:
-      'Caută telefoane, tablete, căști și accesorii verificate pe OviFone.',
+      'Caută în catalogul OviFone - telefoane, tablete, căști și accesorii verificate cu garanție 12 luni.',
     url: '/cautare',
   },
   alternates: {

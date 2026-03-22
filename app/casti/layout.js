@@ -1,11 +1,12 @@
 export const metadata = {
   title: 'Căști Audio',
   description:
-    'Căști audio verificate: AirPods, Samsung Galaxy Buds, căști wireless și cu fir. Calitate garantată la prețuri accesibile.',
+    'Căști originale verificate - AirPods, Samsung Buds și multe altele cu garanție 12 luni.',
+  keywords: ['casti', 'airpods', 'samsung buds', 'casti wireless'],
   openGraph: {
-    title: 'Căști Audio',
+    title: 'Căști Audio | OviFone',
     description:
-      'Căști audio verificate: AirPods, Samsung Galaxy Buds, căști wireless și cu fir.',
+      'Căști originale verificate - AirPods, Samsung Buds și multe altele cu garanție 12 luni.',
     url: '/casti',
   },
   alternates: {

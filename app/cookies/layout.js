@@ -1,11 +1,11 @@
 export const metadata = {
-  title: 'Politica de Cookies',
+  title: 'Politica Cookies',
   description:
-    'Politica de cookies a magazinului OviFone. Află ce cookies folosim și cum le poți gestiona.',
+    'Politica de cookies a OviFone - cum folosim cookie-urile pe site.',
   openGraph: {
-    title: 'Politica de Cookies',
+    title: 'Politica Cookies | OviFone',
     description:
-      'Politica de cookies a magazinului OviFone. Află ce cookies folosim.',
+      'Politica de cookies a OviFone - cum folosim cookie-urile pe site.',
     url: '/cookies',
   },
   alternates: {

@@ -1,11 +1,12 @@
 export const metadata = {
   title: 'Accesorii Telefoane',
   description:
-    'Accesorii pentru telefoane și tablete: încărcătoare, cabluri, suporturi auto și multe altele. Livrare rapidă în toată România.',
+    'Accesorii originale pentru telefoane - încărcătoare, cabluri, adaptoare cu garanție.',
+  keywords: ['accesorii telefon', 'incarcatoare', 'cabluri'],
   openGraph: {
-    title: 'Accesorii Telefoane',
+    title: 'Accesorii Telefoane | OviFone',
     description:
-      'Accesorii pentru telefoane și tablete: încărcătoare, cabluri, suporturi auto și multe altele.',
+      'Accesorii originale pentru telefoane - încărcătoare, cabluri, adaptoare cu garanție.',
     url: '/accesorii',
   },
   alternates: {

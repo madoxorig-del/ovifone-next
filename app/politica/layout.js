@@ -1,11 +1,11 @@
 export const metadata = {
   title: 'Politica de Confidențialitate',
   description:
-    'Politica de confidențialitate OviFone. Află cum colectăm, utilizăm și protejăm datele tale personale.',
+    'Politica de confidențialitate OviFone - cum protejăm datele tale personale.',
   openGraph: {
-    title: 'Politica de Confidențialitate',
+    title: 'Politica de Confidențialitate | OviFone',
     description:
-      'Politica de confidențialitate OviFone. Află cum protejăm datele tale personale.',
+      'Politica de confidențialitate OviFone - cum protejăm datele tale personale.',
     url: '/politica',
   },
   alternates: {
