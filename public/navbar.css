@@ -656,8 +656,8 @@
         pointer-events: none !important;
         max-height: 0 !important;
         overflow: hidden !important;
-        -webkit-transition: max-height 0.3s ease, opacity 0.2s ease, visibility 0s linear 0.2s !important;
-        transition: max-height 0.3s ease, opacity 0.2s ease, visibility 0s linear 0.2s !important;
+        -webkit-transition: max-height 0.25s ease 0.1s, opacity 0.2s ease 0.1s, visibility 0s linear 0.3s !important;
+        transition: max-height 0.25s ease 0.1s, opacity 0.2s ease 0.1s, visibility 0s linear 0.3s !important;
     }
     .has-mega-dropdown:hover > .acc-dropdown,
     .has-mega-dropdown:hover > .nav-link-row + .acc-dropdown {
@@ -692,8 +692,10 @@
         opacity: 0 !important;
         -webkit-transform: translateY(-8px) !important;
         transform: translateY(-8px) !important;
-        -webkit-transition: opacity 0.25s ease, -webkit-transform 0.25s ease !important;
-        transition: opacity 0.25s ease, transform 0.25s ease !important;
+        -webkit-transition: opacity 0.15s ease, -webkit-transform 0.15s ease !important;
+        transition: opacity 0.15s ease, transform 0.15s ease !important;
+        -webkit-transition-delay: 0s !important;
+        transition-delay: 0s !important;
     }
     .nav-item.has-mega-dropdown.mob-open > .acc-dropdown > .acc-dropdown-item {
         opacity: 1 !important;
