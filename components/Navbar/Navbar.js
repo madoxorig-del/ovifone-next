@@ -19,12 +19,18 @@ export default function Navbar() {
   const handleChevronClick = (e) => {
     e.preventDefault();
     e.stopPropagation();
+    if (window.innerWidth > 1024) return;
     const li = e.currentTarget.closest('.has-mega-dropdown');
     if (li) {
       const wasOpen = li.classList.contains('mob-open');
       document.querySelectorAll('.has-mega-dropdown').forEach(el => el.classList.remove('mob-open'));
       if (!wasOpen) li.classList.add('mob-open');
     }
+  };
+
+  const handleChevronTouch = (e) => {
+    e.preventDefault();
+    handleChevronClick(e);
   };
 
   useEffect(() => {
@@ -112,7 +118,7 @@ export default function Navbar() {
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><rect x="5" y="2" width="14" height="20" rx="1"></rect><path d="M10 18h4"></path></svg>
                     <span>Telefoane</span>
                   </Link>
-                  <button className="chevron-toggle" onClick={handleChevronClick} aria-label="Deschide submeniu">
+                  <button className="chevron-toggle" onClick={handleChevronClick} onTouchEnd={handleChevronTouch} aria-label="Deschide submeniu">
                     <svg className="chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><polyline points="6 9 12 15 18 9"></polyline></svg>
                   </button>
                 </div>
@@ -133,7 +139,7 @@ export default function Navbar() {
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><rect x="3" y="3" width="18" height="18" rx="1"></rect><path d="M10 19h4"></path></svg>
                     <span>Tablete</span>
                   </Link>
-                  <button className="chevron-toggle" onClick={handleChevronClick} aria-label="Deschide submeniu">
+                  <button className="chevron-toggle" onClick={handleChevronClick} onTouchEnd={handleChevronTouch} aria-label="Deschide submeniu">
                     <svg className="chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><polyline points="6 9 12 15 18 9"></polyline></svg>
                   </button>
                 </div>
@@ -154,7 +160,7 @@ export default function Navbar() {
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><path d="M4 12v-2a8 8 0 0 1 16 0v2"></path><rect x="2" y="12" width="5" height="7"></rect><rect x="17" y="12" width="5" height="7"></rect></svg>
                     <span>Căști</span>
                   </Link>
-                  <button className="chevron-toggle" onClick={handleChevronClick} aria-label="Deschide submeniu">
+                  <button className="chevron-toggle" onClick={handleChevronClick} onTouchEnd={handleChevronTouch} aria-label="Deschide submeniu">
                     <svg className="chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><polyline points="6 9 12 15 18 9"></polyline></svg>
                   </button>
                 </div>
@@ -175,7 +181,7 @@ export default function Navbar() {
                     <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><path d="M9 1v4"/><path d="M15 1v4"/><rect x="6" y="5" width="12" height="8" rx="2.5"/><path d="M12 13v7"/><rect x="10" y="20" width="4" height="3" rx="1"/></svg>
                     <span>Accesorii</span>
                   </Link>
-                  <button className="chevron-toggle" onClick={handleChevronClick} aria-label="Deschide submeniu">
+                  <button className="chevron-toggle" onClick={handleChevronClick} onTouchEnd={handleChevronTouch} aria-label="Deschide submeniu">
                     <svg className="chevron" viewBox="0 0 24 24" width="14" height="14" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="square"><polyline points="6 9 12 15 18 9"></polyline></svg>
                   </button>
                 </div>
