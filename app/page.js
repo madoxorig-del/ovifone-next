@@ -64,9 +64,10 @@ export default function Home() {
                       <span class="price-current">${pretFormatat}</span>
                       ${tel.pret_vechi && tel.pret_vechi > tel.pret ? `<span class="price-old">${pretVechiFormatat}</span>` : ''}
                     </div>
-                    <div class="premium-stock ${tel.stoc > 0 || tel.stoc === undefined || tel.stoc === null ? 'in-stock' : 'out-of-stock'}">
-                      <span class="stock-dot"></span>
-                      ${tel.stoc > 0 || tel.stoc === undefined || tel.stoc === null ? 'În stoc' : 'Lipsă stoc'}
+                    <div class="stock-chip ${tel.stoc > 0 || tel.stoc === undefined || tel.stoc === null ? 'stock-in' : 'stock-out'}">
+                      ${tel.stoc > 0 || tel.stoc === undefined || tel.stoc === null
+                        ? '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"/></svg> În stoc'
+                        : '<svg viewBox="0 0 24 24" width="13" height="13" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg> Lipsă stoc'}
                     </div>
                   </div>
                 </a>
