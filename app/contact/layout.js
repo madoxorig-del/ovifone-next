@@ -1,11 +1,12 @@
 export const metadata = {
   title: 'Contact',
   description:
-    'Contactează echipa OviFone. Suntem aici să te ajutăm cu orice întrebare despre telefoane, comenzi sau serviciul de buyback.',
+    'Contactează-ne pentru orice întrebare. Magazin fizic în România cu suport rapid.',
+  keywords: ['contact ovifone', 'magazin telefoane'],
   openGraph: {
-    title: 'Contact OviFone',
+    title: 'Contact | OviFone',
     description:
-      'Contactează echipa OviFone. Suntem aici să te ajutăm cu orice întrebare.',
+      'Contactează-ne pentru orice întrebare. Magazin fizic în România cu suport rapid.',
     url: '/contact',
   },
   alternates: {

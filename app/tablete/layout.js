@@ -1,11 +1,12 @@
 export const metadata = {
   title: 'Tablete Verificate',
   description:
-    'Tablete verificate și ne-recondiționate cu garanție. iPad, Samsung Galaxy Tab și alte modele la prețuri avantajoase.',
+    'Tablete ne-recondiționate, verificate cu garanție 12 luni. iPad, Samsung Galaxy Tab la prețuri accesibile.',
+  keywords: ['tablete', 'ipad', 'samsung tab', 'tablete verificate'],
   openGraph: {
-    title: 'Tablete Verificate',
+    title: 'Tablete Verificate | OviFone',
     description:
-      'Tablete verificate și ne-recondiționate cu garanție. iPad, Samsung Galaxy Tab și alte modele.',
+      'Tablete ne-recondiționate, verificate cu garanție 12 luni. iPad, Samsung Galaxy Tab la prețuri accesibile.',
     url: '/tablete',
   },
   alternates: {
