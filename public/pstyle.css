@@ -1355,8 +1355,7 @@
    STARE VIZUALĂ SECTION
    ═══════════════════════════════════════ */
 .stare-vizuala-section {
-    margin: 0 0 30px 0;
-    padding-top: 4px;
+    margin: -8px 0 44px 0;
 }
 .stare-pills {
     display: grid;
