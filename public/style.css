@@ -1040,31 +1040,28 @@ button {
     color: var(--color-text-secondary);
 }
 
-.premium-stock {
-    display: flex;
+.stock-chip {
+    display: inline-flex;
     align-items: center;
-    gap: 6px;
-    font-size: 12px;
+    gap: 5px;
+    margin-top: 10px;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-size: 11.5px;
     font-weight: 600;
-    margin-top: 6px;
+    letter-spacing: 0.02em;
+    width: fit-content;
 }
-.premium-stock .stock-dot {
-    width: 7px;
-    height: 7px;
-    border-radius: 50%;
+.stock-chip svg {
     flex-shrink: 0;
 }
-.premium-stock.in-stock {
-    color: #34c759;
+.stock-chip.stock-in {
+    background: rgba(52, 199, 89, 0.1);
+    color: #2da44e;
 }
-.premium-stock.in-stock .stock-dot {
-    background: #34c759;
-}
-.premium-stock.out-of-stock {
-    color: #ff3b30;
-}
-.premium-stock.out-of-stock .stock-dot {
-    background: #ff3b30;
+.stock-chip.stock-out {
+    background: rgba(255, 59, 48, 0.08);
+    color: #d1242f;
 }
 
 .btn-premium {
