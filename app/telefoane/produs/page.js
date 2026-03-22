@@ -51,6 +51,30 @@ function ProdusContent() {
         return;
       }
 
+      // Inject Product JSON-LD structured data
+      const existingJsonLd = document.querySelector('script[data-product-jsonld]');
+      if (existingJsonLd) existingJsonLd.remove();
+      const jsonLd = document.createElement('script');
+      jsonLd.type = 'application/ld+json';
+      jsonLd.setAttribute('data-product-jsonld', 'true');
+      jsonLd.textContent = JSON.stringify({
+        "@context": "https://schema.org",
+        "@type": "Product",
+        "name": pData.nume,
+        "image": pData.imagine_url,
+        "description": pData.descriere || '',
+        "brand": { "@type": "Brand", "name": pData.brand || 'Apple' },
+        "offers": {
+          "@type": "Offer",
+          "price": pData.pret,
+          "priceCurrency": "RON",
+          "availability": (pData.stoc || 0) > 0 ? "https://schema.org/InStock" : "https://schema.org/OutOfStock",
+          "url": window.location.href,
+          "seller": { "@type": "Organization", "name": "OviFone" }
+        }
+      });
+      document.head.appendChild(jsonLd);
+
       let basePrice = pData.pret || 0;
       let currentStorageMod = 0;
       let selectedStorageText = '';
