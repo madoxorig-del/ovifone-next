@@ -43,12 +43,15 @@ function CautareContent() {
         if (error) throw error;
 
         const q = query.toLowerCase();
-        allRezultate = produse.filter(p =>
-          (p.nume      && p.nume.toLowerCase().includes(q)) ||
-          (p.brand     && p.brand.toLowerCase().includes(q)) ||
-          (p.categorie && p.categorie.toLowerCase().includes(q)) ||
-          (p.culori    && p.culori.toLowerCase().includes(q))
-        );
+        const qNoSpaces = q.replace(/\s+/g, '');
+        allRezultate = produse.filter(p => {
+          const nume = (p.nume || '').toLowerCase();
+          const brand = (p.brand || '').toLowerCase();
+          const categorie = (p.categorie || '').toLowerCase();
+          const culori = (p.culori || '').toLowerCase();
+          return nume.includes(q) || brand.includes(q) || categorie.includes(q) || culori.includes(q) ||
+            nume.replace(/\s+/g, '').includes(qNoSpaces) || brand.replace(/\s+/g, '').includes(qNoSpaces);
+        });
 
         if (allRezultate.length > 0 && controlsBar) controlsBar.style.display = '';
         if (allRezultate.length === 0 && controlsBar) controlsBar.style.display = 'none';
