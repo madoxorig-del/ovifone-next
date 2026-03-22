@@ -656,8 +656,8 @@
         pointer-events: none !important;
         max-height: 0 !important;
         overflow: hidden !important;
-        -webkit-transition: max-height 0.25s ease 0.1s, opacity 0.2s ease 0.1s, visibility 0s linear 0.3s !important;
-        transition: max-height 0.25s ease 0.1s, opacity 0.2s ease 0.1s, visibility 0s linear 0.3s !important;
+        -webkit-transition: max-height 0.25s ease 0.1s, opacity 0.2s ease 0.1s, visibility 0s linear 0.3s, padding 0s linear 0.3s !important;
+        transition: max-height 0.25s ease 0.1s, opacity 0.2s ease 0.1s, visibility 0s linear 0.3s, padding 0s linear 0.3s !important;
     }
     .has-mega-dropdown:hover > .acc-dropdown,
     .has-mega-dropdown:hover > .nav-link-row + .acc-dropdown {
