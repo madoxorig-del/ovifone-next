@@ -271,7 +271,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); overflow-x: hidd
   .vinde-main { padding-top: 0; }
   .vf-panel { padding: 30px 20px; border-radius: var(--r-lg); }
   .vf-title { font-size: 28px; }
-  .step-lbl { display: none; } 
+  .step-lbl { display: none; }
   .step-line { margin-top: -18px; }
   .vf-row-2 { grid-template-columns: 1fr; }
   .vf-actions { flex-direction: column-reverse; gap: 15px; }
@@ -281,6 +281,7 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); overflow-x: hidd
   .cr-price { font-size: 36px !important; }
   .tl-item { flex-direction: column; text-align: center; gap: 15px; }
   .vf-badge-row { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .vf-dropdown-menu { max-height: 180px; }
 }
 
 .vinde-main {
@@ -291,5 +292,35 @@ body { font-family: 'Inter', sans-serif; background: var(--bg); overflow-x: hidd
     .vinde-main {
         padding-top: 145px !important;
     }
+}
+
+/* Questionnaire for "Utilizat" condition */
+.vf-questionnaire {
+  background: var(--glass-bg, rgba(255,255,255,.6));
+  border: 1px solid var(--border, #e5e5e5);
+  border-radius: var(--r-md, 16px);
+  padding: 24px;
+  animation: fadeSlideIn .3s ease;
+}
+@keyframes fadeSlideIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+.vq-title { font-size: 15px; font-weight: 700; color: var(--heading, #1d1d1f); margin: 0 0 18px 0; }
+.vq-item { display: flex; align-items: center; justify-content: space-between; padding: 14px 0; border-bottom: 1px solid var(--border, #e5e5e5); gap: 12px; }
+.vq-item:last-child { border-bottom: none; }
+.vq-label { font-size: 14px; font-weight: 500; color: var(--heading, #1d1d1f); flex: 1; }
+.vq-options { display: flex; gap: 8px; flex-shrink: 0; }
+.vq-opt { cursor: pointer; }
+.vq-opt input { display: none; }
+.vq-opt span {
+  display: inline-block; padding: 8px 18px; border: 2px solid var(--border, #e5e5e5);
+  border-radius: 10px; font-size: 13px; font-weight: 600; color: var(--heading, #1d1d1f);
+  background: var(--white, #fff); transition: all .2s ease;
+}
+.vq-opt:hover span { border-color: rgba(0,0,0,.2); }
+.vq-opt input:checked + span { border-color: var(--accent, #f49201); background: rgba(244,146,1,.08); color: var(--accent, #f49201); }
+
+@media (max-width: 600px) {
+  .vq-item { flex-direction: column; align-items: flex-start; gap: 10px; }
+  .vq-options { width: 100%; }
+  .vq-opt span { padding: 8px 14px; font-size: 12px; }
 }
 

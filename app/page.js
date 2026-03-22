@@ -161,6 +161,16 @@ export default function Home() {
 
     loadPhones();
 
+    // Trustindex widget
+    const tiWrap = document.getElementById('trustindex-wrap');
+    if (tiWrap) {
+      const s = document.createElement('script');
+      s.src = 'https://cdn.trustindex.io/loader.js?f1ca271673e87996ef46c57bd29';
+      s.defer = true;
+      s.async = true;
+      tiWrap.appendChild(s);
+    }
+
     return () => window.removeEventListener('scroll', onScroll);
   }, []);
 
@@ -367,6 +377,16 @@ export default function Home() {
         </div>
       </section>
 
+      {/* RECENZII TRUSTINDEX */}
+      <section className="reviews-section" id="recenzii">
+        <div className="section-container">
+          <div className="section-header" data-reveal="true" style={{textAlign:'center'}}>
+            <h2 className="section-heading">Ce spun clienții noștri</h2><span className="section-heading-line"></span>
+          </div>
+          <div className="trustindex-container" data-reveal="true" data-delay="100" id="trustindex-wrap"></div>
+        </div>
+      </section>
+
       {/* PROCES */}
       <section className="process-section" id="cine-suntem">
         <div className="process-inner">
@@ -420,38 +440,46 @@ export default function Home() {
         </div>
       </section>
 
-      {/* INFO */}
-      <section className="info-section" id="informatii">
+      {/* MARKETING BANNERS */}
+      <section className="promo-banners-section" id="informatii">
         <div className="section-container">
-          <div className="section-header" data-reveal="true">
-            <h2 className="section-heading">Informații</h2>
-            <span className="section-heading-line"></span>
-          </div>
-          <div className="info-grid">
-            <div className="info-card info-featured" data-reveal="true" data-delay="100">
-              <div className="info-media"><img src="https://images.unsplash.com/photo-1556656793-08538906a9f8?auto=format&fit=crop&q=80&w=600&h=400" alt="Provenienta" loading="lazy" /></div>
-              <div className="info-content">
-                <span className="info-tag">Transparență</span>
-                <h3 className="info-title">Proveniența telefoanelor</h3>
-                <p className="info-desc">Toate iPhone-urile noastre provin exclusiv din surse verificate: buy-back propriu, furnizori autorizați și parteneri de încredere. Fiecare telefon este testat riguros și verificat IMEI.</p>
+          <div className="promo-banners-grid">
+
+            {/* BUYBACK BANNER */}
+            <div className="promo-banner promo-buyback" data-reveal="true">
+              <div className="promo-banner-icon">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><polyline points="17 1 21 5 17 9"></polyline><path d="M3 11V9a4 4 0 0 1 4-4h14"></path><polyline points="7 23 3 19 7 15"></polyline><path d="M21 13v2a4 4 0 0 1-4 4H3"></path></svg>
               </div>
-            </div>
-            <div className="info-card" data-reveal="true" data-delay="200">
-              <div className="info-media"><img src="https://www.digimap.co.id/cdn/shop/files/2026_DG_Digitrade_Landing-01.jpg?v=1761186242&width=600" alt="BuyBack" loading="lazy" /></div>
-              <div className="info-content">
-                <span className="info-tag">BuyBack</span>
-                <h3 className="info-title">Cum funcționează sistemul de BuyBack</h3>
-                <p className="info-desc">Adu iPhone-ul vechi, îl evaluăm pe loc, iar tu plătești doar diferența pentru un model nou. Proces rapid, transparent și fără bătăi de cap.</p>
+              <span className="promo-banner-tag">Program BuyBack</span>
+              <h2 className="promo-banner-title">Schimbă telefonul vechi pe unul nou.</h2>
+              <p className="promo-banner-desc">Nu mai pierzi timp cu vânzarea telefonului. Adu-l la noi, îl evaluăm pe loc și plătești doar diferența pentru modelul pe care ți-l dorești. Simplu, rapid, fără bătăi de cap.</p>
+              <div className="promo-banner-steps">
+                <div className="pbs-step"><span className="pbs-num">1</span><span className="pbs-text">Aduci telefonul vechi</span></div>
+                <div className="pbs-arrow"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                <div className="pbs-step"><span className="pbs-num">2</span><span className="pbs-text">Plătești doar diferența</span></div>
+                <div className="pbs-arrow"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2"><path d="M5 12h14M12 5l7 7-7 7"/></svg></div>
+                <div className="pbs-step"><span className="pbs-num">3</span><span className="pbs-text">Primești telefonul nou</span></div>
               </div>
+              <a href="/vinde" className="promo-banner-btn">Evaluează-ți telefonul <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
             </div>
-            <div className="info-card" data-reveal="true" data-delay="300">
-              <div className="info-media"><img src="https://wisetekstore.com/cdn/shop/articles/Refurbished_iPhone_c3f25026-472d-4934-8da7-50537e067d80.png?v=1753960873&width=600" alt="Telefon utilizat" loading="lazy" /></div>
-              <div className="info-content">
-                <span className="info-tag">Economie</span>
-                <h3 className="info-title">De ce merită să alegi un telefon utilizat</h3>
-                <p className="info-desc">Primești un iPhone verificat, la un preț mult mai bun cu până la 50% reducere, fără compromisuri în performanță.</p>
+
+            {/* NE-RECONDIȚIONATE BANNER */}
+            <div className="promo-banner promo-nerecond" data-reveal="true" data-delay="200">
+              <div className="promo-banner-icon">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"></path><path d="M9 12l2 2 4-4"></path></svg>
               </div>
+              <span className="promo-banner-tag">Garanție de autenticitate</span>
+              <h2 className="promo-banner-title">Telefoane ne-recondiționate. Originale 100%.</h2>
+              <p className="promo-banner-desc">Spre deosebire de alte magazine, noi NU vindem telefoane recondiționate sau refurbished. Fiecare dispozitiv este original, verificat și testat complet — exact cum a ieșit din fabrică.</p>
+              <div className="promo-nerecond-badges">
+                <div className="pnr-badge"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg><span>Nu sunt recondiționate</span></div>
+                <div className="pnr-badge"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg><span>Verificare IMEI inclusă</span></div>
+                <div className="pnr-badge"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg><span>12 luni garanție</span></div>
+                <div className="pnr-badge"><svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" strokeWidth="2"><polyline points="20 6 9 17 4 12"/></svg><span>Surse verificate</span></div>
+              </div>
+              <a href="/telefoane" className="promo-banner-btn promo-btn-dark">Vezi telefoanele <svg viewBox="0 0 24 24" width="18" height="18" fill="none" stroke="currentColor" strokeWidth="2.5"><path d="M5 12h14M12 5l7 7-7 7"/></svg></a>
             </div>
+
           </div>
         </div>
       </section>
@@ -478,7 +506,7 @@ export default function Home() {
         <div className="section-container">
           <div className="location-grid">
             <div className="location-map" data-reveal="true">
-              <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d45583.58052778867!2d26.010925!3d44.4337!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b2010eb9efce81%3A0x68b1a8e1ff36f835!2sOviFone!5e0!3m2!1sen!2sus!4v1771696506103!5m2!1sen!2sus" width="600" height="450" style={{border:0}} allowFullScreen loading="lazy" referrerPolicy="no-referrer-when-downgrade"></iframe>
+              <iframe src="https://www.google.com/maps/embed?pb=!1m14!1m8!1m3!1d45583.58052778867!2d26.010925!3d44.4337!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x40b2010eb9efce81%3A0x68b1a8e1ff36f835!2sOviFone!5e0!3m2!1sen!2sus!4v1771696506103!5m2!1sen!2sus" width="600" height="450" style={{border:0}} allowFullScreen loading="lazy"></iframe>
             </div>
             <div className="location-details" data-reveal="true" data-delay="200">
               <h2 className="location-title">Vino să ne vizitezi în magazinul OviFone, pe Bulevardul Iuliu Maniu 73, București!</h2>
