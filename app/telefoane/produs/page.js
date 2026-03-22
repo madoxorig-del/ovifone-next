@@ -575,8 +575,6 @@ function ProdusContent() {
               <div className="price-old" id="dynamic-old-price" style={{ display: 'none' }}></div>
               <div className="price-save" style={{ display: 'none' }}></div>
             </div>
-            <div className="stare-vizuala-section" id="stare-vizuala-container"></div>
-
             <div className="p-options">
               <div className="options-top-row">
                 <div className="option-group">
@@ -600,6 +598,7 @@ function ProdusContent() {
                 <div className="boxes-selector" id="storage-selector"></div>
               </div>
             </div>
+            <div className="stare-vizuala-section" id="stare-vizuala-container"></div>
             <div className="p-action-area">
               <div className="qty-selector">
                 <button className="qty-btn minus">
