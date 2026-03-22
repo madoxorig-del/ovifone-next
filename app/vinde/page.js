@@ -501,6 +501,14 @@ export default function Vinde() {
                       </div>
                     </label>
                     <label className="vc-card-row">
+                      <input type="radio" name="condition" value="Nou Desigilat" data-mod="0.92" />
+                      <div className="vcc-inner-row">
+                        <div className="vcc-ico"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
+                        <div className="vcc-text"><strong>Nou Desigilat</strong><span>Desigilat dar nefolosit, ca nou, fără urme.</span></div>
+                        <div className="vcc-check"><div className="dot"></div></div>
+                      </div>
+                    </label>
+                    <label className="vc-card-row">
                       <input type="radio" name="condition" value="Utilizat" data-mod="0.75" />
                       <div className="vcc-inner-row">
                         <div className="vcc-ico"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div>
