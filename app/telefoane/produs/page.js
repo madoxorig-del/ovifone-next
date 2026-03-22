@@ -131,23 +131,19 @@ function ProdusContent() {
           { key: 'Bun', label: 'Bun', color: '#8b5cf6', desc: 'Zgârieturi ușoare pe ecran sau carcasă. Funcționează perfect, aspect îngrijit.' }
         ];
 
+        const activeStare = stareList.find(s => s.key === stareVizuala) || stareList[0];
         stareContainer.innerHTML = `
-          <div class="stare-header-row">
-            <span class="stare-section-label">Stare vizuală</span>
-          </div>
-          <div class="stare-grid">
+          <div class="option-header"><span>Stare vizuală</span></div>
+          <div class="stare-pills">
             ${stareList.map(s => {
               const isActive = s.key === stareVizuala;
-              return `<div class="stare-item ${isActive ? 'active' : ''}" style="${isActive ? `--stare-color:${s.color};` : ''}">
-                <div class="stare-item-dot" style="background:${s.color};"></div>
-                <div class="stare-item-content">
-                  <span class="stare-item-label" style="${isActive ? `color:${s.color};` : ''}">${s.label}</span>
-                  <p class="stare-item-desc">${s.desc}</p>
-                </div>
-                ${isActive ? '<span class="stare-item-check"><svg viewBox="0 0 24 24" width="16" height="16" stroke="' + s.color + '" stroke-width="2.5" fill="none"><polyline points="20 6 9 17 4 12"/></svg></span>' : ''}
+              return `<div class="stare-pill ${isActive ? 'active' : ''}" style="--pill-color:${s.color}">
+                <span class="stare-pill-dot" style="background:${s.color}"></span>
+                <span class="stare-pill-label">${s.label}</span>
               </div>`;
             }).join('')}
-          </div>`;
+          </div>
+          <p class="stare-desc-text"><svg viewBox="0 0 24 24" width="14" height="14" stroke="${activeStare.color}" stroke-width="2.5" fill="none"><polyline points="20 6 9 17 4 12"/></svg> ${activeStare.desc}</p>`;
       }
 
       const tabDescriere = document.getElementById('tab-descriere');

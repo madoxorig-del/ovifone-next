@@ -1357,80 +1357,70 @@
 .stare-vizuala-section {
     margin: 18px 0 10px 0;
 }
-.stare-header-row {
-    margin-bottom: 10px;
+.stare-pills {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 10px;
 }
-.stare-section-label {
-    font-size: 14px;
-    color: #1d1d1f;
-    font-weight: 600;
-}
-.stare-grid {
+.stare-pill {
     display: flex;
-    flex-direction: column;
-    gap: 0;
-    border: 1px solid #ebebed;
-    border-radius: 14px;
-    overflow: hidden;
+    align-items: center;
+    gap: 8px;
+    padding: 14px 12px;
     background: #fff;
+    border: 1.5px solid #ebebed;
+    border-radius: 12px;
+    opacity: 0.4;
+    transition: all 0.2s ease;
 }
-.stare-item {
-    display: flex;
-    align-items: flex-start;
-    gap: 12px;
-    padding: 12px 14px;
-    border-bottom: 1px solid #f0f0f2;
-    position: relative;
-    transition: background 0.2s ease;
+.stare-pill.active {
+    opacity: 1;
+    border-color: var(--pill-color, #f49201);
+    background: #fff;
+    box-shadow: 0 0 0 1px var(--pill-color, #f49201);
 }
-.stare-item:last-child {
-    border-bottom: none;
-}
-.stare-item:not(.active) {
-    opacity: 0.45;
-}
-.stare-item.active {
-    background: #fafafa;
-}
-.stare-item-dot {
+.stare-pill-dot {
     width: 8px;
     height: 8px;
     border-radius: 50%;
     flex-shrink: 0;
-    margin-top: 5px;
 }
-.stare-item-content {
-    flex: 1;
-    min-width: 0;
-}
-.stare-item-label {
+.stare-pill-label {
     font-size: 13px;
-    font-weight: 700;
+    font-weight: 600;
     color: #1d1d1f;
-    display: block;
-    margin-bottom: 2px;
+    white-space: nowrap;
 }
-.stare-item-desc {
-    font-size: 12px;
+.stare-pill.active .stare-pill-label {
+    color: var(--pill-color, #1d1d1f);
+}
+.stare-desc-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    margin: 10px 0 0 0;
+    font-size: 13px;
     color: #6e6e73;
-    margin: 0;
-    line-height: 1.45;
+    line-height: 1.5;
 }
-.stare-item-check {
+.stare-desc-text svg {
     flex-shrink: 0;
-    margin-top: 2px;
 }
 
 @media (max-width: 768px) {
-    .stare-item {
-        padding: 10px 12px;
-        gap: 10px;
+    .stare-pills {
+        grid-template-columns: repeat(2, 1fr);
+        gap: 8px;
     }
-    .stare-item-label {
-        font-size: 12.5px;
+    .stare-pill {
+        padding: 11px 10px;
+        gap: 6px;
     }
-    .stare-item-desc {
-        font-size: 11.5px;
+    .stare-pill-label {
+        font-size: 12px;
+    }
+    .stare-desc-text {
+        font-size: 12px;
     }
 }
 
