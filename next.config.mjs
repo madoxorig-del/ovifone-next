@@ -3,6 +3,16 @@ const nextConfig = {
   async headers() {
     return [
       {
+        // CSS, JS, and font files — no cache, always fresh after deploy
+        source: '/:path*(css|js|woff|woff2|ttf|otf)',
+        headers: [
+          {
+            key: 'Cache-Control',
+            value: 'public, max-age=0, must-revalidate',
+          },
+        ],
+      },
+      {
         source: '/(.*)',
         headers: [
           {
@@ -33,11 +43,12 @@ const nextConfig = {
             key: 'Content-Security-Policy',
             value: [
               "default-src 'self'",
-              "script-src 'self' 'unsafe-inline' 'unsafe-eval'",
-              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com",
-              "font-src 'self' https://fonts.gstatic.com",
+              "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://cdn.trustindex.io",
+              "style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.trustindex.io",
+              "font-src 'self' https://fonts.gstatic.com https://cdn.trustindex.io",
               "img-src 'self' data: blob: https:",
-              "connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co",
+              "connect-src 'self' https://*.supabase.co https://*.supabase.in wss://*.supabase.co https://cdn.trustindex.io",
+              "frame-src 'self' https://www.google.com https://cdn.trustindex.io",
               "frame-ancestors 'self'",
               "base-uri 'self'",
               "form-action 'self'",

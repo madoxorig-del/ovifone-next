@@ -97,7 +97,7 @@ export default function Vinde() {
     // STATE
     let currentStep = 1;
     const totalSteps = 4;
-    const state = { deviceType: '', brand: '', modelName: '', storage: '', battery: null, batteryUnknown: false, condition: '', condModifier: 1 };
+    const state = { deviceType: '', brand: '', modelName: '', storage: '', battery: null, batteryUnknown: false, condition: '', condModifier: 1, color: '', contactLichide: '', functionarePerfecta: '', zgarieturi: '', cutieOriginala: '', conectivitate: '' };
 
     const btnNext = document.getElementById('btn-next');
     const btnPrev = document.getElementById('btn-prev');
@@ -119,6 +119,8 @@ export default function Vinde() {
       else if (state.battery !== null) sumBattery.textContent = `${state.battery}%`;
       else sumBattery.textContent = '-';
       sumCond.textContent = state.condition || '-';
+      const sumColor = document.getElementById('sum-color');
+      if (sumColor) sumColor.textContent = state.color || '-';
     }
 
     document.querySelectorAll('input[name="deviceType"]').forEach(radio => {
@@ -151,9 +153,24 @@ export default function Vinde() {
       updateLiveSummary();
     });
 
+    document.getElementById('v-color')?.addEventListener('input', (e) => { state.color = e.target.value.trim(); updateLiveSummary(); });
+
     document.querySelectorAll('input[name="condition"]').forEach(radio => {
-      radio.addEventListener('change', (e) => { state.condition = e.target.value; state.condModifier = parseFloat(e.target.dataset.mod); updateLiveSummary(); });
+      radio.addEventListener('change', (e) => {
+        state.condition = e.target.value;
+        state.condModifier = parseFloat(e.target.dataset.mod);
+        const questWrap = document.getElementById('utilizat-questionnaire');
+        if (questWrap) questWrap.style.display = e.target.value === 'Utilizat' ? 'block' : 'none';
+        updateLiveSummary();
+      });
     });
+
+    // Questionnaire listeners
+    document.querySelectorAll('input[name="contactLichide"]').forEach(r => r.addEventListener('change', (e) => { state.contactLichide = e.target.value; }));
+    document.querySelectorAll('input[name="functionarePerfecta"]').forEach(r => r.addEventListener('change', (e) => { state.functionarePerfecta = e.target.value; }));
+    document.querySelectorAll('input[name="zgarieturi"]').forEach(r => r.addEventListener('change', (e) => { state.zgarieturi = e.target.value; }));
+    document.querySelectorAll('input[name="cutieOriginala"]').forEach(r => r.addEventListener('change', (e) => { state.cutieOriginala = e.target.value; }));
+    document.querySelectorAll('input[name="conectivitate"]').forEach(r => r.addEventListener('change', (e) => { state.conectivitate = e.target.value; }));
 
     function calculateSimulatedOffer() {
       let base = 2000 + (state.brand.length * 50) + (state.modelName.length * 100);
@@ -165,6 +182,13 @@ export default function Vinde() {
       let currentBatt = state.battery || 85;
       if (!state.batteryUnknown && currentBatt < 80) price -= 250;
       price = price * state.condModifier;
+      // Questionnaire deductions for "Utilizat"
+      if (state.condition === 'Utilizat') {
+        if (state.contactLichide === 'Da') price *= 0.7;
+        if (state.functionarePerfecta === 'Nu') price *= 0.8;
+        if (state.zgarieturi === 'Da') price *= 0.85;
+        if (state.cutieOriginala === 'Nu') price *= 0.95;
+      }
       return Math.max(Math.round(price / 10) * 10, 150);
     }
 
@@ -227,6 +251,13 @@ export default function Vinde() {
     }
 
     function validateStep(step) {
+      // Sync React-controlled values into vanilla state
+      const checkedType = document.querySelector('input[name="deviceType"]:checked');
+      if (checkedType) state.deviceType = checkedType.value;
+      state.brand = document.getElementById('v-brand')?.value.trim() || '';
+      state.modelName = document.getElementById('v-model')?.value.trim() || '';
+      state.color = document.getElementById('v-color')?.value.trim() || '';
+      updateLiveSummary();
       if (step === 1) {
         if (!state.deviceType) { shakeError('Alege tipul dispozitivului!'); return false; }
         if (state.brand.length < 2) { shakeError('Introdu numele producătorului!'); return false; }
@@ -237,7 +268,14 @@ export default function Vinde() {
         if (state.battery === null && !state.batteryUnknown) { state.battery = parseInt(battSlider.value); updateLiveSummary(); }
       }
       if (step === 3) {
-        if (!state.condition) { shakeError('Bifează starea fizică a dispozitivului!'); return false; }
+        if (!state.condition) { shakeError('Selectează starea dispozitivului!'); return false; }
+        if (state.condition === 'Utilizat') {
+          if (!state.contactLichide) { shakeError('Răspunde dacă a avut contact cu lichide!'); return false; }
+          if (!state.functionarePerfecta) { shakeError('Răspunde dacă funcționează perfect!'); return false; }
+          if (!state.zgarieturi) { shakeError('Răspunde dacă are zgârieturi vizibile!'); return false; }
+          if (!state.cutieOriginala) { shakeError('Răspunde dacă ai cutia originală!'); return false; }
+          if (!state.conectivitate) { shakeError('Selectează tipul de conectivitate!'); return false; }
+        }
       }
       if (step === 4) {
         const name = document.getElementById('v-name')?.value.trim();
@@ -264,12 +302,20 @@ export default function Vinde() {
         const finalEmail = document.getElementById('v-email')?.value.trim();
         const estimatedPrice = calculateSimulatedOffer();
         try {
-          const { error } = await supabase.from('cereri_buyback').insert([{
+          const insertData = {
             nume: finalName, telefon: finalPhone, email: finalEmail || '-',
             tip_device: state.deviceType, brand: state.brand, model: state.modelName,
             stocare: state.storage, baterie: state.batteryUnknown ? 'Necunoscut' : state.battery + '%',
-            stare: state.condition, pret_estimat: estimatedPrice.toString(), status: 'Nou'
-          }]);
+            stare: state.condition, culoare: state.color || '-', pret_estimat: estimatedPrice.toString(), status: 'Nou'
+          };
+          if (state.condition === 'Utilizat') {
+            insertData.contact_lichide = state.contactLichide;
+            insertData.functionare_perfecta = state.functionarePerfecta;
+            insertData.zgarieturi = state.zgarieturi;
+            insertData.cutie_originala = state.cutieOriginala;
+            insertData.conectivitate = state.conectivitate;
+          }
+          const { error } = await supabase.from('cereri_buyback').insert([insertData]);
           if (error) throw error;
           document.getElementById('vf-actions').style.display = 'none';
           document.getElementById('step-4')?.classList.remove('active');
@@ -421,6 +467,10 @@ export default function Vinde() {
                     <label className="v-chip"><input type="radio" name="storage" value="1TB" /><span>1 TB+</span></label>
                   </div>
                 </div>
+                <div className="vf-field mt-20">
+                  <label>Culoare</label>
+                  <input type="text" className="vf-input" id="v-color" placeholder="Ex: Negru, Alb, Albastru..." />
+                </div>
                 <div className="vf-field mt-25">
                   <label>Sănătatea Bateriei (Battery Health)</label>
                   <div className="range-wrap" id="battery-range-wrap">
@@ -438,34 +488,80 @@ export default function Vinde() {
 
               {/* STEP 3 */}
               <div className="form-step" id="step-3">
-                <h3 className="step-title">Evaluarea stării fizice</h3>
+                <h3 className="step-title">Starea dispozitivului</h3>
                 <div className="vf-field mt-20">
-                  <label>Cum arată ecranul și carcasa?</label>
+                  <label>În ce stare se află?</label>
                   <div className="vf-cards-col">
                     <label className="vc-card-row">
-                      <input type="radio" name="condition" value="Impecabil" data-mod="1" />
+                      <input type="radio" name="condition" value="Nou Sigilat" data-mod="1" />
+                      <div className="vcc-inner-row">
+                        <div className="vcc-ico"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><path d="M12 8v8"></path><path d="M8 12h8"></path></svg></div>
+                        <div className="vcc-text"><strong>Nou Sigilat</strong><span>Cutie originală nedesfăcută, telefonul nu a fost folosit niciodată.</span></div>
+                        <div className="vcc-check"><div className="dot"></div></div>
+                      </div>
+                    </label>
+                    <label className="vc-card-row">
+                      <input type="radio" name="condition" value="Nou Desigilat" data-mod="0.92" />
                       <div className="vcc-inner-row">
                         <div className="vcc-ico"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg></div>
-                        <div className="vcc-text"><strong>Impecabil (Ca Nou)</strong><span>Fără absolut nicio zgârietură. Purtat doar cu husă și folie.</span></div>
+                        <div className="vcc-text"><strong>Nou Desigilat</strong><span>Desigilat dar nefolosit sau folosit foarte puțin, ca nou, fără urme.</span></div>
                         <div className="vcc-check"><div className="dot"></div></div>
                       </div>
                     </label>
                     <label className="vc-card-row">
-                      <input type="radio" name="condition" value="Foarte Bun" data-mod="0.85" />
+                      <input type="radio" name="condition" value="Utilizat" data-mod="0.75" />
                       <div className="vcc-inner-row">
                         <div className="vcc-ico"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><circle cx="12" cy="12" r="10"></circle><line x1="12" y1="8" x2="12" y2="12"></line><line x1="12" y1="16" x2="12.01" y2="16"></line></svg></div>
-                        <div className="vcc-text"><strong>Urme Normale</strong><span>Zgârieturi fine pe ramă sau ecran, vizibile doar în lumină.</span></div>
+                        <div className="vcc-text"><strong>Utilizat</strong><span>Telefonul a fost folosit zi de zi. Completează chestionarul de mai jos.</span></div>
                         <div className="vcc-check"><div className="dot"></div></div>
                       </div>
                     </label>
-                    <label className="vc-card-row">
-                      <input type="radio" name="condition" value="Deteriorat" data-mod="0.5" />
-                      <div className="vcc-inner-row">
-                        <div className="vcc-ico"><svg viewBox="0 0 24 24" width="24" height="24" stroke="currentColor" strokeWidth="2" fill="none"><path d="M16 16s-1.5-2-4-2-4 2-4 2"></path><circle cx="12" cy="12" r="10"></circle><line x1="9" y1="9" x2="9.01" y2="9"></line><line x1="15" y1="9" x2="15.01" y2="9"></line></svg></div>
-                        <div className="vcc-text"><strong>Deteriorat / Spart</strong><span>Ecran crăpat, carcasă deformată sau urme vizibile de impact.</span></div>
-                        <div className="vcc-check"><div className="dot"></div></div>
-                      </div>
-                    </label>
+                  </div>
+                </div>
+
+                {/* Chestionar Utilizat */}
+                <div id="utilizat-questionnaire" style={{display:'none'}} className="vf-questionnaire mt-20">
+                  <h4 className="vq-title">Detalii suplimentare</h4>
+
+                  <div className="vq-item">
+                    <span className="vq-label">A avut contact cu lichide?</span>
+                    <div className="vq-options">
+                      <label className="vq-opt"><input type="radio" name="contactLichide" value="Da" /><span>Da</span></label>
+                      <label className="vq-opt"><input type="radio" name="contactLichide" value="Nu" /><span>Nu</span></label>
+                    </div>
+                  </div>
+
+                  <div className="vq-item">
+                    <span className="vq-label">Funcționează perfect? (touchscreen, butoane, cameră, microfon)</span>
+                    <div className="vq-options">
+                      <label className="vq-opt"><input type="radio" name="functionarePerfecta" value="Da" /><span>Da</span></label>
+                      <label className="vq-opt"><input type="radio" name="functionarePerfecta" value="Nu" /><span>Nu</span></label>
+                    </div>
+                  </div>
+
+                  <div className="vq-item">
+                    <span className="vq-label">Are zgârieturi vizibile pe ecran sau carcasă?</span>
+                    <div className="vq-options">
+                      <label className="vq-opt"><input type="radio" name="zgarieturi" value="Da" /><span>Da</span></label>
+                      <label className="vq-opt"><input type="radio" name="zgarieturi" value="Nu" /><span>Nu</span></label>
+                    </div>
+                  </div>
+
+                  <div className="vq-item">
+                    <span className="vq-label">Ai cutia originală?</span>
+                    <div className="vq-options">
+                      <label className="vq-opt"><input type="radio" name="cutieOriginala" value="Da" /><span>Da</span></label>
+                      <label className="vq-opt"><input type="radio" name="cutieOriginala" value="Nu" /><span>Nu</span></label>
+                    </div>
+                  </div>
+
+                  <div className="vq-item">
+                    <span className="vq-label">Conectivitate rețea</span>
+                    <div className="vq-options">
+                      <label className="vq-opt"><input type="radio" name="conectivitate" value="Liber de rețea" /><span>Liber de rețea</span></label>
+                      <label className="vq-opt"><input type="radio" name="conectivitate" value="Blocat" /><span>Blocat</span></label>
+                      <label className="vq-opt"><input type="radio" name="conectivitate" value="e-SIM" /><span>e-SIM</span></label>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -543,6 +639,7 @@ export default function Vinde() {
                   <div className="vils-row"><span className="vils-lbl">Brand:</span><span className="vils-val" id="sum-brand">-</span></div>
                   <div className="vils-row"><span className="vils-lbl">Model:</span><span className="vils-val" id="sum-model">-</span></div>
                   <div className="vils-row"><span className="vils-lbl">Stocare:</span><span className="vils-val" id="sum-storage">-</span></div>
+                  <div className="vils-row"><span className="vils-lbl">Culoare:</span><span className="vils-val" id="sum-color">-</span></div>
                   <div className="vils-row"><span className="vils-lbl">Baterie:</span><span className="vils-val" id="sum-battery">-</span></div>
                   <div className="vils-row"><span className="vils-lbl">Stare:</span><span className="vils-val" id="sum-cond">-</span></div>
                 </div>
