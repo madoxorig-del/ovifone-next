@@ -1040,6 +1040,33 @@ button {
     color: var(--color-text-secondary);
 }
 
+.premium-stock {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 12px;
+    font-weight: 600;
+    margin-top: 6px;
+}
+.premium-stock .stock-dot {
+    width: 7px;
+    height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+}
+.premium-stock.in-stock {
+    color: #34c759;
+}
+.premium-stock.in-stock .stock-dot {
+    background: #34c759;
+}
+.premium-stock.out-of-stock {
+    color: #ff3b30;
+}
+.premium-stock.out-of-stock .stock-dot {
+    background: #ff3b30;
+}
+
 .btn-premium {
     width: 100%;
     background: rgba(0, 0, 0, 0.85);

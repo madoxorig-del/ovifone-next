@@ -64,6 +64,10 @@ export default function Home() {
                       <span class="price-current">${pretFormatat}</span>
                       ${tel.pret_vechi && tel.pret_vechi > tel.pret ? `<span class="price-old">${pretVechiFormatat}</span>` : ''}
                     </div>
+                    <div class="premium-stock ${tel.stoc > 0 || tel.stoc === undefined || tel.stoc === null ? 'in-stock' : 'out-of-stock'}">
+                      <span class="stock-dot"></span>
+                      ${tel.stoc > 0 || tel.stoc === undefined || tel.stoc === null ? 'În stoc' : 'Lipsă stoc'}
+                    </div>
                   </div>
                 </a>
               </div>`;
